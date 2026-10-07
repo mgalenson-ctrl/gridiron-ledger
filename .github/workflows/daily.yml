@@ -16,6 +16,33 @@ jobs:
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
+      - name: Arrange files into folders (one-time, after a flat upload)
+        run: |
+          python3 - <<'PY'
+          import os, glob, json, shutil, sys
+          if os.path.isdir('nfl') and os.path.isdir('college') and os.path.isdir('site'): print('layout ok'); sys.exit(0)
+          def mv(src, dst):
+              if os.path.exists(src): os.makedirs(os.path.dirname(dst), exist_ok=True); shutil.move(src, dst); print(src, '->', dst)
+          for f in ('build_features.py','train.py','predict.py'): mv(f, f'nfl/{f}')
+          for f in ('cfb_build.py','cfb_train.py','cfb_predict.py','extract_pbp.py','rds_reader.py','team_info.py'): mv(f, f'college/{f}')
+          for f in ('run_nfl.sh','run_college.sh','weather_fetch.py'): mv(f, f'scripts/{f}')
+          mv('build_site.py','site/build_site.py')
+          for f in ('manifest.webmanifest','sw.js'): mv(f, f'site/static/{f}')
+          for f in glob.glob('icon-*.png'): mv(f, f'site/static/icons/{f}')
+          for f in glob.glob('app_template*.html'):
+              mv(f, ('college' if '<title>Gridiron Ledger College</title>' in open(f).read() else 'nfl') + '/app_template.html')
+          for f in glob.glob('predictions_log*.json'):
+              k = next(iter(json.load(open(f))), '')
+              mv(f, ('nfl' if '_' in k else 'college') + '/out/predictions_log.json')
+          need = ['nfl/build_features.py','nfl/train.py','nfl/predict.py','nfl/app_template.html','college/cfb_build.py','college/cfb_train.py','college/cfb_predict.py','college/extract_pbp.py','college/rds_reader.py','college/team_info.py','college/app_template.html','scripts/run_nfl.sh','scripts/run_college.sh','scripts/weather_fetch.py','site/build_site.py','site/static/manifest.webmanifest','site/static/sw.js','site/static/icons/icon-192.png','requirements.txt']
+          missing = [p for p in need if not os.path.exists(p)]
+          if missing: sys.exit('missing files: ' + ', '.join(missing))
+          print('arranged')
+          PY
+          git config user.name "gridiron-ledger-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet || (git commit -m "Arrange project folders" && git push)
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13"
