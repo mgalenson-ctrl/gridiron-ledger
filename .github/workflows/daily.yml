@@ -1,0 +1,72 @@
+name: Daily refresh and publish
+on:
+  schedule:
+    - cron: "30 11 * * *"   # 6:30 AM Central (daylight time); 5:30 AM in winter
+  workflow_dispatch:
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Map the folders the pipelines expect
+        run: |
+          sudo mkdir -p /home/claude && sudo chown "$USER" /home/claude
+          ln -s "$GITHUB_WORKSPACE/nfl" /home/claude/nflpredict
+          ln -s "$GITHUB_WORKSPACE/college" /home/claude/cfbpredict
+          mkdir -p /home/claude/nflverse /home/claude/sportsdataverse nfl/out college/out
+      - name: NFL picks
+        id: nfl
+        continue-on-error: true
+        run: bash scripts/run_nfl.sh
+      - name: College picks
+        id: college
+        continue-on-error: true
+        run: bash scripts/run_college.sh
+      - uses: actions/configure-pages@v5
+        id: pages
+      - name: Build site
+        env:
+          PREVIOUS_URL: ${{ steps.pages.outputs.base_url }}
+        run: python3 site/build_site.py
+      - name: Save the prediction log
+        run: |
+          git config user.name "gridiron-ledger-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add nfl/out/predictions_log.json college/out/predictions_log.json
+          git diff --cached --quiet || git commit -m "Daily prediction log $(date -u +%F)"
+          git push
+      - uses: actions/upload-artifact@v4
+        with:
+          name: snapshots-${{ github.run_id }}
+          path: |
+            nfl/out/snapshots/
+            college/out/snapshots/
+          if-no-files-found: ignore
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site/dist
+      - name: Report pipeline status
+        if: steps.nfl.outcome == 'failure' || steps.college.outcome == 'failure'
+        run: echo "::warning::NFL=${{ steps.nfl.outcome }} College=${{ steps.college.outcome }} (a failed sport keeps its previous page)"
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/deploy-pages@v4
+        id: deployment
