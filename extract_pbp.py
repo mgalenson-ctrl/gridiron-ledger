@@ -1,0 +1,5 @@
+import sys, time; sys.path.insert(0,'/home/claude/cfbpredict'); from rds_reader import read_rds
+KEEP=['year','week','game_id','pos_team','def_pos_team','home','away','play_type','down','distance','yards_to_goal','yards_gained','EPA','success','rush','pass','pass_attempt','completion','sack','int','turnover','fumble_vec','drive_id','drive_result','drive_pts','drive_number','new_drive_pts','passer_player_name','rusher_player_name','sack_taken_player','fg_inds','fg_made','yds_fg','penalty_flag','penalty_no_play','rz_play','start_date','home_team','away_team','spread','over_under','home_team_pregame_elo','away_team_pregame_elo','TimeSecsRem','period','pos_score_diff','td_play','punt','kickoff_play','scoring_play','completed','wallclock','neutral_site','venue','venue_id','touchdown','yds_sacked','yds_rushed','yds_receiving','score_diff']
+y=sys.argv[1]; t=time.time()
+df=read_rds(f'/home/claude/sportsdataverse/cfbfastr-data/data/rds/pbp_players_pos_{y}.rds', keep=KEEP)
+df.to_pickle(f'/tmp/cfb/data/pbp_{y}.pkl'); print(y, df.shape, round(time.time()-t,1),'s')

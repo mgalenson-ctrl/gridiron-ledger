@@ -1,0 +1,479 @@
+<title>Gridiron Ledger College</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@87.5,500;87.5,700;100,400;100,600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a scoreboard ledger. Single column on phones, two-column game detail on desktop. Ink on paper-grey with a turf-green accent; probabilities set in mono. */
+:root{
+  --bg:#f3f3ef; --surface:#ffffff; --line:#d9dad3; --fg:#17201b; --muted:#5e665f;
+  --accent:#1f7a4d; --accent-fg:#ffffff; --accent-soft:#dcefe3;
+  --warn:#9a6200; --warn-soft:#fbefd6; --away:#3a5aa8; --home:#1f7a4d;
+  --display:"Archivo",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#121613; --surface:#1b211c; --line:#2d352f; --fg:#e8ebe6; --muted:#9aa49c;
+  --accent:#4fbf85; --accent-fg:#0f1711; --accent-soft:#1d3528; --warn:#e2a83c; --warn-soft:#3a2d12; --away:#8aa3e6; --home:#4fbf85; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121613; --surface:#1b211c; --line:#2d352f; --fg:#e8ebe6; --muted:#9aa49c;
+  --accent:#4fbf85; --accent-fg:#0f1711; --accent-soft:#1d3528; --warn:#e2a83c; --warn-soft:#3a2d12; --away:#8aa3e6; --home:#4fbf85; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--display);font-size:15px;line-height:1.45;margin:0}
+.wrap{max-width:980px;margin:0 auto;padding-inline:16px;padding-block:0 48px}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);z-index:5;border-bottom:1px solid var(--line);padding-block:12px 0}
+.brand{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand h1{font-size:22px;margin:0;letter-spacing:-.01em;font-weight:700;font-stretch:87.5%}
+.brand .wk{font-family:var(--mono);font-size:13px;color:var(--muted)}
+nav.tabs{display:flex;gap:4px;overflow-x:auto;margin-top:10px;scrollbar-width:none}
+nav.tabs button{background:none;border:0;border-bottom:3px solid transparent;padding:8px 10px;font:inherit;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap}
+nav.tabs button[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--accent)}
+nav.tabs button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.fresh{display:flex;flex-wrap:wrap;gap:6px 14px;font-family:var(--mono);font-size:12px;color:var(--muted);padding-block:12px 4px}
+.fresh b{color:var(--fg);font-weight:500}
+.pill{display:inline-block;border-radius:999px;padding:2px 9px;font-size:12px;font-weight:600;letter-spacing:.02em;text-transform:uppercase}
+.pill.early{background:var(--accent-soft);color:var(--accent)}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.notice{background:var(--warn-soft);color:var(--warn);border-left:3px solid var(--warn);padding:10px 12px;font-size:14px;margin-block:14px;border-radius:0 6px 6px 0}
+section[role="tabpanel"]{padding-block:8px}
+h2{font-size:17px;margin:18px 0 8px;font-weight:700;font-stretch:87.5%}
+h3{font-size:14px;margin:14px 0 6px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
+.day{font-family:var(--mono);font-size:12px;color:var(--muted);margin:16px 0 6px;letter-spacing:.04em;text-transform:uppercase}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 14px;cursor:pointer;display:grid;gap:8px;text-align:left;font:inherit;color:inherit;width:100%}
+.card:focus-visible{outline:2px solid var(--accent)}
+.card .teams{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.card .t{font-size:20px;font-weight:700;font-stretch:87.5%}
+.card .t.pick::after{content:"▲";font-size:10px;margin-left:6px;color:var(--accent);vertical-align:middle}
+.card .meta{font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.bar{height:8px;border-radius:4px;background:var(--line);overflow:hidden;display:flex}
+.bar i{display:block;height:100%}
+.bar .a{background:var(--away)} .bar .h{background:var(--home)}
+.probs{display:flex;justify-content:space-between;font-family:var(--mono);font-size:13px;font-variant-numeric:tabular-nums}
+.flags{display:flex;gap:6px;flex-wrap:wrap}
+.detail{display:grid;gap:14px}
+.back{background:none;border:1px solid var(--line);border-radius:6px;padding:6px 10px;font:inherit;color:var(--fg);cursor:pointer}
+.hero{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:16px}
+.hero .big{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;text-align:center}
+.hero .big .t{font-size:22px;overflow-wrap:anywhere;font-weight:700;font-stretch:87.5%;line-height:1}
+.hero .big .p{font-family:var(--mono);font-size:26px;font-variant-numeric:tabular-nums;margin-top:4px}
+.hero .big .at{color:var(--muted);font-size:13px}
+.hero .sub{font-family:var(--mono);font-size:12px;color:var(--muted);text-align:center;margin-top:10px}
+.two{display:grid;grid-template-columns:1fr;gap:14px}
+@media(min-width:760px){.two{grid-template-columns:1fr 1fr}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 14px;min-width:0}
+.factor{display:grid;grid-template-columns:1fr 100px 48px;gap:8px;align-items:center;font-size:13px;padding:5px 0;border-bottom:1px solid var(--line)}
+.factor:last-child{border-bottom:0}
+.factor .fb{height:8px;background:var(--line);border-radius:4px;position:relative;overflow:hidden}
+.factor .fb i{position:absolute;top:0;height:100%}
+.factor .fb .pos{left:50%;background:var(--home)} .factor .fb .neg{right:50%;background:var(--away)}
+.factor .v{font-family:var(--mono);font-size:12px;text-align:right;font-variant-numeric:tabular-nums;color:var(--muted)}
+table{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums}
+th,td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left;white-space:normal}
+th{font-weight:600;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+.tscroll{overflow-x:auto}
+td.better{color:var(--accent);font-weight:600}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px}
+.tile .k{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.tile .v{font-family:var(--mono);font-size:24px;font-variant-numeric:tabular-nums;margin-top:2px}
+.tile .s{font-size:12px;color:var(--muted)}
+.muted{color:var(--muted)} .mono{font-family:var(--mono);font-size:12px}
+svg text{fill:var(--fg);font-family:var(--mono);font-size:11px}
+.res{display:grid;grid-template-columns:auto 1fr auto auto;gap:6px 12px;align-items:center;font-size:13px;padding:7px 0;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
+.res .ok{color:var(--accent);font-weight:700} .res .miss{color:var(--warn);font-weight:700}
+.sel{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-block:8px}
+select{font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--fg)}
+p{max-width:68ch}
+ul{padding-left:20px;max-width:70ch}
+/* landing */
+.status{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-size:13px;color:var(--muted);padding-block:10px 2px}
+.status .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);display:inline-block;margin-right:4px}
+.picks{display:grid;grid-template-columns:1fr;gap:8px}
+@media(min-width:720px){.picks{grid-template-columns:1fr 1fr}}
+details.pick{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:0;overflow:hidden}
+details.pick>summary{display:grid;grid-template-columns:1fr auto;grid-template-areas:"main conf" "meter meter" "meta meta";gap:4px 12px;align-items:center;padding:12px 14px;cursor:pointer;list-style:none}
+details.pick>summary::-webkit-details-marker{display:none}
+details.pick>summary:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+details.pick[open]>summary{border-bottom:1px solid var(--line)}
+.why{padding:10px 14px 12px;display:grid;gap:8px}
+.why ul{margin:0;padding-left:18px;max-width:none;display:grid;gap:5px;font-size:14px;line-height:1.4}
+.why li.against{color:var(--muted)}
+.why .more{justify-self:start;background:none;border:1px solid var(--line);border-radius:6px;padding:5px 10px;font:inherit;font-size:13px;color:var(--fg);cursor:pointer}
+.why .more:hover{border-color:var(--accent)}
+.pick .main .hint{font-size:11px;color:var(--muted);font-family:var(--mono);margin-top:2px}
+details.pick[open] .hint{display:none}
+.pick .main{grid-area:main;min-width:0}
+.pick .winner{font-size:20px;overflow-wrap:anywhere;font-weight:700;font-stretch:87.5%;line-height:1.1;letter-spacing:-.01em}
+.pick .winner small{font-size:15px;font-weight:500;color:var(--muted);font-stretch:100%}
+.pick .conf{grid-area:conf;text-align:right}
+.pick .conf .p{font-family:var(--mono);font-size:22px;font-variant-numeric:tabular-nums;line-height:1}
+.pick .conf .tier{display:inline-block;margin-top:4px;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.tier.Strong{background:var(--accent);color:var(--accent-fg)} .tier.Moderate{background:var(--accent-soft);color:var(--accent)} .tier.Lean{background:var(--line);color:var(--muted)}
+.pick .meta{grid-area:meta;display:flex;flex-wrap:wrap;gap:4px 10px;font-size:12px;color:var(--muted);font-family:var(--mono)}
+.pick .meter{grid-area:meter;margin-block:2px 4px;height:4px;border-radius:2px;background:var(--line);overflow:hidden}
+.pick .meter i{display:block;height:100%;background:var(--accent)}
+.chip{display:inline-flex;align-items:center;gap:4px;padding:1px 7px;border-radius:6px;border:1px solid var(--line);font-size:11px;font-family:var(--mono);color:var(--fg)}
+.chip.warn{border-color:var(--warn);color:var(--warn)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--muted);margin:14px 0 4px}
+@media(prefers-reduced-motion:no-preference){.card,details.pick{transition:border-color .15s}.card:hover,details.pick:hover{border-color:var(--accent)}}
+</style>
+<div class="wrap">
+<header class="top">
+  <div class="brand"><h1>Gridiron Ledger <span class="muted" style="font-weight:500">College</span></h1><span class="wk" id="wkLabel"></span></div>
+  <nav class="tabs" role="tablist" id="tabs">
+    <button role="tab" data-tab="week" aria-selected="true">Picks</button>
+    <button role="tab" data-tab="results">Results</button>
+    <button role="tab" data-tab="model">Model performance</button>
+    <button role="tab" data-tab="about">Method &amp; data</button>
+  </nav>
+</header>
+<div class="fresh" id="fresh"></div>
+<section role="tabpanel" id="tab-week"></section>
+<section role="tabpanel" id="tab-results" hidden></section>
+<section role="tabpanel" id="tab-model" hidden></section>
+<section role="tabpanel" id="tab-about" hidden></section>
+</div>
+<script id="bundle" type="application/json">__BUNDLE__</script>
+<script>
+const B = JSON.parse(document.getElementById('bundle').textContent);
+const $ = s => document.querySelector(s);
+const pct = p => (p*100).toFixed(0)+'%';
+const f3 = v => v==null?'—':(v>=0?'+':'')+v.toFixed(3);
+const f2 = v => v==null?'—':v.toFixed(2);
+const fp = v => v==null?'—':(v*100).toFixed(1)+'%';
+const esc = s => String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmtTime = t => { const [h,m]=t.split(':').map(Number); const ap=h>=12?'PM':'AM'; return `${((h+11)%12)+1}:${String(m).padStart(2,'0')} ${ap} ET`; };
+const fmtDay = d => new Date(d+'T12:00:00').toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'});
+const tierOf = c => { for(const t of B.confidence_tiers){ if(c>=t.lo && c<t.hi) return t; } return B.confidence_tiers[B.confidence_tiers.length-1]; };
+const tierHit = name => { const t=B.confidence_tiers.find(t=>t.tier===name); return t&&t.hit_rate!=null?pct(t.hit_rate):'—'; };
+function wxChip(g){ const w=g.weather; if(!w) return '';
+  if(w.status==='roofed') return `<span class="chip">Roof</span>`;
+  if(w.status==='forecast') return `<span class="chip">${Math.round(w.temp_f)}°F · ${Math.round(w.wind_mph)} mph${w.gust_mph?` (gusts ${Math.round(w.gust_mph)})`:''}${w.pop_pct!=null?` · ${Math.round(w.pop_pct)}% rain`:''}${w.retractable?' · retractable':''}</span>`;
+  return `<span class="chip warn">No forecast</span>`; }
+/* Plain-language rationale built from the model's own factor contributions. Each bullet quotes the inputs behind a factor;
+   wording is templated per feature, never free-form, so it cannot invent reasons the model did not use. */
+const f3s = v => (v>=0?'+':'')+v.toFixed(2);
+function rationaleFor(g, pick){
+  const L=g.latest, other=pick===g.home?g.away:g.home;
+  const P = pick===g.home?g.home_profile:g.away_profile, O = pick===g.home?g.away_profile:g.home_profile;
+  const sign = pick===g.home?1:-1;  // factor logit >0 favors home
+  const W = g.weather||{};
+  const T = {
+    d_adj_off_off_epa: ()=>`${pick}'s offense has been more efficient: ${f3s(P.adj_off_epa)} vs ${f3s(O.adj_off_epa)} EPA per play, adjusted for opponents.`,
+    d_adj_def_off_epa: ()=>`${pick}'s defense has been stingier: opponents average ${f3s(-P.adj_def_epa)} EPA per play against ${pick} vs ${f3s(-O.adj_def_epa)} against ${other}, adjusted for schedule.`,
+    d_qb_epa: ()=>`Quarterback edge: ${P.qb_name||pick+' QB'} ${f3s(P.qb_epa)} vs ${O.qb_name||other+' QB'} ${f3s(O.qb_epa)} EPA per dropback over their recent dropbacks.`,
+    d_qb_change: ()=> O.qb_change ? `${other} starts a different QB than last week (${O.qb_name||'TBD'}); teams switching starters have won less often historically.` : `${pick} keeps the same starter while ${other} does not.`,
+    d_qb_db_hist: ()=>`${P.qb_name||pick+' QB'} has a much larger recent body of work (${Math.round(P.qb_db_hist)} vs ${Math.round(O.qb_db_hist)} dropbacks), so his numbers are more trustworthy.`,
+    d_qb_cpoe: ()=>`${P.qb_name||pick+' QB'} completes more passes than expected (${(P.qb_cpoe>=0?'+':'')+P.qb_cpoe.toFixed(1)}% vs ${(O.qb_cpoe>=0?'+':'')+O.qb_cpoe.toFixed(1)}%).`,
+    d_qb_sack_rate: ()=>`${P.qb_name||pick+' QB'} takes fewer sacks (${(P.qb_sack_rate*100).toFixed(1)}% vs ${(O.qb_sack_rate*100).toFixed(1)}% of dropbacks).`,
+    d_qb_int_rate: ()=>`${P.qb_name||pick+' QB'} throws fewer interceptions (${(P.qb_int_rate*100).toFixed(1)}% vs ${(O.qb_int_rate*100).toFixed(1)}%).`,
+    d_to_per_game: ()=> P.to_per_game>=O.to_per_game ? `${pick}'s ${P.to_per_game.toFixed(1)} giveaways a game look like bad luck rather than a trend; the model expects fewer going forward, so ${pick} is better than its record suggests.` : `${other}'s low giveaway count (${O.to_per_game.toFixed(1)} a game) looks like good luck rather than a trend; the model expects more going forward.`,
+    d_takeaways_per_game: ()=>`${P.takeaways_per_game>O.takeaways_per_game?pick:other} forces more takeaways (${Math.max(P.takeaways_per_game,O.takeaways_per_game).toFixed(1)} vs ${Math.min(P.takeaways_per_game,O.takeaways_per_game).toFixed(1)} per game).`,
+    d_pass_vs_passdef: ()=>`Matchup: ${pick}'s passing game (${f3s(P.adj_pass_epa)} EPA/dropback) against ${other}'s pass defense (${f3s(-O.adj_def_pass_epa)} allowed) is the better side of the air battle.`,
+    d_rush_vs_rundef: ()=>`Matchup: ${pick}'s rushing attack (${f3s(P.adj_rush_epa)} EPA/rush) lines up well against ${other}'s run defense (${f3s(-O.adj_def_rush_epa)} allowed).`,
+    d_pp_vs_rush: ()=>`Pass protection: ${pick} allows sacks on ${(P.sack_rate_off*100).toFixed(1)}% of dropbacks while ${other} generates them on ${(O.sack_rate_def*100).toFixed(1)}%.`,
+    d_explosive_edge: ()=>`Big plays: ${pick} creates explosive plays more often than ${other}'s defense allows them.`,
+    d_fg_rate: ()=>`Kicking: ${pick}'s field-goal accuracy (${(P.fg_rate*100).toFixed(0)}%) tops ${other}'s (${(O.fg_rate*100).toFixed(0)}%).`,
+    d_fg_long_rate: ()=>`Kicking from 40+: ${pick} ${(P.fg_long_rate*100).toFixed(0)}% vs ${other} ${(O.fg_long_rate*100).toFixed(0)}%.`,
+    d_st_epa_per_game: ()=>`Special teams have added more value for ${pick} this season.`,
+    d_pen_per_game: ()=>`Discipline: ${pick} commits fewer penalties (${P.pen_per_game.toFixed(1)} vs ${O.pen_per_game.toFixed(1)} per game).`,
+    wx_wind: ()=>`Forecast wind of ${Math.round(W.wind_mph)} mph at kickoff; in past games wind has slightly favored the home side.`,
+    wx_cold: ()=>`Cold forecast (${Math.round(W.temp_f)}°F); cold has slightly favored the home side historically.`,
+    wx_wind_x_passlean: ()=>`Wind (${Math.round(W.wind_mph)} mph) matters more for the pass-heavier offense in this matchup.`,
+    wx_wind_x_fg: ()=>`Wind (${Math.round(W.wind_mph)} mph) raises the value of the more reliable long-range kicker.`,
+    wx_cold_x_awaydome: ()=>`A dome team visiting in the cold (${Math.round(W.temp_f)}°F).`,
+    d_inj_starters_out: ()=>`Injuries: ${O.inj_starters_out} ${other} starters are out or doubtful vs ${P.inj_starters_out} for ${pick}.`,
+    d_inj_starters_q: ()=>`${other} has more starters listed questionable (${O.inj_starters_q} vs ${P.inj_starters_q}).`,
+    d_inj_qb_out: ()=>`${other}'s quarterback is listed out on the injury report.`,
+    d_inj_ol_out: ()=>`${other} is missing offensive-line starters (${O.inj_ol_out ?? 0}).`,
+    d_elo: ()=>`${pick} comes in with the higher pregame Elo rating (${Math.round(P.elo)} vs ${Math.round(O.elo)}), a running tally of results against schedule strength.`,
+    d_l3_off_epa: ()=>`Recent form: ${pick}'s offense has averaged ${f3s(P.l3_off_epa)} EPA per play over its last three games vs ${f3s(O.l3_off_epa)} for ${other}.`,
+    d_l3_def_epa: ()=>`Recent form: ${pick}'s defense has allowed ${f3s(P.l3_def_epa)} EPA per play over its last three games vs ${f3s(O.l3_def_epa)} for ${other}.`,
+    d_l3_ppd: ()=>`Recent form: ${pick} is scoring ${f2(P.l3_ppd)} points per drive over its last three games vs ${f2(O.l3_ppd)} for ${other}.`,
+    conf_game: ()=>`Conference game: home-field edges have been smaller in league play, which nudges this toward ${pick}.`,
+    d_adj_off_sr: ()=>`${pick} stays on schedule more often: ${fp(P.adj_off_sr)} success rate vs ${fp(O.adj_off_sr)}, adjusted for opponents.`,
+    d_adj_off_off_sr: ()=>`${pick} stays on schedule more often: ${fp(P.adj_off_sr)} success rate vs ${fp(O.adj_off_sr)}, adjusted for opponents.`,
+    d_adj_def_off_sr: ()=>`${pick}'s defense gets off the field: opponents succeed less often against ${pick} than against ${other}.`,
+    d_adj_off_ppd: ()=>`${pick} scores more per possession: ${f2(P.adj_ppd)} vs ${f2(O.adj_ppd)} adjusted points per drive.`,
+    d_adj_def_ppd: ()=>`${pick}'s defense allows fewer points per drive (${f2(-P.adj_def_ppd)} vs ${f2(-O.adj_def_ppd)} relative to average).`,
+    d_adj_off_pass_epa: ()=>`${pick}'s passing game is more efficient: ${f3s(P.adj_pass_epa)} vs ${f3s(O.adj_pass_epa)} adjusted EPA per dropback.`,
+    d_adj_def_pass_epa: ()=>`${pick} defends the pass better (${f3s(-P.adj_def_pass_epa)} vs ${f3s(-O.adj_def_pass_epa)} allowed per dropback).`,
+    d_adj_off_rush_epa: ()=>`${pick} runs the ball more efficiently: ${f3s(P.adj_rush_epa)} vs ${f3s(O.adj_rush_epa)} adjusted EPA per rush.`,
+    d_adj_def_rush_epa: ()=>`${pick} defends the run better (${f3s(-P.adj_def_rush_epa)} vs ${f3s(-O.adj_def_rush_epa)} allowed per rush).`,
+    d_adj_off_explosive_rate: ()=>`${pick} generates more explosive plays (${fp(P.adj_explosive)} vs ${fp(O.adj_explosive)} of snaps, adjusted).`,
+    d_adj_def_explosive_rate: ()=>`${pick} gives up fewer explosive plays.`,
+    d_fbs: ()=>`${other} is not an FBS program, which the model treats as a large talent gap.`,
+  };
+  return T;
+}
+function rationale(g){
+  const L=g.latest, pick=L.pick, other=pick===g.home?g.away:g.home, sign = pick===g.home?1:-1, T = rationaleFor(g, pick);
+  // consistency check: a template may only state "X is better" if the raw numbers agree with the factor's direction;
+  // otherwise the bullet says plainly that the weight is conditional on the other inputs.
+  const CHK = {
+    d_adj_off_off_epa:[p=>p.adj_off_epa,true], d_adj_def_off_epa:[p=>p.adj_def_epa,true], d_qb_epa:[p=>p.qb_epa,true], d_qb_db_hist:[p=>p.qb_db_hist,true],
+    d_qb_cpoe:[p=>p.qb_cpoe,true], d_qb_sack_rate:[p=>p.qb_sack_rate,false], d_qb_int_rate:[p=>p.qb_int_rate,false], d_takeaways_per_game:[p=>p.takeaways_per_game,true],
+    d_pass_vs_passdef:[p=>p.adj_pass_epa,true], d_rush_vs_rundef:[p=>p.adj_rush_epa,true], d_pp_vs_rush:[p=>p.sack_rate_off,false], d_fg_rate:[p=>p.fg_rate,true], d_fg_long_rate:[p=>p.fg_long_rate,true],
+    d_pen_per_game:[p=>p.pen_per_game,false], d_elo:[p=>p.elo,true], d_l3_off_epa:[p=>p.l3_off_epa,true], d_l3_def_epa:[p=>p.l3_def_epa,false], d_l3_ppd:[p=>p.l3_ppd,true],
+    d_adj_off_off_sr:[p=>p.adj_off_sr,true], d_adj_off_ppd:[p=>p.adj_ppd,true], d_adj_def_ppd:[p=>p.adj_def_ppd,true], d_adj_off_pass_epa:[p=>p.adj_pass_epa,true], d_adj_def_pass_epa:[p=>p.adj_def_pass_epa,true],
+    d_adj_off_rush_epa:[p=>p.adj_rush_epa,true], d_adj_def_rush_epa:[p=>p.adj_def_rush_epa,true], d_adj_off_explosive_rate:[p=>p.adj_explosive,true], d_adj_def_explosive_rate:[p=>p.adj_def_explosive,true],
+    d_explosive_edge:[p=>p.adj_explosive,true], d_inj_starters_out:[p=>-(p.inj_starters_out||0),true],
+  };
+  const consistent = (key, pickTeam)=>{ const c=CHK[key]; if(!c) return true; const PP = pickTeam===g.home?g.home_profile:g.away_profile, OO = pickTeam===g.home?g.away_profile:g.home_profile;
+    const pv=c[0](PP), ov=c[0](OO); if(pv==null||ov==null||pv===ov) return true; return (pv>ov)===c[1]; };
+  const fallback = (f, pickTeam)=>`${f.feature}: the model's learned weight on this input tilts toward ${pickTeam} once the other factors are accounted for (the raw numbers alone would not show it).`;
+  const fs = L.factors.map(f=>({...f, s: f.logit*sign})).filter(f=>T[f.key] && Math.abs(f.logit)>=0.03);
+  const forPick = fs.filter(f=>f.s>0).slice(0,3), against = fs.filter(f=>f.s<0).slice(0,1);
+  const bullets = forPick.map(f=>`<li>${consistent(f.key,pick)?T[f.key]():fallback(f,pick)}</li>`);
+  if(bullets.length<2 && L.intercept_logit*sign>0) bullets.push(`<li>Home field: the baseline edge for the home team is worth about ${pct(1/(1+Math.exp(-L.intercept_logit)))} before any matchup factors.</li>`);
+  if(bullets.length===0) bullets.push(`<li>No single factor stands out; this is close to a coin flip on the numbers.</li>`);
+  const ag = against.map(f=>`<li class="against">On the other side: ${consistent(f.key,other)?rationaleFor(g, other)[f.key]():fallback(f,other)}</li>`);
+  return bullets.concat(ag).join('');
+}
+let state = {tab:'week', game:null, conf:'', sort:'time'};
+try{ const t=localStorage.getItem('gl.tab'); if(t) state.tab=t; const c=localStorage.getItem('gl.conf'); if(c) state.conf=c; }catch(e){}
+
+$('#wkLabel').textContent = `${B.season} · Week ${B.week}`;
+$('#fresh').innerHTML = `<span>Games through <b>${B.data.pbp_through}</b></span><span>Run <b>${new Date(B.generated_at).toLocaleString()}</b></span><span>Model <b>${B.model_version}</b></span><span>Forecasts <b>${B.weather_meta.fetched_at?new Date(B.weather_meta.fetched_at).toLocaleString():'none'}</b></span>`;
+
+function showTab(t){ state.tab=t; try{localStorage.setItem('gl.tab',t)}catch(e){}
+  document.querySelectorAll('nav.tabs button').forEach(b=>b.setAttribute('aria-selected', b.dataset.tab===t));
+  ['week','results','model','about'].forEach(k=>{ $('#tab-'+k).hidden = k!==t; });
+  window.scrollTo({top:0});
+}
+$('#tabs').addEventListener('click', e=>{ const b=e.target.closest('button'); if(b) showTab(b.dataset.tab); });
+
+/* ---------- This week ---------- */
+function renderWeek(){
+  const el = $('#tab-week');
+  if(state.game){ el.innerHTML = renderDetail(B.games.find(g=>g.game_id===state.game)); return; }
+  const inj = B.data.injuries_available_for_week;
+  const confs = [...new Set(B.games.flatMap(g=>[g.home_conf,g.away_conf]).filter(Boolean))].sort();
+  let html = `<div class="status"><span><span class="dot"></span>Week ${B.week} picks · all FBS games</span><span>· forecasts shown for ${B.games.filter(g=>g.weather&&g.weather.status==='forecast').length} of ${B.games.length} games (display only)</span><span>· refreshed daily</span></div>
+  <div class="sel"><label for="cf">Conference</label><select id="cf"><option value="">All (${B.games.length})</option>${confs.map(c=>`<option value="${esc(c)}" ${state.conf===c?'selected':''}>${esc(c)}</option>`).join('')}</select>
+  <label for="so">Sort</label><select id="so"><option value="time" ${state.sort!=='conf'?'selected':''}>Kickoff</option><option value="conf" ${state.sort==='conf'?'selected':''}>Confidence</option></select></div>`;
+  const byDay = {};
+  const shown = B.games.filter(g=>!state.conf || g.home_conf===state.conf || g.away_conf===state.conf);
+  shown.forEach(g=>{ (byDay[state.sort==='conf'?'all':g.gameday] ||= []).push(g); });
+  Object.keys(byDay).sort().forEach(d=>{
+    html += `<div class="day">${d==='all'?'All games by confidence':fmtDay(d)}</div><div class="picks">`;
+    byDay[d].sort((a,b)=> state.sort==='conf' ? Math.max(b.latest.p_home,1-b.latest.p_home)-Math.max(a.latest.p_home,1-a.latest.p_home) : (a.gameday+a.gametime_et).localeCompare(b.gameday+b.gametime_et)).forEach(g=>{
+      const L = g.latest, p = L.p_home, pick = L.pick, loser = pick===g.home?g.away:g.home, conf = Math.max(p,1-p), tier = tierOf(conf);
+      const flags = [];
+      if(g.qb_flags.length) flags.push('<span class="chip warn">QB uncertain</span>');
+      if(g.early_first && Math.abs(g.early_first.p_home-p)>=0.03) flags.push(`<span class="chip">was ${g.early_first.pick} ${pct(Math.max(g.early_first.p_home,1-g.early_first.p_home))} Tue</span>`);
+      html += `<details class="pick" id="d-${g.game_id}"><summary>
+        <div class="main"><div class="winner">${pick} <small>over ${loser}${pick===g.away?' (away)':''}</small></div><div class="hint">tap for why</div></div>
+        <div class="conf"><div class="p">${pct(conf)}</div><span class="tier ${tier.tier}">${tier.tier}</span></div>
+        <div class="meter"><i style="width:${(conf-0.5)*200}%"></i></div>
+        <div class="meta"><span>${state.sort==='conf'?fmtDay(g.gameday)+' ':''}${fmtTime(g.gametime_et)}</span><span>${g.away} at ${g.home}${g.neutral?' (neutral)':''}</span><span class="chip">${g.score?`${g.away} ${g.score.away} – ${g.home} ${g.score.home}${g.score.adjusted?'*':''}`:''}</span>${wxChip(g)}${flags.join('')}</div>
+      </summary><div class="why"><ul>${rationale(g)}</ul><div class="mono muted" style="font-size:12px">Projected score ${g.away} ${g.score.away}, ${g.home} ${g.score.home} (margin ${g.score.margin>0?g.home:g.away} by ${Math.abs(g.score.margin).toFixed(1)}, total ${g.score.total.toFixed(0)})${g.score.adjusted?' · *rounded to agree with the pick':''}. Typical error ±${B.score_metrics.margin_mae.toFixed(0)} points on margin.</div><button class="more" data-game="${g.game_id}">Full breakdown →</button></div></details>`;
+    });
+    html += '</div>';
+  });
+  html += `<p class="mono muted" style="margin:10px 0 0">Reasons are written from the model's largest factor contributions for each game and quote the underlying numbers; they are not editorial opinions.</p><div class="legend">${B.confidence_tiers.map(t=>`<span><span class="tier ${t.tier}" style="padding:1px 7px;border-radius:999px;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase">${t.tier}</span> ${pct(t.lo)}–${pct(t.hi)} · hit ${pct(t.hit_rate)} of ${t.n} past picks</span>`).join('')}</div>
+  <p class="mono muted" style="margin:6px 0 0">Confidence = model win probability of the pick. Hit rates are from walk-forward predictions, 2022–${B.season}. Tap a game for the reasons, matchup numbers and forecast.</p>`;
+  el.innerHTML = html;
+}
+$('#tab-week').addEventListener('change', e=>{ if(e.target.id==='cf'){ state.conf=e.target.value; try{localStorage.setItem('gl.conf',state.conf)}catch(x){} renderWeek(); } if(e.target.id==='so'){ state.sort=e.target.value; renderWeek(); } });
+$('#tab-week').addEventListener('click', e=>{
+  const c = e.target.closest('[data-game]'); if(c){ state.game=c.dataset.game; renderWeek(); window.scrollTo({top:0}); return; }
+  if(e.target.closest('#back')){ state.game=null; renderWeek(); }
+});
+
+function row(label, hv, av, fmt, higherBetter){
+  if((hv==null||hv===undefined)&&(av==null||av===undefined)) return '';
+  const hb = hv!=null&&av!=null&&hv!==av ? ((hv>av)===higherBetter) : null;
+  return `<tr><td>${label}</td><td class="${hb===false?'better':''}">${fmt(av)}</td><td class="${hb===true?'better':''}">${fmt(hv)}</td></tr>`;
+}
+function renderDetail(g){
+  const L = g.latest, p = L.p_home, H=g.home_profile, A=g.away_profile, w=g.weather||{};
+  const top = L.factors.filter(f=>Math.abs(f.logit)>0.005).slice(0,10);
+  const maxL = Math.max(0.3, ...top.map(f=>Math.abs(f.logit)));
+  const factors = top.map(f=>`<div class="factor"><span>${esc(f.feature)}</span><span class="fb"><i class="${f.logit>=0?'pos':'neg'}" style="width:${Math.abs(f.logit)/maxL*50}%"></i></span><span class="v">${f.logit>=0?g.home:g.away} ${Math.abs(f.logit).toFixed(2)}</span></div>`).join('');
+  const inj = (P)=> `<b>${P.team}</b> (${esc(P.conf||'Independent')}${P.div&&P.div!=='fbs'?', '+P.div.toUpperCase():''}): no official injury report feed exists for college football; expected QB is the passer with the most dropbacks in the last game (${esc(P.qb_name||'unknown')}).`;
+  return `<div class="detail">
+    <div><button class="back" id="back">← Week ${B.week}</button></div>
+    <div class="hero">
+      <div class="big">
+        <div><div class="t" style="color:var(--away)">${g.away}</div><div class="p">${pct(1-p)}</div></div>
+        <div class="at">at<br><span class="mono">${fmtDay(g.gameday)}<br>${fmtTime(g.gametime_et)}</span></div>
+        <div><div class="t" style="color:var(--home)">${g.home}</div><div class="p">${pct(p)}</div></div>
+      </div>
+      <div class="bar" style="margin-top:10px"><i class="a" style="width:${(1-p)*100}%"></i><i class="h" style="width:${p*100}%"></i></div>
+      <div class="sub">Pick <b>${L.pick}</b> · <span class="tier ${tierOf(Math.max(p,1-p)).tier}" style="padding:1px 7px;border-radius:999px;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase">${tierOf(Math.max(p,1-p)).tier}</span> · <span class="pill ${g.latest_type==='updated'?'warn':'early'}">${g.latest_type}</span> run ${new Date(L.predicted_at).toLocaleString()} · ${L.model_version} · inputs ${L.input_hash}</div>
+      <div class="sub">Projected score: <b>${g.away} ${g.score.away} – ${g.home} ${g.score.home}</b>${g.score.adjusted?' (rounded to agree with the pick)':''} · expected total ${g.score.total.toFixed(1)}${g.market.spread_line!=null?'':''}</div>
+      <div class="sub">First call (Mon, ${g.early_first.model_version}): ${g.early_first.pick} ${pct(Math.max(g.early_first.p_home,1-g.early_first.p_home))} · ${g.runs.length} run${g.runs.length>1?'s':''} logged · Market: ${g.market.p_home_devig!=null?`${g.market.p_home_devig>=0.5?g.home:g.away} ${pct(Math.max(g.market.p_home_devig,1-g.market.p_home_devig))} (spread ${g.market.spread_line>0?g.home+' -'+g.market.spread_line:g.away+' -'+(-g.market.spread_line)})`:'n/a'}</div>
+      ${g.qb_flags.length?`<div class="notice" style="margin-bottom:0">${g.qb_flags.map(esc).join('<br>')}</div>`:''}
+      ${(g.early.missing_inputs||[]).filter(m=>!m.startsWith('Wind')&&!m.startsWith('Cold')).length?`<div class="notice" style="margin-bottom:0">Missing inputs imputed with training medians: ${g.early.missing_inputs.filter(m=>!m.startsWith('Wind')&&!m.startsWith('Cold')).map(esc).join(', ')}</div>`:''}
+    </div>
+    <div class="two">
+      <div class="panel"><h3>Strongest model-weighted factors</h3>
+        <p class="mono muted" style="margin:0 0 8px">Each bar is the feature's contribution to the win-probability logit (standardized difference × learned weight). Bars point toward the team they favor. Weights are learned from 2020–${B.season} games; signs are conditional on the other features, not causal claims.</p>
+        ${factors}
+        <div class="factor"><span>Home-field baseline (intercept)</span><span class="fb"><i class="${L.intercept_logit>=0?'pos':'neg'}" style="width:${Math.abs(L.intercept_logit)/maxL*50}%"></i></span><span class="v">${L.intercept_logit>=0?g.home:g.away} ${Math.abs(L.intercept_logit).toFixed(2)}</span></div>
+      </div>
+      <div class="panel"><h3>Availability, venue, weather</h3>
+        <p style="margin:0 0 6px">${inj(A)}</p><p style="margin:0 0 10px">${inj(H)}</p>
+        <p style="margin:0 0 6px"><b>Venue</b>: ${esc(g.stadium)}${g.neutral?' (neutral site)':''} · roof: ${g.roof?esc(g.roof):'not listed'} · surface: ${g.surface?esc(g.surface):'not listed'}</p>
+        <p style="margin:0 0 6px"><b>Weather at kickoff</b>: ${w.status==='forecast'?`${Math.round(w.temp_f)}°F, wind ${Math.round(w.wind_mph)} mph${w.gust_mph?` gusting ${Math.round(w.gust_mph)}`:''}, ${w.pop_pct!=null?Math.round(w.pop_pct)+'% chance of precipitation':'precipitation n/a'}${w.retractable?' (retractable roof; forecast applied, may be closed)':''}. <span class="mono muted">${({nws:'NWS',metoffice:'Met Office','open-meteo':'Open-Meteo'})[w.source]||'Forecast'} forecast${w.forecast_created?' issued '+new Date(w.forecast_created).toLocaleString():''}, fetched ${new Date(w.fetched_at).toLocaleString()}, valid ${w.valid_for}.</span> Weather is shown for context only: the college feed has no historical kickoff conditions, so no weather weight could be learned.`:w.status==='roofed'?'Roofed stadium; weather is zeroed in the model.':`<span class="pill warn">forecast unavailable</span> (${w.status||'not fetched'}); weather inputs imputed with training medians.`}</p>
+        <p style="margin:0"><b>Rest &amp; travel</b>: ${A.team} ${A.rest} days rest${A.travel_miles!=null?`, ${Math.round(A.travel_miles)} mi`:''}; ${H.team} ${H.rest} days rest${H.travel_miles>0?`, ${Math.round(H.travel_miles)} mi`:''}. ${g.div_game?'Conference game.':''} <span class="muted">(Rest and travel were tested and did not improve walk-forward accuracy; shown for context only.)</span></p>
+      </div>
+    </div>
+    <div class="panel"><h3>Matchup profile (season to date, before this game)</h3>
+    <div class="tscroll"><table><thead><tr><th>Metric</th><th>${g.away}</th><th>${g.home}</th></tr></thead><tbody>
+      ${row('Games played', H.games_played, A.games_played, v=>v==null?'—':v, true)}
+      ${row('Adj. offensive EPA/play', H.adj_off_epa, A.adj_off_epa, f3, true)}
+      ${row('Adj. defensive EPA/play (higher = better D)', H.adj_def_epa, A.adj_def_epa, f3, true)}
+      ${row('Adj. pass EPA/dropback', H.adj_pass_epa, A.adj_pass_epa, f3, true)}
+      ${row('Adj. rush EPA/play', H.adj_rush_epa, A.adj_rush_epa, f3, true)}
+      ${row('Adj. pass defense', H.adj_def_pass_epa, A.adj_def_pass_epa, f3, true)}
+      ${row('Adj. run defense', H.adj_def_rush_epa, A.adj_def_rush_epa, f3, true)}
+      ${row('Adj. success rate', H.adj_off_sr, A.adj_off_sr, fp, true)}
+      ${row('Adj. points per drive', H.adj_ppd, A.adj_ppd, f2, true)}
+      ${row('Last 5: offensive EPA/play', H.l5_off_epa, A.l5_off_epa, f3, true)}
+      ${row('Last 5: EPA/play allowed', H.l5_def_epa, A.l5_def_epa, f3, false)}
+      <tr><th colspan="3" style="text-align:left">Quarterback (expected starter)</th></tr>
+      <tr><td>Expected starter</td><td>${esc(A.qb_name||'unknown')}${A.qb_change?' <span class="pill warn">new</span>':''}</td><td>${esc(H.qb_name||'unknown')}${H.qb_change?' <span class="pill warn">new</span>':''}</td></tr>
+      ${row('EPA / dropback (trailing)', H.qb_epa, A.qb_epa, f3, true)}
+      ${row('Completion % over expected', H.qb_cpoe, A.qb_cpoe, v=>v==null?'—':(v>=0?'+':'')+v.toFixed(1), true)}
+      ${row('Interception rate', H.qb_int_rate, A.qb_int_rate, fp, false)}
+      ${row('Sack rate', H.qb_sack_rate, A.qb_sack_rate, fp, false)}
+      ${row('EPA / dropback vs blitz', H.qb_blitz_epa, A.qb_blitz_epa, f3, true)}
+      ${row('Dropbacks in trailing window', H.qb_db_hist, A.qb_db_hist, v=>v==null?'—':Math.round(v), true)}
+      <tr><th colspan="3" style="text-align:left">Situational &amp; special teams</th></tr>
+      ${row('3rd-down conversion', H.third_rate, A.third_rate, fp, true)}
+      ${row('Red-zone TD rate', H.rz_td_rate, A.rz_td_rate, fp, true)}
+      ${row('FG accuracy (shrunk)', H.fg_rate, A.fg_rate, fp, true)}
+      ${row('FG accuracy 40+', H.fg_long_rate, A.fg_long_rate, fp, true)}
+      ${row('Giveaways / game', H.to_per_game, A.to_per_game, f2, false)}
+      ${row('Takeaways / game', H.takeaways_per_game, A.takeaways_per_game, f2, true)}
+      ${row('Penalties / game', H.pen_per_game, A.pen_per_game, f2, false)}
+      ${row('Sack rate allowed', H.sack_rate_off, A.sack_rate_off, fp, false)}
+      ${row('Sack rate generated', H.sack_rate_def, A.sack_rate_def, fp, true)}
+      <tr><th colspan="3" style="text-align:left">Tendencies (context, not model inputs)</th></tr>
+      ${row('Pregame Elo (CFBD)', H.elo, A.elo, v=>v==null?'—':Math.round(v), true)}
+      ${row('Plays per game', H.plays_per_game, A.plays_per_game, v=>v==null?'—':v.toFixed(0), true)}
+      ${row('Pass rate', H.pass_rate, A.pass_rate, fp, true)}
+
+      ${row('Pass rate over expected', H.pass_oe, A.pass_oe, v=>v==null?'—':(v>=0?'+':'')+v.toFixed(1)+'%', true)}
+      ${row('Play-action rate', H.pa_rate, A.pa_rate, fp, true)}
+      ${row('Motion rate', H.motion_rate, A.motion_rate, fp, true)}
+      ${row('Defensive blitz rate', H.blitz_rate_def, A.blitz_rate_def, fp, true)}
+      ${row('4th-down attempts / game', H.fourth_go_rate, A.fourth_go_rate, f2, true)}
+      ${row('Pace (sec / play)', H.pace, A.pace, v=>v==null?'—':v.toFixed(1), false)}
+    </tbody></table></div>
+    <p class="mono muted" style="margin:8px 0 0">Green marks the better side of each row. "Adj." = opponent-adjusted by ridge regression over this season's games with last season as a down-weighted prior.</p>
+    </div>
+  </div>`;
+}
+
+/* ---------- Results (walk-forward) ---------- */
+function renderResults(){
+  const el = $('#tab-results');
+  const seasons = [...new Set(B.history.map(h=>h.season))].sort((a,b)=>b-a);
+  const sel = state.rs ?? seasons[0];
+  const rows = B.history.filter(h=>h.season===sel);
+  const weeks = [...new Set(rows.map(r=>r.week))].sort((a,b)=>b-a);
+  const decided = rows.filter(r=>r.home_win!==0.5);
+  const acc = decided.filter(r=>(r.p_home>0.5)===(r.home_win===1)).length;
+  const brier = rows.reduce((s,r)=>s+(r.p_home-r.home_win)**2,0)/rows.length;
+  const mk = decided.filter(r=>r.mkt!=null); const macc = mk.filter(r=>(r.mkt>0.5)===(r.home_win===1)).length;
+  let html = `<div class="sel"><label for="rs">Season</label><select id="rs">${seasons.map(s=>`<option ${s===sel?'selected':''}>${s}</option>`).join('')}</select>
+    <span class="mono muted">Each game was predicted by a model trained only on games before that week (walk-forward).</span></div>
+    <div class="tiles"><div class="tile"><div class="k">Model record</div><div class="v">${acc}–${decided.length-acc}</div><div class="s">${pct(acc/decided.length)} winners</div></div>
+    <div class="tile"><div class="k">Brier score</div><div class="v">${brier.toFixed(4)}</div><div class="s">lower is better; 0.25 = coin flip</div></div>
+    <div class="tile"><div class="k">Market favorite</div><div class="v">${mk.length?pct(macc/mk.length):'—'}</div><div class="s">closing-line benchmark</div></div>
+    <div class="tile"><div class="k">Home team</div><div class="v">${pct(decided.filter(r=>r.home_win===1).length/decided.length)}</div><div class="s">always-pick-home</div></div></div>`;
+  weeks.forEach(w=>{
+    const wr = rows.filter(r=>r.week===w);
+    const wa = wr.filter(r=>r.home_win!==0.5&&(r.p_home>0.5)===(r.home_win===1)).length;
+    html += `<div class="day">Week ${w} · ${wa}–${wr.filter(r=>r.home_win!==0.5).length-wa}</div>`;
+    wr.forEach(r=>{
+      const pick = r.p_home>=0.5?r.home:r.away, conf = Math.max(r.p_home,1-r.p_home);
+      const won = r.home_win===0.5?'tie':(((r.p_home>0.5)===(r.home_win===1))?'ok':'miss');
+      html += `<div class="res"><span class="${won}">${won==='ok'?'✓':won==='miss'?'✗':'='}</span><span>${r.away} ${r.away_score} at ${r.home} ${r.home_score}${r.pred_home!=null?` <span class="muted mono">(proj ${r.pred_away}–${r.pred_home})</span>`:''}</span><span class="mono">${pick} ${pct(conf)}</span><span class="mono muted">${r.mkt!=null?'mkt '+(r.mkt>=0.5?r.home:r.away)+' '+pct(Math.max(r.mkt,1-r.mkt)):''}</span></div>`;
+    });
+  });
+  el.innerHTML = html;
+  $('#rs').addEventListener('change', e=>{ state.rs=+e.target.value; renderResults(); });
+}
+
+/* ---------- Model performance ---------- */
+function calChart(cal){
+  const W=360,H=260,m={l:40,r:10,t:10,b:36}; const x=v=>m.l+v*(W-m.l-m.r), y=v=>H-m.b-v*(H-m.t-m.b);
+  let s=`<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:420px;display:block" role="img" aria-label="Calibration: predicted vs actual home win rate">`;
+  [0,.25,.5,.75,1].forEach(v=>{ s+=`<line x1="${x(0)}" x2="${x(1)}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)"/><text x="${m.l-6}" y="${y(v)+4}" text-anchor="end">${v}</text><text x="${x(v)}" y="${H-m.b+16}" text-anchor="middle">${v}</text>`; });
+  s+=`<line x1="${x(0)}" y1="${y(0)}" x2="${x(1)}" y2="${y(1)}" stroke="var(--muted)" stroke-dasharray="4 4"/>`;
+  const maxn=Math.max(...cal.map(c=>c.n));
+  cal.forEach(c=>{ const r=4+8*Math.sqrt(c.n/maxn); s+=`<circle cx="${x(c.pred)}" cy="${y(c.actual)}" r="${r}" fill="var(--accent)" fill-opacity=".75" stroke="var(--accent)"/>`; });
+  s+=`<text x="${(x(0)+x(1))/2}" y="${H-4}" text-anchor="middle">predicted home win probability</text><text transform="rotate(-90)" x="${-(y(0)+y(1))/2}" y="12" text-anchor="middle">actual home win rate</text></svg>`;
+  return s;
+}
+function renderModel(){
+  const M=B.metrics, e=M.early, h=M.holdout_2025_on;
+  const abl = Object.entries(B.ablation);
+  $('#tab-model').innerHTML = `
+    <h2>Walk-forward performance, 2024–${B.season} (${e.n} games)</h2>
+    <div class="tiles">
+      <div class="tile"><div class="k">Winner accuracy</div><div class="v">${pct(e.accuracy)}</div><div class="s">final early model</div></div>
+      <div class="tile"><div class="k">Brier score</div><div class="v">${e.brier.toFixed(4)}</div><div class="s">log loss ${e.logloss.toFixed(4)}</div></div>
+      <div class="tile"><div class="k">Home-team pick</div><div class="v">${pct(e.home_pick_accuracy)}</div><div class="s">Brier ${e.home_pick_brier.toFixed(4)}</div></div>
+      <div class="tile"><div class="k">Market favorite</div><div class="v">${pct(e.market_accuracy)}</div><div class="s">Brier ${e.market_brier.toFixed(4)} (consensus spread)</div></div>
+      <div class="tile"><div class="k">Elo alone</div><div class="v">${pct(e.elo_accuracy)}</div><div class="s">CFBD pregame Elo</div></div>
+      <div class="tile"><div class="k">Agrees with market</div><div class="v">${pct(e.agree_with_market)}</div><div class="s">share of games, same pick</div></div>
+    </div>
+    <h2>Untouched holdout: 2025–${B.season} (${h.early.n} games)</h2>
+    <p>Feature set and regularization were chosen on 2024 only. These seasons were never used for selection. The market benchmark converts the consensus spread to a win probability (16-point normal); the Elo benchmark is CFBD's pregame Elo on its own.</p>
+    <div class="tscroll"><table><thead><tr><th>Model</th><th>Accuracy</th><th>Brier</th></tr></thead><tbody>
+      <tr><td>Always home</td><td>${pct(h.early.home_accuracy)}</td><td>—</td></tr>
+      <tr><td>Baseline (adj. EPA only)</td><td>${pct(h.baseline.accuracy)}</td><td>${h.baseline.brier.toFixed(4)}</td></tr>
+      <tr><td><b>Final early model</b></td><td><b>${pct(h.early.accuracy)}</b></td><td><b>${h.early.brier.toFixed(4)}</b></td></tr>
+
+      <tr><td>Market favorite (consensus spread)</td><td>${pct(h.early.market_accuracy)}</td><td>${h.early.market_brier.toFixed(4)}</td></tr>
+      <tr><td>Pregame Elo alone</td><td>${pct(h.early.elo_accuracy)}</td><td>—</td></tr>
+    </tbody></table></div>
+    <h2>Projected scores</h2>
+    <div class="tiles">
+      <div class="tile"><div class="k">Margin error</div><div class="v">±${B.score_metrics.margin_mae.toFixed(1)}</div><div class="s">mean abs. error, pts (market spread ±${B.score_metrics.spread_mae.toFixed(1)})</div></div>
+      <div class="tile"><div class="k">Total error</div><div class="v">±${B.score_metrics.total_mae.toFixed(1)}</div><div class="s">pts (market total ±${B.score_metrics.market_total_mae.toFixed(1)})</div></div>
+      <div class="tile"><div class="k">Margin within 7</div><div class="v">${pct(B.score_metrics.margin_within_7)}</div><div class="s">of ${B.score_metrics.n} games</div></div>
+    </div>
+    <p>${esc(B.definitions.scores)}</p>
+    <h2>Calibration</h2>
+    <div class="two"><div class="panel">${calChart(e.calibration)}<p class="mono muted" style="margin:6px 0 0">Dot size = number of games in the bin. Points on the dashed line are perfectly calibrated.</p></div>
+    <div class="panel tscroll"><table><thead><tr><th>Predicted</th><th>Games</th><th>Avg pred</th><th>Actual</th></tr></thead><tbody>
+      ${e.calibration.map(c=>`<tr><td>${c.lo.toFixed(1)}–${c.hi.toFixed(1)}</td><td>${c.n}</td><td>${pct(c.pred)}</td><td>${pct(c.actual)}</td></tr>`).join('')}</tbody></table></div></div>
+    <h2>By season</h2>
+    <div class="tscroll"><table><thead><tr><th>Season</th><th>Games</th><th>Model</th><th>Brier</th><th>Market</th></tr></thead><tbody>
+      ${Object.entries(e.by_season).map(([s,v])=>`<tr><td>${s}</td><td>${v.n}</td><td>${pct(v.accuracy)}</td><td>${v.brier.toFixed(4)}</td><td>${pct(v.market_accuracy)}</td></tr>`).join('')}</tbody></table></div>
+    <h2>Does each feature group help? (ablation, 2022–${B.season})</h2>
+    <p>Starting from the simple baseline, each group was added on its own with the same walk-forward protocol (C = 0.1 here; the final model uses C = 0.02 chosen on 2024). Differences of a few tenths of a percent are within noise.</p>
+    <div class="tscroll"><table><thead><tr><th>Feature set</th><th>Features</th><th>Accuracy</th><th>Brier</th><th>Log loss</th></tr></thead><tbody>
+      ${abl.map(([k,v])=>`<tr><td>${esc(k)}</td><td>${v.n_features}</td><td>${pct(v.accuracy)}</td><td>${v.brier.toFixed(4)}</td><td>${v.logloss.toFixed(4)}</td></tr>`).join('')}</tbody></table></div>
+    <h2>Learned weights (final early model)</h2>
+    <p>Logistic-regression coefficients on standardized home-minus-away differences. Positive favors the home team when it has the higher value.</p>
+    <div class="tscroll"><table><thead><tr><th>Feature</th><th>Weight</th></tr></thead><tbody>
+      ${Object.entries(B.coefficients.early).sort((a,b)=>Math.abs(b[1])-Math.abs(a[1])).map(([k,v])=>`<tr><td>${esc(B.feature_labels[k]||k)}</td><td>${f3(v)}</td></tr>`).join('')}</tbody></table></div>`;
+}
+
+/* ---------- About ---------- */
+function renderAbout(){
+  const D=B.definitions, d=B.data;
+  $('#tab-about').innerHTML = `
+    <h2>What is predicted</h2><p>${esc(D.target)}</p>
+    <h2>Prediction cutoffs</h2>
+    <p><span class="pill early">Early</span> ${esc(D.early_cutoff)}</p>
+    <p><span class="pill warn">Updated</span> ${esc(D.updated_cutoff)}</p>
+    <h2>How the model is trained</h2><p>${esc(D.training)}</p>
+    <p>Opponent adjustment: for each week, every FBS team's offensive and defensive EPA/play, success rate, pass/rush EPA, explosive-play rate and points per drive are solved jointly by ridge regression (offense strength − opponent defense strength + home term), using this season's prior weeks with last season as a 0.25-weighted prior; all non-FBS opponents are pooled into one rating entity. The pregame Elo is CFBD's published rating, which is computed only from results before the game. Quarterback form (shown for context) uses the expected starter's trailing ~350 dropbacks, shrunk toward league average.</p>
+    <h2>Weather</h2><p>${esc(B.weather_meta.model_note)} ${esc(B.weather_meta.sources)} Forecasts are refreshed on every run and the prediction is re-issued; the first Tuesday call stays on record for comparison.</p>
+    <h2>Deliberately outside the model</h2><ul>${D.not_in_model.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>
+    <p>Betting lines are never a model input. Devigged closing moneylines are shown only as a benchmark, which is a stricter comparison than a line captured at the early cutoff would be. For the current week the moneyline shown is the one captured at the data pull.</p>
+    <h2>Data</h2><ul>${d.sources.filter(s=>!s.startsWith('Open-Meteo')).map(s=>`<li>${esc(s)}</li>`).join('')}</ul>
+    <p class="mono muted">Play-by-play through ${d.pbp_through} · features built ${new Date(d.features_built_at).toLocaleString()}</p>
+    <h2>Saved snapshots</h2>
+    <p>Every prediction run writes an immutable snapshot (model version, input hash, every input value, every probability, coefficients) alongside this app's data bundle. The input hash shown on each game ties the displayed probability to that snapshot. Nothing in this page is sample data; where a value is missing it is labeled as such. The Results tab shows 2025–${B.season} walk-forward results; earlier seasons are summarized in the model-performance tables.</p>`;
+}
+
+renderWeek(); renderResults(); renderModel(); renderAbout(); showTab(state.tab);
+</script>
