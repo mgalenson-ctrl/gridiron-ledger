@@ -239,6 +239,9 @@ def injury_news(row):
     out.sort(key=lambda n: n['seen'], reverse=True)
     return {'items': out[:12], 'baseline_only': first_run}
 
+def KICKOFF(row):
+    try: return pd.Timestamp(f"{pd.Timestamp(row.gameday).date()} {row.gametime}").tz_localize('America/New_York').tz_convert('UTC').to_pydatetime()
+    except Exception: return None
 games_out = []
 for idx, row in wk.iterrows():
     xr = Xwk.loc[[idx]]
@@ -287,7 +290,7 @@ for idx, row in wk.iterrows():
     runs = prior.get('runs', [])
     runs.append({'at': now, 'type': 'updated' if inj_live_ok.get(row.game_id) else 'early', 'p_home': rec['updated']['p_home'] if rec['updated'] else rec['early']['p_home'],
                  'model_version': MODEL_VERSION, 'weather_status': (rec['weather'] or {}).get('status')})
-    LOG[row.game_id] = {'early': rec['early_first'], 'runs': runs}
+    LOG[row.game_id] = {**prior, 'early': rec['early_first'], 'runs': runs}
     rec['stats'] = rec['updated'] or rec['early']
     rec['stats_type'] = 'updated' if rec['updated'] else 'early'
     if pd.notna(row.home_moneyline) and pd.notna(row.away_moneyline):
@@ -303,6 +306,29 @@ for idx, row in wk.iterrows():
     LOG[row.game_id]['runs'][-1].update({'p_crunch': rec['crunch']['p_home'] if rec['crunch'] else None, 'p_stats': rec['stats']['p_home'],
                                          'spread_line': rec['market']['spread_line'], 'ml_home': rec['market']['home_moneyline']})
     rec['runs'] = runs
+    # ---- lock at kickoff: after a game starts, show the last pre-kickoff prediction and stop logging runs
+    _ko = KICKOFF(row)
+    _entry = LOG[row.game_id]
+    if _ko is not None and datetime.now(timezone.utc) >= _ko:
+        if _entry['runs'] and _entry['runs'][-1].get('at') == now: _entry['runs'].pop()
+        _late = [r for r in _entry['runs'] if datetime.fromisoformat(r['at']) >= _ko]
+        if _late:
+            _entry.setdefault('runs_after_kickoff', []).extend(_late)
+            _entry['runs'] = [r for r in _entry['runs'] if datetime.fromisoformat(r['at']) < _ko]
+        if _entry.get('frozen'):
+            rec = {**_entry['frozen'], 'early_first': rec['early_first'], 'runs': _entry['runs'], 'locked': True, 'locked_note': None}
+        else:
+            _last = _entry['runs'][-1] if _entry['runs'] else None
+            rec['crunch'] = None; rec['line'] = None; rec['latest'] = dict(rec['stats']); rec['latest_type'] = rec['stats_type']
+            if _last:   # show the probability that was actually on record before kickoff
+                rec['latest'].update({'p_home': _last['p_home'], 'p_away': round(1-_last['p_home'],4), 'pick': row.home_team if _last['p_home']>=0.5 else row.away_team, 'predicted_at': _last['at']})
+            rec['score'] = reconcile(rec['score'], rec['latest']['pick'], row.home_team, row.away_team)
+            rec['runs'] = _entry['runs']; rec['locked'] = True
+            rec['locked_note'] = ('No full pre-kickoff snapshot was saved for this game (it started before kickoff locking was added), so the last stats-only call before kickoff is shown; the reasons listed come from the current stats model. '
+                                  + (f"Last call before kickoff: {row.home_team if _last['p_home']>=0.5 else row.away_team} {max(_last['p_home'],1-_last['p_home'])*100:.0f}% ({_last['at'][:16].replace('T',' ')} UTC)." if _last else ''))
+    else:
+        _entry['frozen'] = {k: v for k, v in rec.items() if k not in ('runs', 'early_first')}
+        rec['locked'] = False; rec['locked_note'] = None
     games_out.append(rec)
 json.dump(LOG, open(LOG_PATH,'w'), indent=0, default=float)
 

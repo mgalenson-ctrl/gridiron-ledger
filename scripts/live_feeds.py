@@ -94,6 +94,11 @@ def nfl():
     for r in up.itertuples():
         gid = r.game_id
         try:
+            ko = pd.Timestamp(f"{r.gameday.date()} {r.gametime}").tz_localize('America/New_York').tz_convert('UTC')
+            if ko <= pd.Timestamp(NOW): continue   # started: the pick is locked; in-game lines are not pre-game lines
+        except Exception:
+            pass
+        try:
             s = get(f'https://site.api.espn.com/apis/site/v2/sports/football/nfl/summary?event={int(r.espn)}')
         except Exception as e:  # noqa: BLE001
             errors.append(f'{gid}: {type(e).__name__}: {e}'); continue
@@ -164,6 +169,8 @@ def college():
     try:
         for ev in events:
             comp = (ev.get('competitions') or [{}])[0]
+            state = dig(ev, 'status', 'type', 'state') or dig(comp, 'status', 'type', 'state')
+            if state and state != 'pre': continue   # started or final: in-game lines are not pre-game lines
             odds = parse_odds((comp.get('odds') or [None])[0])
             gid = str(ev.get('id'))
             games[gid] = {'espn_id': ev.get('id'), 'odds': odds, 'injuries': None}

@@ -229,6 +229,7 @@ function newsChip(g){ const n=g.injury_news; if(!n||n.baseline_only) return ''; 
 function statsChip(g){ return (g.crunch&&g.stats&&g.stats.pick!==g.latest.pick)?`<span class="chip">Stats-only pick: ${g.stats.pick}</span>`:''; }
 function liveBlock(g){
   const parts=[], l=g.line;
+  if(g.locked) parts.push(`<p style="margin:0 0 6px"><b>Locked at kickoff.</b> This is the last prediction made before the game started; nothing after kickoff changes it.${g.locked_note?' '+esc(g.locked_note):''}</p>`);
   if(l && l.cur_spread_home!=null){
     let s=`<b>Betting line</b>: ${spTxt(l.cur_spread_home,g)}`;
     if(l.open_spread_home!=null && l.open_spread_home!==l.cur_spread_home) s+=`, opened ${spTxt(l.open_spread_home,g)}`;
@@ -273,6 +274,7 @@ function renderWeek(){
       const L = g.latest, p = L.p_home, pick = L.pick, loser = pick===g.home?g.away:g.home, conf = Math.max(p,1-p), tier = tierOf(conf);
       const flags = [];
       if(g.qb_flags.length) flags.push('<span class="chip warn">QB uncertain</span>');
+      if(g.locked) flags.unshift('<span class="chip">Locked at kickoff</span>');
       flags.push(lineChip(g), newsChip(g), statsChip(g));
       html += `<details class="pick" id="d-${g.game_id}"><summary>
         <div class="main"><div class="winner">${pick} <small>over ${loser}${pick===g.away?' (away)':''}</small></div><div class="hint">tap for why</div></div>
