@@ -1,7 +1,9 @@
 name: Daily refresh and publish
 on:
   schedule:
-    - cron: "30 11 * * *"   # 6:30 AM Central (daylight time); 5:30 AM in winter
+    - cron: "30 11 * * *"            # every morning, 6:30 AM Central (5:30 in winter)
+    - cron: "15 12-23 * * 0,1,4,5,6" # hourly on game days (Thu-Mon), 7:15 AM-6:15 PM Central
+    - cron: "15 0-4 * * 0,1,2,5,6"   # and through the evening games (UTC wraps past midnight)
   workflow_dispatch:
 permissions:
   contents: write
@@ -30,7 +32,7 @@ jobs:
           for f in ('manifest.webmanifest','sw.js'): mv(f, f'site/static/{f}')
           for f in glob.glob('icon-*.png'): mv(f, f'site/static/icons/{f}')
           for f in glob.glob('app_template*.html'):
-              mv(f, ('college' if '<title>Gridiron Ledger College</title>' in open(f).read() else 'nfl') + '/app_template.html')
+              mv(f, ('college' if 'College</title>' in open(f).read() else 'nfl') + '/app_template.html')
           for f in glob.glob('predictions_log*.json'):
               k = next(iter(json.load(open(f))), '')
               mv(f, ('nfl' if '_' in k else 'college') + '/out/predictions_log.json')
@@ -43,6 +45,24 @@ jobs:
           git config user.email "actions@users.noreply.github.com"
           git add -A
           git diff --cached --quiet || (git commit -m "Arrange project folders" && git push)
+      - name: Put uploaded files in place (files named like nfl__predict.py go to nfl/predict.py)
+        run: |
+          shopt -s nullglob
+          moved=0
+          for z in *.zip; do unzip -o -q "$z" -x 'daily.yml' && echo "unpacked $z"; git rm -q -f "$z" 2>/dev/null || rm -f "$z"; moved=1; done
+          for f in *__*; do
+            dest="${f//__//}"; dest="$(printf '%s' "$dest" | sed -E 's/ \([0-9]+\)(\.[A-Za-z]+)$/\1/')"
+            case "$dest" in nfl/*|college/*|scripts/*|site/*) mkdir -p "$(dirname "$dest")"; git mv -f "$f" "$dest" 2>/dev/null || mv -f "$f" "$dest"; echo "$f -> $dest"; moved=1;; esac
+          done
+          git config user.name "gridiron-ledger-bot"
+          git config user.email "actions@users.noreply.github.com"
+          if [ $moved = 1 ]; then git add -A; git commit -m "Put uploaded files in place"; git push; fi
+      - name: Apply the site name
+        run: |
+          sed -i 's/Gridiron Ledger/Hunch vs. Crunch/g' nfl/app_template.html college/app_template.html site/build_site.py site/static/manifest.webmanifest README.md
+          sed -i 's/"short_name":"Gridiron"/"short_name":"Hunch v Crunch"/' site/static/manifest.webmanifest
+          git add nfl/app_template.html college/app_template.html site/build_site.py site/static/manifest.webmanifest README.md
+          git diff --cached --quiet || (git commit -m "Rename to Hunch vs. Crunch" && git push)
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13"
@@ -73,8 +93,30 @@ jobs:
           git config user.name "gridiron-ledger-bot"
           git config user.email "actions@users.noreply.github.com"
           git add nfl/out/predictions_log.json college/out/predictions_log.json
-          git diff --cached --quiet || git commit -m "Daily prediction log $(date -u +%F)"
+          git add nfl/out/line_history.json nfl/out/injury_history.json college/out/line_history.json 2>/dev/null || true
+          git diff --cached --quiet || git commit -m "Prediction log $(date -u +'%F %H:%M') UTC"
+          git pull --rebase -q || true
           git push
+      - name: Publish ready-made pages for the Claude mirror (branch "published", replaced each run)
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          rm -rf /tmp/pub && mkdir -p /tmp/pub
+          python3 - <<'PY'
+          import json, os
+          for key in ('nfl', 'college'):
+              b = f'{key}/out/bundle.json'
+              if not os.path.exists(b): print(key, 'no bundle this run; mirror keeps its last page'); continue
+              data = json.dumps(json.load(open(b)), separators=(',', ':')).replace('</', '<\\/')
+              page = open(f'{key}/app_template.html').read().replace('__BUNDLE__', data)
+              open(f'/tmp/pub/{key}.html', 'w').write(page); print(key, len(page)//1024, 'KB')
+          PY
+          cd /tmp/pub
+          echo "${GITHUB_SHA} $(date -u +%FT%TZ) run ${GITHUB_RUN_ID}" > SOURCE.txt
+          git init -q && git checkout -q -b published && git add -A
+          git -c user.name=gridiron-ledger-bot -c user.email=actions@users.noreply.github.com commit -qm "Pages for the Claude mirror $(date -u +'%F %H:%M') UTC"
+          git push -q -f "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" published
       - uses: actions/upload-artifact@v4
         with:
           name: snapshots-${{ github.run_id }}
