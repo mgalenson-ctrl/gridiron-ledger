@@ -135,10 +135,34 @@ def nfl():
 def college():
     games, errors = {}, []
     lh = load('/home/claude/cfbpredict/out/line_history.json', {})
-    d0 = (NOW - timedelta(days=1)).strftime('%Y%m%d'); d1 = (NOW + timedelta(days=9)).strftime('%Y%m%d')
+    # ESPN rejects date ranges on this endpoint; ask for the current week (same week the model predicts), then fall back to single days
+    urls = []
     try:
-        sb = get(f'https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard?groups=80&limit=500&dates={d0}-{d1}')
-        for ev in sb.get('events') or []:
+        import pandas as pd
+        F = pd.read_pickle('/home/claude/cfbpredict/out/game_features.pkl')
+        s_ = int(F.season.max()); w_ = int(F[(F.season == s_) & (~F.played) & (F.season_type == 'regular')].week.min())
+        urls.append(f'https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard?groups=80&seasontype=2&week={w_}&dates={s_}&limit=300')
+        urls.append(f'https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard?groups=80&week={w_}&limit=300')
+    except Exception as e:  # noqa: BLE001
+        errors.append(f'week lookup: {type(e).__name__}: {e}')
+    events, last_err = None, None
+    for u in urls:
+        try:
+            sb = get(u); events = sb.get('events') or []
+            if events: break
+        except Exception as e:  # noqa: BLE001
+            last_err = e
+    if not events:
+        events = []
+        for k in range(-1, 8):
+            d = (NOW + timedelta(days=k)).strftime('%Y%m%d')
+            try: events += get(f'https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard?groups=80&limit=300&dates={d}').get('events') or []
+            except Exception as e:  # noqa: BLE001
+                last_err = e
+    if not events and last_err is not None:
+        errors.append(f'scoreboard: {type(last_err).__name__}: {last_err}')
+    try:
+        for ev in events:
             comp = (ev.get('competitions') or [{}])[0]
             odds = parse_odds((comp.get('odds') or [None])[0])
             gid = str(ev.get('id'))
