@@ -16,6 +16,10 @@ from sklearn.pipeline import make_pipeline
 OUT = '/home/claude/nflpredict/out'
 F = pd.read_pickle(f'{OUT}/game_features.pkl')
 F = F[F.game_type.isin(['REG','WC','DIV','CON','SB'])].copy()
+# Next Gen Stats team features (pre-game, exponentially weighted over prior games); built by ngs_build.py
+if os.path.exists(f'{OUT}/ngs_features.pkl'):
+    _ngs = pd.read_pickle(f'{OUT}/ngs_features.pkl').drop(columns=['home_team','away_team'], errors='ignore')
+    F = F.merge(_ngs, on='game_id', how='left')
 
 # ---------------------------------------------------------------- feature groups (diff = home - away)
 GROUPS = {
@@ -32,13 +36,24 @@ GROUPS = {
  'rivalry': ['prev_meeting_margin','div_game_flag'],
  'injuries': ['inj_starters_out','inj_starters_q','inj_qb_out','inj_ol_out'],
  'weather': ['wx_wind','wx_cold','wx_wind_x_passlean','wx_cold_x_awaydome','wx_wind_x_fg'],
+ 'ngs_off': ['ngs_ttt','ngs_ryoe','ngs_sep','ngs_yacoe'],
+ 'market': ['mkt_logit','mkt_spread'],
  'availability': ['av_off_out','av_def_out','av_ol_out','av_skill_out','av_dl_out','av_lb_out','av_db_out','av_off_q','av_def_q'],
 }
-GAME_LEVEL = {'div_game_flag','wx_wind','wx_cold','wx_wind_x_passlean','wx_cold_x_awaydome','wx_wind_x_fg'}
+GAME_LEVEL = {'mkt_logit','mkt_spread','div_game_flag','wx_wind','wx_cold','wx_wind_x_passlean','wx_cold_x_awaydome','wx_wind_x_fg'}
 SIDE_ONLY = {'div_game_flag'}  # game-level, not diffed
 
+def ml_prob(ml):
+    ml = pd.to_numeric(ml, errors='coerce')
+    return np.where(ml > 0, 100/(ml+100), -ml/(-ml+100))
 def build_X(df):
     X = pd.DataFrame(index=df.index)
+    # betting market (pre-game line): de-vigged moneyline as a logit, and the spread (home expected margin)
+    ph, pa = ml_prob(df.home_moneyline), ml_prob(df.away_moneyline); p = np.clip(ph/(ph+pa), 0.01, 0.99)
+    df['mkt_logit'] = np.log(p/(1-p)); df['mkt_spread'] = pd.to_numeric(df.spread_line, errors='coerce')
+    for f_ in ('ngs_ttt','ngs_ryoe','ngs_sep','ngs_yacoe'):
+        for s_ in ('h','a'):
+            if f'{s_}_{f_}' not in df: df[f'{s_}_{f_}'] = np.nan
     # derived
     for s in ('h','a'):
         df[f'{s}_short_week'] = (df[f'{s}_rest'] < 7).astype(float)
@@ -62,6 +77,8 @@ def build_X(df):
             else:
                 X[f'd_{f}'] = df[f'h_{f}'] - df[f'a_{f}']
     X['home_adv'] = 1.0 - df.neutral.astype(float)
+    for c in [c for c in X.columns if c.startswith('d_ngs_')]:
+        if X[c].isna().all(): X[c] = 0.0   # Next Gen Stats download failed this run: neutral value instead of breaking the fit
     return X
 
 def cols_for(groups):
@@ -147,11 +164,14 @@ if __name__ == '__main__':
         ('+rivalry', ['baseline','efficiency','qb','rivalry']),
         ('+weather', ['baseline','efficiency','qb','weather']),
         ('final+weather', ['baseline','qb','special_discipline','matchup','weather']),
-        ('all_early', [g for g in GROUPS if g!='injuries']),
+        ('all_early', [g for g in GROUPS if g not in ('injuries','market')]),
         ('final+weather+injuries', ['baseline','qb','special_discipline','matchup','weather','injuries']),
         ('final+weather+availability', ['baseline','qb','special_discipline','matchup','weather','availability']),
         ('final+weather+inj+avail', ['baseline','qb','special_discipline','matchup','weather','injuries','availability']),
-        ('all_updated(+injuries)', [g for g in GROUPS if g!='availability']),
+        ('all_updated(+injuries)', [g for g in GROUPS if g not in ('availability','market')]),
+        ('final+weather+ngs_off (stats-only)', ['baseline','qb','special_discipline','matchup','weather','ngs_off']),
+        ('market only (betting line)', ['market']),
+        ('baseline+market (final)', ['baseline','market']),
     ]
     allP = {}
     for name, groups in ladder:

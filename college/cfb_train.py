@@ -21,10 +21,14 @@ GROUPS = {
  'level': ['fbs'],
  'weather': ['wx_wind','wx_cold'],
  'conf_game': ['conf_game_flag'],
+ 'market': ['mkt_logit','mkt_spread'],
 }
-GAME_LEVEL = {'conf_game_flag','wx_wind','wx_cold'}
+GAME_LEVEL = {'conf_game_flag','wx_wind','wx_cold','mkt_logit','mkt_spread'}
 def build_X(df):
     X = pd.DataFrame(index=df.index)
+    # betting market: point spread (home line; negative = home favored) and its implied win probability (16-pt normal) as a logit
+    _p = np.clip(norm.cdf(-pd.to_numeric(df.spread, errors='coerce')/16.0), 0.01, 0.99)
+    df['mkt_logit'] = np.log(_p/(1-_p)); df['mkt_spread'] = -pd.to_numeric(df.spread, errors='coerce')
     df['h_pp_vs_rush'] = -(df.h_sack_rate_off - df.a_sack_rate_def); df['a_pp_vs_rush'] = -(df.a_sack_rate_off - df.h_sack_rate_def)
     df['h_rush_vs_rundef'] = df.h_adj_off_rush_epa - df.a_adj_def_rush_epa; df['a_rush_vs_rundef'] = df.a_adj_off_rush_epa - df.h_adj_def_rush_epa
     df['h_pass_vs_passdef'] = df.h_adj_off_pass_epa - df.a_adj_def_pass_epa; df['a_pass_vs_passdef'] = df.a_adj_off_pass_epa - df.h_adj_def_pass_epa
@@ -109,7 +113,8 @@ if __name__=='__main__':
             ('+rest_travel',['baseline','rest_travel']),('+level',['baseline','level']),('+conf_game',['baseline','conf_game']),('+elo',['baseline','elo']),
             ('elo_only',['elo']),('base+qb+sd+matchup+level',['baseline','qb','special_discipline','matchup','level']),
             ('base+qb+sd+matchup+level+elo',['baseline','qb','special_discipline','matchup','level','elo']),
-            ('all',[g for g in GROUPS if g!='weather'])]
+            ('all',[g for g in GROUPS if g not in ('weather','market')]),
+            ('market only (betting line)',['market']),('stats+market (final)',['baseline','efficiency','elo','form_l3','conf_game','market'])]
     results={}; allP={}
     for name,groups in ladder:
         P=walk_forward(groups); res,P=evaluate(P); results[name]={'groups':groups,'n_features':len(cols_for(groups)),**res}; allP[name]=P

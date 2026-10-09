@@ -1,4 +1,4 @@
-<title>Gridiron Ledger College</title>
+<title>Hunch vs. Crunch College</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@87.5,500;87.5,700;100,400;100,600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
 /* Layout: a scoreboard ledger. Single column on phones, two-column game detail on desktop. Ink on paper-grey with a turf-green accent; probabilities set in mono. */
@@ -118,7 +118,7 @@ details.pick[open] .hint{display:none}
 </style>
 <div class="wrap">
 <header class="top">
-  <div class="brand"><h1>Gridiron Ledger <span class="muted" style="font-weight:500">College</span></h1><span class="wk" id="wkLabel"></span></div>
+  <div class="brand"><h1>Hunch vs. Crunch <span class="muted" style="font-weight:500">College</span></h1><span class="wk" id="wkLabel"></span></div>
   <nav class="tabs" role="tablist" id="tabs">
     <button role="tab" data-tab="week" aria-selected="true">Picks</button>
     <button role="tab" data-tab="results">Results</button>
@@ -158,6 +158,12 @@ function rationaleFor(g, pick){
   const sign = pick===g.home?1:-1;  // factor logit >0 favors home
   const W = g.weather||{};
   const T = {
+    mkt_logit: ()=>{ const l=g.line||{}, pm=(l.cur_p_home!=null?l.cur_p_home:g.market.p_home_devig); if(pm==null) return `The betting market leans ${pick}.`; const fav=pm>=.5?g.home:g.away; return `Betting market: ${fav} is favored${l.cur_spread_home!=null?` (${spTxt(l.cur_spread_home,g)})`:''}, about ${pct(Math.max(pm,1-pm))} to win${l.open_spread_home!=null&&l.open_spread_home!==l.cur_spread_home?`; the line opened at ${spTxt(l.open_spread_home,g)}`:''}.`; },
+    mkt_spread: ()=>T.mkt_logit(),
+    d_ngs_ttt: ()=>`Player tracking: ${pick}'s quarterback gets the ball out in ${P.ngs_ttt?.toFixed(2)}s on average vs ${O.ngs_ttt?.toFixed(2)}s for ${other}.`,
+    d_ngs_ryoe: ()=>`Player tracking: ${pick}'s runners gain ${(P.ngs_ryoe>=0?'+':'')+P.ngs_ryoe?.toFixed(2)} yards over expected per carry vs ${(O.ngs_ryoe>=0?'+':'')+O.ngs_ryoe?.toFixed(2)} for ${other}.`,
+    d_ngs_sep: ()=>`Player tracking: ${pick}'s receivers get ${P.ngs_sep?.toFixed(2)} yards of separation at the catch point vs ${O.ngs_sep?.toFixed(2)}.`,
+    d_ngs_yacoe: ()=>`Player tracking: ${pick} gains ${(P.ngs_yacoe>=0?'+':'')+P.ngs_yacoe?.toFixed(2)} yards after catch over expected vs ${(O.ngs_yacoe>=0?'+':'')+O.ngs_yacoe?.toFixed(2)}.`,
     d_adj_off_off_epa: ()=>`${pick}'s offense has been more efficient: ${f3s(P.adj_off_epa)} vs ${f3s(O.adj_off_epa)} EPA per play, adjusted for opponents.`,
     d_adj_def_off_epa: ()=>`${pick}'s defense has been stingier: opponents average ${f3s(-P.adj_def_epa)} EPA per play against ${pick} vs ${f3s(-O.adj_def_epa)} against ${other}, adjusted for schedule.`,
     d_qb_epa: ()=>`Quarterback edge: ${P.qb_name||pick+' QB'} ${f3s(P.qb_epa)} vs ${O.qb_name||other+' QB'} ${f3s(O.qb_epa)} EPA per dropback over their recent dropbacks.`,
@@ -216,18 +222,46 @@ function rationale(g){
     d_pen_per_game:[p=>p.pen_per_game,false], d_elo:[p=>p.elo,true], d_l3_off_epa:[p=>p.l3_off_epa,true], d_l3_def_epa:[p=>p.l3_def_epa,false], d_l3_ppd:[p=>p.l3_ppd,true],
     d_adj_off_off_sr:[p=>p.adj_off_sr,true], d_adj_off_ppd:[p=>p.adj_ppd,true], d_adj_def_ppd:[p=>p.adj_def_ppd,true], d_adj_off_pass_epa:[p=>p.adj_pass_epa,true], d_adj_def_pass_epa:[p=>p.adj_def_pass_epa,true],
     d_adj_off_rush_epa:[p=>p.adj_rush_epa,true], d_adj_def_rush_epa:[p=>p.adj_def_rush_epa,true], d_adj_off_explosive_rate:[p=>p.adj_explosive,true], d_adj_def_explosive_rate:[p=>p.adj_def_explosive,true],
-    d_explosive_edge:[p=>p.adj_explosive,true], d_inj_starters_out:[p=>-(p.inj_starters_out||0),true],
+    d_explosive_edge:[p=>p.adj_explosive,true], d_inj_starters_out:[p=>-(p.inj_starters_out||0),true], d_ngs_ryoe:[p=>p.ngs_ryoe,true], d_ngs_sep:[p=>p.ngs_sep,true], d_ngs_yacoe:[p=>p.ngs_yacoe,true],
   };
   const consistent = (key, pickTeam)=>{ const c=CHK[key]; if(!c) return true; const PP = pickTeam===g.home?g.home_profile:g.away_profile, OO = pickTeam===g.home?g.away_profile:g.home_profile;
     const pv=c[0](PP), ov=c[0](OO); if(pv==null||ov==null||pv===ov) return true; return (pv>ov)===c[1]; };
   const fallback = (f, pickTeam)=>`${f.feature}: the model's learned weight on this input tilts toward ${pickTeam} once the other factors are accounted for (the raw numbers alone would not show it).`;
   const fs = L.factors.map(f=>({...f, s: f.logit*sign})).filter(f=>T[f.key] && Math.abs(f.logit)>=0.03);
   const forPick = fs.filter(f=>f.s>0).slice(0,3), against = fs.filter(f=>f.s<0).slice(0,1);
-  const bullets = forPick.map(f=>`<li>${consistent(f.key,pick)?T[f.key]():fallback(f,pick)}</li>`);
+  const seen = new Set(); const bullets = forPick.map(f=>consistent(f.key,pick)?T[f.key]():fallback(f,pick)).filter(t=>!seen.has(t)&&seen.add(t)).map(t=>`<li>${t}</li>`);
   if(bullets.length<2 && L.intercept_logit*sign>0) bullets.push(`<li>Home field: the baseline edge for the home team is worth about ${pct(1/(1+Math.exp(-L.intercept_logit)))} before any matchup factors.</li>`);
   if(bullets.length===0) bullets.push(`<li>No single factor stands out; this is close to a coin flip on the numbers.</li>`);
   const ag = against.map(f=>`<li class="against">On the other side: ${consistent(f.key,other)?rationaleFor(g, other)[f.key]():fallback(f,other)}</li>`);
   return bullets.concat(ag).join('');
+}
+
+/* ---------- live: betting line, line movement, injury news, stats-only pick ---------- */
+const spTxt=(sp,g)=> sp==null?'—':(sp===0?"Pick'em":(sp<0?`${g.home} ${sp}`:`${g.away} -${sp}`));
+const ago=t=>{ if(!t) return ''; const m=Math.round((Date.now()-new Date(t))/60000); if(m<1) return 'just now'; if(m<60) return `${m} min ago`; if(m<1440) return `${Math.round(m/60)} hr ago`; const d=new Date(t); return d.toLocaleDateString(undefined,{weekday:'short'})+' '+d.toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}); };
+function lineChip(g){ const l=g.line; if(!l||l.cur_spread_home==null) return '';
+  const moved = l.open_spread_home!=null && l.open_spread_home!==l.cur_spread_home;
+  return `<span class="chip${l.flags.length?' warn':''}">Line ${spTxt(l.cur_spread_home,g)}${moved?` (opened ${spTxt(l.open_spread_home,g)})`:''}</span>`; }
+function newsChip(g){ const n=g.injury_news; if(!n||n.baseline_only) return ''; const k=n.items.filter(i=>Date.now()-new Date(i.seen)<24*3600e3).length; return k?`<span class="chip warn">${k} injury update${k>1?'s':''} today</span>`:''; }
+function statsChip(g){ return (g.crunch&&g.stats&&g.stats.pick!==g.latest.pick)?`<span class="chip">Stats-only pick: ${g.stats.pick}</span>`:''; }
+function liveBlock(g){
+  const parts=[], l=g.line;
+  if(l && l.cur_spread_home!=null){
+    let s=`<b>Betting line</b>: ${spTxt(l.cur_spread_home,g)}`;
+    if(l.open_spread_home!=null && l.open_spread_home!==l.cur_spread_home) s+=`, opened ${spTxt(l.open_spread_home,g)}`;
+    if(l.cur_p_home!=null) s+=` · implied ${l.cur_p_home>=.5?g.home:g.away} ${pct(Math.max(l.cur_p_home,1-l.cur_p_home))}${l.open_p_home!=null&&Math.abs(l.open_p_home-l.cur_p_home)>=.01?` (opened ${l.open_p_home>=.5?g.home:g.away} ${pct(Math.max(l.open_p_home,1-l.open_p_home))})`:''}`;
+    if(l.total!=null) s+=` · total ${l.total}${l.total_open!=null&&l.total_open!==l.total?` (opened ${l.total_open})`:''}`;
+    if(l.flags.length) s+=`<br>${l.flags.map(f=>`<span class="chip warn">${esc(f)}</span>`).join(' ')}`;
+    if(l.moves&&l.moves.length>1) s+=`<br><span class="mono muted">Changes seen: ${l.moves.slice(-5).map(m=>`${spTxt(m.spread_home,g)} ${ago(m.t)}`).join(' → ')}</span>`;
+    parts.push(`<p style="margin:0 0 6px">${s}</p>`);
+  }
+  const n=g.injury_news;
+  if(n && n.items.length){
+    parts.push(`<p style="margin:0 0 4px"><b>${n.baseline_only?'Injury list (changes are tracked from here on)':'Injury news, last 72 hours'}</b></p><ul style="margin:0 0 6px">${n.items.slice(0,6).map(i=>`<li>${esc(i.team)} ${esc(i.name)} (${esc(i.pos||'')}${i.starter?', starter':''}): <b>${esc(i.status)}</b>${i.prev&&i.prev!==i.status?` (was ${esc(i.prev)})`:''}${n.baseline_only?'':` <span class="mono muted">${ago(i.seen)}</span>`}</li>`).join('')}</ul>`);
+  }
+  if(g.crunch && g.stats) parts.push(`<p style="margin:0 0 6px"><b>Without betting data</b>, the stats-only model says ${g.stats.pick} ${pct(Math.max(g.stats.p_home,1-g.stats.p_home))}${g.stats.pick!==g.latest.pick?' (a different winner)':''}.</p>`);
+  if(!g.crunch) parts.push(`<p style="margin:0 0 6px" class="muted">No betting line found for this game yet, so this pick is the stats-only model.</p>`);
+  return parts.length?`<div class="live" style="border-top:1px solid var(--line);padding-top:8px">${parts.join('')}</div>`:'';
 }
 let state = {tab:'week', game:null, conf:'', sort:'time'};
 try{ const t=localStorage.getItem('gl.tab'); if(t) state.tab=t; const c=localStorage.getItem('gl.conf'); if(c) state.conf=c; }catch(e){}
@@ -245,10 +279,10 @@ $('#tabs').addEventListener('click', e=>{ const b=e.target.closest('button'); if
 /* ---------- This week ---------- */
 function renderWeek(){
   const el = $('#tab-week');
-  if(state.game){ el.innerHTML = renderDetail(B.games.find(g=>g.game_id===state.game)); return; }
+  if(state.game){ el.innerHTML = renderDetail(B.games.find(g=>String(g.game_id)===String(state.game))); return; }
   const inj = B.data.injuries_available_for_week;
   const confs = [...new Set(B.games.flatMap(g=>[g.home_conf,g.away_conf]).filter(Boolean))].sort();
-  let html = `<div class="status"><span><span class="dot"></span>Week ${B.week} picks · all FBS games</span><span>· forecasts shown for ${B.games.filter(g=>g.weather&&g.weather.status==='forecast').length} of ${B.games.length} games (display only)</span><span>· refreshed daily</span></div>
+  let html = `<div class="status"><span><span class="dot"></span>Week ${B.week} picks · all FBS games</span><span>· ${B.live&&B.live.fetched_at?`lines checked ${ago(B.live.fetched_at)}`:'live lines unavailable this run'}; ${B.games.filter(g=>g.latest_type==='crunch').length} of ${B.games.length} picks use the current line</span><span>· forecasts shown for ${B.games.filter(g=>g.weather&&g.weather.status==='forecast').length} of ${B.games.length} games (display only)</span><span>· updates hourly on game days</span></div>
   <div class="sel"><label for="cf">Conference</label><select id="cf"><option value="">All (${B.games.length})</option>${confs.map(c=>`<option value="${esc(c)}" ${state.conf===c?'selected':''}>${esc(c)}</option>`).join('')}</select>
   <label for="so">Sort</label><select id="so"><option value="time" ${state.sort!=='conf'?'selected':''}>Kickoff</option><option value="conf" ${state.sort==='conf'?'selected':''}>Confidence</option></select></div>`;
   const byDay = {};
@@ -260,13 +294,13 @@ function renderWeek(){
       const L = g.latest, p = L.p_home, pick = L.pick, loser = pick===g.home?g.away:g.home, conf = Math.max(p,1-p), tier = tierOf(conf);
       const flags = [];
       if(g.qb_flags.length) flags.push('<span class="chip warn">QB uncertain</span>');
-      if(g.early_first && Math.abs(g.early_first.p_home-p)>=0.03) flags.push(`<span class="chip">was ${g.early_first.pick} ${pct(Math.max(g.early_first.p_home,1-g.early_first.p_home))} Tue</span>`);
+      flags.push(lineChip(g), statsChip(g));
       html += `<details class="pick" id="d-${g.game_id}"><summary>
         <div class="main"><div class="winner">${pick} <small>over ${loser}${pick===g.away?' (away)':''}</small></div><div class="hint">tap for why</div></div>
         <div class="conf"><div class="p">${pct(conf)}</div><span class="tier ${tier.tier}">${tier.tier}</span></div>
         <div class="meter"><i style="width:${(conf-0.5)*200}%"></i></div>
         <div class="meta"><span>${state.sort==='conf'?fmtDay(g.gameday)+' ':''}${fmtTime(g.gametime_et)}</span><span>${g.away} at ${g.home}${g.neutral?' (neutral)':''}</span><span class="chip">${g.score?`${g.away} ${g.score.away} – ${g.home} ${g.score.home}${g.score.adjusted?'*':''}`:''}</span>${wxChip(g)}${flags.join('')}</div>
-      </summary><div class="why"><ul>${rationale(g)}</ul><div class="mono muted" style="font-size:12px">Projected score ${g.away} ${g.score.away}, ${g.home} ${g.score.home} (margin ${g.score.margin>0?g.home:g.away} by ${Math.abs(g.score.margin).toFixed(1)}, total ${g.score.total.toFixed(0)})${g.score.adjusted?' · *rounded to agree with the pick':''}. Typical error ±${B.score_metrics.margin_mae.toFixed(0)} points on margin.</div><button class="more" data-game="${g.game_id}">Full breakdown →</button></div></details>`;
+      </summary><div class="why"><ul>${rationale(g)}</ul><div class="mono muted" style="font-size:12px">Projected score ${g.away} ${g.score.away}, ${g.home} ${g.score.home} (margin ${g.score.margin>0?g.home:g.away} by ${Math.abs(g.score.margin).toFixed(1)}, total ${g.score.total.toFixed(0)})${g.score.adjusted?' · *rounded to agree with the pick':''}. Typical error ±${B.score_metrics.margin_mae.toFixed(0)} points on margin.</div>${liveBlock(g)}<button class="more" data-game="${g.game_id}">Full breakdown →</button></div></details>`;
     });
     html += '</div>';
   });
@@ -300,9 +334,10 @@ function renderDetail(g){
         <div><div class="t" style="color:var(--home)">${g.home}</div><div class="p">${pct(p)}</div></div>
       </div>
       <div class="bar" style="margin-top:10px"><i class="a" style="width:${(1-p)*100}%"></i><i class="h" style="width:${p*100}%"></i></div>
-      <div class="sub">Pick <b>${L.pick}</b> · <span class="tier ${tierOf(Math.max(p,1-p)).tier}" style="padding:1px 7px;border-radius:999px;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase">${tierOf(Math.max(p,1-p)).tier}</span> · <span class="pill ${g.latest_type==='updated'?'warn':'early'}">${g.latest_type}</span> run ${new Date(L.predicted_at).toLocaleString()} · ${L.model_version} · inputs ${L.input_hash}</div>
+      <div class="sub">Pick <b>${L.pick}</b> · <span class="tier ${tierOf(Math.max(p,1-p)).tier}" style="padding:1px 7px;border-radius:999px;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase">${tierOf(Math.max(p,1-p)).tier}</span> · <span class="pill ${g.latest_type==='early'?'early':'warn'}">${g.latest_type==='crunch'?'stats + line':g.latest_type}</span> run ${new Date(L.predicted_at).toLocaleString()} · ${L.model_version} · inputs ${L.input_hash}</div>
       <div class="sub">Projected score: <b>${g.away} ${g.score.away} – ${g.home} ${g.score.home}</b>${g.score.adjusted?' (rounded to agree with the pick)':''} · expected total ${g.score.total.toFixed(1)}${g.market.spread_line!=null?'':''}</div>
       <div class="sub">First call (Mon, ${g.early_first.model_version}): ${g.early_first.pick} ${pct(Math.max(g.early_first.p_home,1-g.early_first.p_home))} · ${g.runs.length} run${g.runs.length>1?'s':''} logged · Market: ${g.market.p_home_devig!=null?`${g.market.p_home_devig>=0.5?g.home:g.away} ${pct(Math.max(g.market.p_home_devig,1-g.market.p_home_devig))} (spread ${g.market.spread_line>0?g.home+' -'+g.market.spread_line:g.away+' -'+(-g.market.spread_line)})`:'n/a'}</div>
+      ${liveBlock(g)}
       ${g.qb_flags.length?`<div class="notice" style="margin-bottom:0">${g.qb_flags.map(esc).join('<br>')}</div>`:''}
       ${(g.early.missing_inputs||[]).filter(m=>!m.startsWith('Wind')&&!m.startsWith('Cold')).length?`<div class="notice" style="margin-bottom:0">Missing inputs imputed with training medians: ${g.early.missing_inputs.filter(m=>!m.startsWith('Wind')&&!m.startsWith('Cold')).map(esc).join(', ')}</div>`:''}
     </div>
@@ -410,12 +445,12 @@ function calChart(cal){
   return s;
 }
 function renderModel(){
-  const M=B.metrics, e=M.early, h=M.holdout_2025_on;
+  const M=B.metrics, e=M.crunch||M.early, h=M.holdout_2025_on;
   const abl = Object.entries(B.ablation);
   $('#tab-model').innerHTML = `
     <h2>Walk-forward performance, 2024–${B.season} (${e.n} games)</h2>
     <div class="tiles">
-      <div class="tile"><div class="k">Winner accuracy</div><div class="v">${pct(e.accuracy)}</div><div class="s">final early model</div></div>
+      <div class="tile"><div class="k">Winner accuracy</div><div class="v">${pct(e.accuracy)}</div><div class="s">final model (stats + betting line)</div></div>
       <div class="tile"><div class="k">Brier score</div><div class="v">${e.brier.toFixed(4)}</div><div class="s">log loss ${e.logloss.toFixed(4)}</div></div>
       <div class="tile"><div class="k">Home-team pick</div><div class="v">${pct(e.home_pick_accuracy)}</div><div class="s">Brier ${e.home_pick_brier.toFixed(4)}</div></div>
       <div class="tile"><div class="k">Market favorite</div><div class="v">${pct(e.market_accuracy)}</div><div class="s">Brier ${e.market_brier.toFixed(4)} (consensus spread)</div></div>
@@ -427,7 +462,8 @@ function renderModel(){
     <div class="tscroll"><table><thead><tr><th>Model</th><th>Accuracy</th><th>Brier</th></tr></thead><tbody>
       <tr><td>Always home</td><td>${pct(h.early.home_accuracy)}</td><td>—</td></tr>
       <tr><td>Baseline (adj. EPA only)</td><td>${pct(h.baseline.accuracy)}</td><td>${h.baseline.brier.toFixed(4)}</td></tr>
-      <tr><td><b>Final early model</b></td><td><b>${pct(h.early.accuracy)}</b></td><td><b>${h.early.brier.toFixed(4)}</b></td></tr>
+      ${h.crunch?`<tr><td><b>Final model (stats + betting line)</b></td><td><b>${pct(h.crunch.accuracy)}</b></td><td><b>${h.crunch.brier.toFixed(4)}</b></td></tr>`:''}
+      <tr><td>Stats-only model (no betting data)</td><td>${pct(h.early.accuracy)}</td><td>${h.early.brier.toFixed(4)}</td></tr>
 
       <tr><td>Market favorite (consensus spread)</td><td>${pct(h.early.market_accuracy)}</td><td>${h.early.market_brier.toFixed(4)}</td></tr>
       <tr><td>Pregame Elo alone</td><td>${pct(h.early.elo_accuracy)}</td><td>—</td></tr>
@@ -450,7 +486,8 @@ function renderModel(){
     <p>Starting from the simple baseline, each group was added on its own with the same walk-forward protocol (C = 0.1 here; the final model uses C = 0.02 chosen on 2024). Differences of a few tenths of a percent are within noise.</p>
     <div class="tscroll"><table><thead><tr><th>Feature set</th><th>Features</th><th>Accuracy</th><th>Brier</th><th>Log loss</th></tr></thead><tbody>
       ${abl.map(([k,v])=>`<tr><td>${esc(k)}</td><td>${v.n_features}</td><td>${pct(v.accuracy)}</td><td>${v.brier.toFixed(4)}</td><td>${v.logloss.toFixed(4)}</td></tr>`).join('')}</tbody></table></div>
-    <h2>Learned weights (final early model)</h2>
+    ${B.coefficients.crunch?`<h2>Learned weights (final model: stats + betting line)</h2><div class="tscroll"><table><thead><tr><th>Feature</th><th>Weight</th></tr></thead><tbody>${Object.entries(B.coefficients.crunch).sort((a,b)=>Math.abs(b[1])-Math.abs(a[1])).map(([k,v])=>`<tr><td>${esc(B.feature_labels[k]||k)}</td><td>${f3(v)}</td></tr>`).join('')}</tbody></table></div>`:''}
+    <h2>Learned weights (stats-only model)</h2>
     <p>Logistic-regression coefficients on standardized home-minus-away differences. Positive favors the home team when it has the higher value.</p>
     <div class="tscroll"><table><thead><tr><th>Feature</th><th>Weight</th></tr></thead><tbody>
       ${Object.entries(B.coefficients.early).sort((a,b)=>Math.abs(b[1])-Math.abs(a[1])).map(([k,v])=>`<tr><td>${esc(B.feature_labels[k]||k)}</td><td>${f3(v)}</td></tr>`).join('')}</tbody></table></div>`;
@@ -464,11 +501,12 @@ function renderAbout(){
     <h2>Prediction cutoffs</h2>
     <p><span class="pill early">Early</span> ${esc(D.early_cutoff)}</p>
     <p><span class="pill warn">Updated</span> ${esc(D.updated_cutoff)}</p>
+    ${D.crunch?`<h2>Two picks per game</h2><p><b>Main pick.</b> ${esc(D.crunch)}</p><p><b>Stats-only pick.</b> ${esc(D.stats_only)}</p>`:''}
     <h2>How the model is trained</h2><p>${esc(D.training)}</p>
     <p>Opponent adjustment: for each week, every FBS team's offensive and defensive EPA/play, success rate, pass/rush EPA, explosive-play rate and points per drive are solved jointly by ridge regression (offense strength − opponent defense strength + home term), using this season's prior weeks with last season as a 0.25-weighted prior; all non-FBS opponents are pooled into one rating entity. The pregame Elo is CFBD's published rating, which is computed only from results before the game. Quarterback form (shown for context) uses the expected starter's trailing ~350 dropbacks, shrunk toward league average.</p>
     <h2>Weather</h2><p>${esc(B.weather_meta.model_note)} ${esc(B.weather_meta.sources)} Forecasts are refreshed on every run and the prediction is re-issued; the first Tuesday call stays on record for comparison.</p>
     <h2>Deliberately outside the model</h2><ul>${D.not_in_model.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>
-    <p>Betting lines are never a model input. Devigged closing moneylines are shown only as a benchmark, which is a stricter comparison than a line captured at the early cutoff would be. For the current week the moneyline shown is the one captured at the data pull.</p>
+    <p>Live lines and injury statuses come from ESPN's public data and are checked every run (hourly on game days). A pick made before the line is available uses the stats-only model and says so. Line movement is shown for context; it says where the price went, not who bet.</p>
     <h2>Data</h2><ul>${d.sources.filter(s=>!s.startsWith('Open-Meteo')).map(s=>`<li>${esc(s)}</li>`).join('')}</ul>
     <p class="mono muted">Play-by-play through ${d.pbp_through} · features built ${new Date(d.features_built_at).toLocaleString()}</p>
     <h2>Saved snapshots</h2>

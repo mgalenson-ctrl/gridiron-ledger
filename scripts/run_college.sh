@@ -13,4 +13,5 @@ python3 team_info.py
 python3 cfb_build.py
 python3 cfb_train.py
 python3 "$GITHUB_WORKSPACE/scripts/weather_fetch.py" college || echo "weather step failed; continuing without forecasts"
+python3 "$GITHUB_WORKSPACE/scripts/live_feeds.py" college || echo "live feeds failed; using CFBD lines only"
 python3 cfb_predict.py

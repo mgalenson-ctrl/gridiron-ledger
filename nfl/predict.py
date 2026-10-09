@@ -1,11 +1,14 @@
 """Fit final models on all played games, predict the current week, and write the app data bundle."""
 import numpy as np, pandas as pd, json, hashlib, os
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from train import *
 
-MODEL_VERSION = 'v1.1.0'
-EARLY_GROUPS = ['baseline','qb','special_discipline','matchup','weather']
+MODEL_VERSION = 'v2.0.0'
+# Stats-only model (no betting data): the "pure" pick, kept for the hunch-vs-model experiment
+EARLY_GROUPS = ['baseline','qb','special_discipline','matchup','weather','ngs_off']
 UPDATED_GROUPS = EARLY_GROUPS + ['injuries']
+# Final model (owner's choice, Oct 2026): team efficiency + the betting line. Chosen on 2022-24 Brier; 2025-26 reported as holdout.
+CRUNCH_GROUPS = ['baseline','market']
 C_FINAL = 0.05
 meta = json.load(open(f'{OUT}/data_meta.json'))
 
@@ -18,6 +21,8 @@ LABELS = {
  'd_pp_vs_rush':'Pass protection vs pass rush','d_rush_vs_rundef':'Rushing offense vs run defense','d_pass_vs_passdef':'Passing offense vs pass defense',
  'd_explosive_edge':'Explosive plays gained vs allowed',
  'wx_wind':'Wind at kickoff','wx_cold':'Cold at kickoff (below 45°F)','wx_wind_x_passlean':'Wind × pass-leaning offense','wx_cold_x_awaydome':'Cold vs visiting dome team','wx_wind_x_fg':'Wind × long field-goal edge',
+ 'mkt_logit':'Betting market win probability (moneyline)','mkt_spread':'Betting market point spread',
+ 'd_ngs_ttt':'QB time to throw (Next Gen Stats)','d_ngs_ryoe':'Rush yards over expected per carry (Next Gen Stats)','d_ngs_sep':'Receiver separation (Next Gen Stats)','d_ngs_yacoe':'Yards after catch over expected (Next Gen Stats)',
  'd_inj_starters_out':'Starters out/doubtful','d_inj_starters_q':'Starters questionable','d_inj_qb_out':'QB listed out','d_inj_ol_out':'OL starters out',
 }
 
@@ -54,17 +59,79 @@ for idx, row in F[(F.season==cur_season)&(F.week==cur_week)].iterrows():
     else:
         F.loc[idx,'wx_wind'] = np.nan; F.loc[idx,'wx_temp'] = np.nan; F.loc[idx,'wx_source'] = 'missing'
         wx_note[row.game_id] = {'status': (fc or {}).get('status','unavailable'), 'summary':'Forecast unavailable; weather inputs imputed with training medians.'}
+# ---------------------------------------------------------------- live feeds (ESPN): current line and injury statuses
+LIVE = {}
+live_meta = {'fetched_at': None, 'n_with_odds': 0, 'errors': []}
+if os.path.exists(f'{OUT}/live.json'):
+    lj = json.load(open(f'{OUT}/live.json'))
+    age_h = (datetime.now(timezone.utc) - datetime.fromisoformat(lj['fetched_at'])).total_seconds()/3600
+    if age_h <= 3:
+        LIVE = lj.get('games', {}); live_meta = {k: lj.get(k) for k in ('fetched_at','n_with_odds','errors','source')}
+LINE_HIST = json.load(open(f'{OUT}/line_history.json')) if os.path.exists(f'{OUT}/line_history.json') else {}
+INJ_HIST = json.load(open(f'{OUT}/injury_history.json')) if os.path.exists(f'{OUT}/injury_history.json') else {}
+line_src = {}
+for idx, row in F[(F.season==cur_season)&(F.week==cur_week)].iterrows():
+    o = (LIVE.get(row.game_id) or {}).get('odds')
+    if o and o.get('ml_home') is not None and o.get('ml_away') is not None:
+        F.loc[idx,'home_moneyline'] = o['ml_home']; F.loc[idx,'away_moneyline'] = o['ml_away']
+        if o.get('spread_home') is not None: F.loc[idx,'spread_line'] = -o['spread_home']
+        if o.get('total') is not None: F.loc[idx,'total_line'] = o['total']
+        line_src[row.game_id] = f"ESPN ({o.get('provider') or 'consensus'}) at {live_meta['fetched_at']}"
+    elif pd.notna(row.home_moneyline):
+        line_src[row.game_id] = 'nflverse games.csv at data pull'
+
+# live injury statuses -> the same starter-count features the updated model was trained on.
+# Official report rows (nflverse) are combined with ESPN statuses posted in the last 10 days; the more severe status wins.
+_dep = pd.read_csv('/tmp/nfl/data/depth_2026.csv'); _dep = _dep[_dep.dt==_dep.dt.max()]
+STARTERS = {t: grp for t, grp in _dep[_dep.pos_rank==1].groupby('team')}
+GSIS2ESPN = dict(zip(_dep.gsis_id.astype(str), _dep.espn_id.astype(str)))
+OL = {'T','G','C','OL','OT','OG','LT','RT','LG','RG'}
+SEV = {'Out':3,'Injured Reserve':3,'Doubtful':2,'Questionable':1}
+_inj_off = pd.read_csv(f'/tmp/nfl/data/injuries_{cur_season}.csv')
+_inj_off = _inj_off[(_inj_off.week==cur_week)]
+def live_injury_feats(team, side, gid):
+    status = {}   # espn_id or name -> (severity, status, name, pos, source)
+    for r in _inj_off[_inj_off.team==team].itertuples():
+        st = r.report_status if isinstance(r.report_status,str) else None
+        if st in SEV:
+            k = GSIS2ESPN.get(str(r.gsis_id), r.full_name); status[k] = (SEV[st], st, r.full_name, r.position, 'official report')
+    cutoff = datetime.now(timezone.utc) - timedelta(days=10)
+    for p in ((LIVE.get(gid) or {}).get('injuries') or {}).get(side, []):
+        st = p.get('status'); d = p.get('date')
+        try: recent = d is None or datetime.fromisoformat(d.replace('Z','+00:00')) >= cutoff
+        except ValueError: recent = True
+        if st in SEV and recent:
+            k = p.get('espn_id') or p.get('name')
+            if k not in status or SEV[st] > status[k][0]: status[k] = (SEV[st], st, p.get('name'), p.get('pos'), 'ESPN')
+    if not status and not len(_inj_off[_inj_off.team==team]) and gid not in LIVE: return None
+    st_df = STARTERS.get(team); st_ids = set(st_df.espn_id.astype(str)) if st_df is not None else set()
+    st_pos = dict(zip(st_df.espn_id.astype(str), st_df.pos_abb)) if st_df is not None else {}
+    out_ = {k:v for k,v in status.items() if v[0]>=2}; q = {k:v for k,v in status.items() if v[0]==1}
+    return {'inj_available': 1, 'inj_starters_out': sum(k in st_ids for k in out_), 'inj_starters_q': sum(k in st_ids for k in q),
+            'inj_total_out': len(out_), 'inj_qb_out': int(any((v[3]=='QB') and k in st_ids for k,v in out_.items())),
+            'inj_ol_out': sum(k in st_ids and st_pos.get(k) in OL for k in out_),
+            'inj_names_out': '; '.join(f"{v[2]} ({v[3]}, {v[1].lower()}{', starter' if k in st_ids else ''})" for k,v in sorted(out_.items(), key=lambda kv:-(kv[0] in st_ids))[:8]),
+            'inj_names_q': '; '.join(f"{v[2]} ({v[3]}{', starter' if k in st_ids else ''})" for k,v in q.items() if k in st_ids)}
+inj_live_ok = {}
+for idx, row in F[(F.season==cur_season)&(F.week==cur_week)].iterrows():
+    ok = True
+    for s_, team, side in (('h',row.home_team,'home'),('a',row.away_team,'away')):
+        f_ = live_injury_feats(team, side, row.game_id)
+        if f_ is None: ok = False; continue
+        for k,v in f_.items(): F.loc[idx, f'{s_}_{k}'] = v
+    inj_live_ok[row.game_id] = ok
 X_all = build_X(F)
 
 early_model, early_med, early_cols = fit_final(EARLY_GROUPS)
+crunch_model, crunch_med, crunch_cols = fit_final(CRUNCH_GROUPS)
 upd_model, upd_med, upd_cols = fit_final(UPDATED_GROUPS)
 
 # ---------------------------------------------------------------- score models (ridge; margin on EARLY cols, total on team sums)
 SCORE_ALPHA = 100.0
 T_all = build_T(F)
-margin_model, margin_med = fit_reg(X_all.loc[F.played, early_cols], F.result[F.played], SCORE_ALPHA)
+margin_model, margin_med = fit_reg(X_all.loc[F.played, crunch_cols], F.result[F.played], SCORE_ALPHA)
 total_model, total_med = fit_reg(T_all[F.played], F.total[F.played], SCORE_ALPHA)
-PS = walk_forward_scores(early_cols, SCORE_ALPHA)
+PS = walk_forward_scores(crunch_cols, SCORE_ALPHA)
 PSd = PS.dropna(subset=['result','total'])
 def mae(a,b): return float(np.mean(np.abs(a-b)))
 score_metrics = {'n': int(len(PSd)), 'margin_mae': mae(PSd.pred_margin, PSd.result), 'spread_mae': mae(PSd.spread_line, PSd.result),
@@ -73,7 +140,7 @@ score_metrics = {'n': int(len(PSd)), 'margin_mae': mae(PSd.pred_margin, PSd.resu
                  'holdout_2025_on': {'margin_mae': mae(PSd[PSd.season>=2025].pred_margin, PSd[PSd.season>=2025].result), 'spread_mae': mae(PSd[PSd.season>=2025].spread_line, PSd[PSd.season>=2025].result),
                                      'total_mae': mae(PSd[PSd.season>=2025].pred_total, PSd[PSd.season>=2025].total), 'market_total_mae': mae(PSd[PSd.season>=2025].total_line, PSd[PSd.season>=2025].total)}}
 def score_pred(idx):
-    m = float(margin_model.predict(X_all.loc[[idx], early_cols].fillna(margin_med))[0]); t = float(total_model.predict(T_all.loc[[idx]].fillna(total_med))[0])
+    m = float(margin_model.predict(X_all.loc[[idx], crunch_cols].fillna(margin_med))[0]); t = float(total_model.predict(T_all.loc[[idx]].fillna(total_med))[0])
     h = (t+m)/2; a = (t-m)/2
     return {'margin': round(m,1), 'total': round(t,1), 'home': int(round(h)), 'away': int(round(a)), 'adjusted': False}
 def reconcile(score, pick, home, away):
@@ -88,6 +155,7 @@ def reconcile(score, pick, home, away):
 P_early = walk_forward(EARLY_GROUPS, C=C_FINAL); res_early, P_early = evaluate(P_early)
 P_upd = walk_forward(UPDATED_GROUPS, C=C_FINAL); res_upd, P_upd = evaluate(P_upd)
 P_base = walk_forward(['baseline'], C=C_FINAL); res_base, P_base = evaluate(P_base)
+P_crunch = walk_forward(CRUNCH_GROUPS, C=C_FINAL); res_crunch, P_crunch = evaluate(P_crunch)
 ablation = json.load(open(f'{OUT}/ablation_results.json'))
 
 # ---------------------------------------------------------------- current week
@@ -98,7 +166,7 @@ LOG = json.load(open(LOG_PATH)) if os.path.exists(LOG_PATH) else {}
 Xwk = X_all.loc[wk.index]
 input_hash = hashlib.sha256(pd.util.hash_pandas_object(Xwk[upd_cols].round(6)).values.tobytes()).hexdigest()[:16]
 now = datetime.now(timezone.utc).isoformat(timespec='seconds')
-injuries_available = bool((wk.h_inj_available==1).all())
+injuries_available = bool(all(inj_live_ok.get(g, False) for g in wk.game_id))
 
 def team_profile(row, s):
     g = lambda k: (None if pd.isna(row.get(f'{s}_{k}')) else float(row.get(f'{s}_{k}')))
@@ -117,6 +185,7 @@ def team_profile(row, s):
             'fourth_go_rate': g('fourth_go_rate'),
             'rest': g('rest'), 'travel_miles': g('travel_miles'), 'tz_shift': g('tz_shift'), 'prev_ot': g('prev_ot'),
             'consec_road_prior': g('consec_road_prior'), 'coach': row.get(f'{s}_coach'), 'coach_tenure': g('coach_tenure'),
+            'ngs_ttt': g('ngs_ttt'), 'ngs_ryoe': g('ngs_ryoe'), 'ngs_sep': g('ngs_sep'), 'ngs_yacoe': g('ngs_yacoe'),
             'inj_available': g('inj_available'), 'inj_starters_out': g('inj_starters_out'), 'inj_starters_q': g('inj_starters_q'),
             'inj_names_out': row.get(f'{s}_inj_names_out') if isinstance(row.get(f'{s}_inj_names_out'), str) else None,
             'av_off_out': g('av_off_out'), 'av_def_out': g('av_def_out'), 'av_off_q': g('av_off_q'), 'av_def_q': g('av_def_q'),
@@ -125,6 +194,50 @@ def team_profile(row, s):
 # depth-chart cross-check for QB (flag disagreement between nflverse projected starter and latest depth chart)
 d26 = pd.read_csv('/tmp/nfl/data/depth_2026.csv'); d26 = d26[d26.dt==d26.dt.max()]
 dc_qb = d26[(d26.pos_abb=='QB')&(d26.pos_rank==1)].set_index('team').player_name.to_dict()
+
+def _ml_p(h, a):
+    try: return round(devig(float(h), float(a)), 4)
+    except Exception: return None
+def line_movement(row):
+    rows = LINE_HIST.get(row.game_id) or []
+    o = (LIVE.get(row.game_id) or {}).get('odds') or {}
+    if not rows and not o: return None
+    first = rows[0] if rows else {}
+    open_sp = o.get('spread_home_open') if o.get('spread_home_open') is not None else first.get('spread_home')
+    open_mlh = o.get('ml_home_open') if o.get('ml_home_open') is not None else first.get('ml_home')
+    open_mla = o.get('ml_away_open') if o.get('ml_away_open') is not None else first.get('ml_away')
+    cur_sp = o.get('spread_home', rows[-1].get('spread_home') if rows else None)
+    cur_mlh = o.get('ml_home', rows[-1].get('ml_home') if rows else None); cur_mla = o.get('ml_away', rows[-1].get('ml_away') if rows else None)
+    p_open, p_cur = _ml_p(open_mlh, open_mla), _ml_p(cur_mlh, cur_mla)
+    flags = []
+    if open_sp is not None and cur_sp is not None:
+        mv = cur_sp - open_sp   # negative = moved toward home
+        if abs(mv) >= 1.5: flags.append(f"Spread moved {abs(mv):g} pts toward {row.home_team if mv<0 else row.away_team}")
+        for key in (3, 7):
+            if (abs(open_sp) < key) != (abs(cur_sp) < key) and abs(mv) >= 0.5: flags.append(f"Crossed the key number {key}")
+        if open_sp != 0 and cur_sp != 0 and (open_sp < 0) != (cur_sp < 0): flags.append('Favorite flipped')
+    if p_open is not None and p_cur is not None and abs(p_cur-p_open) >= 0.05:
+        flags.append(f"Win odds shifted {abs(p_cur-p_open)*100:.0f} pts toward {row.home_team if p_cur>p_open else row.away_team}")
+    return {'open_spread_home': open_sp, 'cur_spread_home': cur_sp, 'open_p_home': p_open, 'cur_p_home': p_cur,
+            'open_ml': [open_mlh, open_mla], 'cur_ml': [cur_mlh, cur_mla], 'total_open': o.get('total_open'), 'total': o.get('total'),
+            'provider': o.get('provider'), 'flags': flags, 'moves': [r for r in rows if r.get('t')][-12:],
+            'note': 'Movement is open-to-current from the sportsbook ESPN shows. It shows where the line went, not who bet; betting-split ("sharp money") data is not available from a free source.'}
+def injury_news(row):
+    out = []
+    cutoff = datetime.now(timezone.utc) - timedelta(hours=72)
+    for team in (row.away_team, row.home_team):
+        st_df = STARTERS.get(team); st_ids = set(st_df.espn_id.astype(str)) if st_df is not None else set()
+        for key, ph in (INJ_HIST.get(team) or {}).items():
+            for i, ch in enumerate(ph.get('changes', [])):
+                seen = datetime.fromisoformat(ch['seen'])
+                if seen < cutoff: continue
+                prev = ph['changes'][i-1]['status'] if i else None
+                if prev is None and ch['status'] == 'Cleared': continue
+                out.append({'team': team, 'name': ph.get('name'), 'pos': ph.get('pos'), 'status': ch['status'], 'prev': prev, 'seen': ch['seen'], 'starter': key in st_ids})
+    first_run = not any(len(ph.get('changes', [])) > 1 for t in (row.away_team, row.home_team) for ph in (INJ_HIST.get(t) or {}).values())
+    out = [n for n in out if n['starter'] or n['status'] in ('Out','Doubtful')]
+    out.sort(key=lambda n: n['seen'], reverse=True)
+    return {'items': out[:12], 'baseline_only': first_run}
 
 games_out = []
 for idx, row in wk.iterrows():
@@ -148,7 +261,9 @@ for idx, row in wk.iterrows():
                       'away_moneyline': None if pd.isna(row.away_moneyline) else float(row.away_moneyline),
                       'p_home_devig': None if pd.isna(row.home_moneyline) else round(devig(row.home_moneyline,row.away_moneyline),4),
                       'spread_line': None if pd.isna(row.spread_line) else float(row.spread_line),
-                      'source': 'nflverse games.csv moneyline at data pull (benchmark only, not a model input)'},
+                      'total_line': None if pd.isna(row.total_line) else float(row.total_line),
+                      'source': line_src.get(row.game_id, 'unavailable')},
+           'line': line_movement(row), 'injury_news': injury_news(row),
            'home_profile': team_profile(row,'h'), 'away_profile': team_profile(row,'a'),
            'qb_flags': []}
     for s, team in (('h',row.home_team),('a',row.away_team)):
@@ -157,7 +272,7 @@ for idx, row in wk.iterrows():
             rec['qb_flags'].append(f'{team}: nflverse projected starter {proj} differs from latest depth chart ({dc}); treat QB as uncertain')
         if not isinstance(proj,str):
             rec['qb_flags'].append(f'{team}: expected starter unknown; QB features imputed with training medians')
-    if injuries_available:
+    if inj_live_ok.get(row.game_id):
         p_u = float(upd_model.predict_proba(xr[upd_cols].fillna(upd_med))[:,1][0])
         c_u, b0u = contributions(upd_model, upd_med, upd_cols, xr.iloc[0])
         rec['updated'] = {'p_home': round(p_u,4), 'p_away': round(1-p_u,4), 'pick': row.home_team if p_u>=0.5 else row.away_team,
@@ -170,18 +285,29 @@ for idx, row in wk.iterrows():
     else:
         rec['early_first'] = rec['early']
     runs = prior.get('runs', [])
-    runs.append({'at': now, 'type': 'updated' if injuries_available else 'early', 'p_home': rec['updated']['p_home'] if rec['updated'] else rec['early']['p_home'],
+    runs.append({'at': now, 'type': 'updated' if inj_live_ok.get(row.game_id) else 'early', 'p_home': rec['updated']['p_home'] if rec['updated'] else rec['early']['p_home'],
                  'model_version': MODEL_VERSION, 'weather_status': (rec['weather'] or {}).get('status')})
     LOG[row.game_id] = {'early': rec['early_first'], 'runs': runs}
-    rec['latest'] = rec['updated'] or rec['early']
+    rec['stats'] = rec['updated'] or rec['early']
+    rec['stats_type'] = 'updated' if rec['updated'] else 'early'
+    if pd.notna(row.home_moneyline) and pd.notna(row.away_moneyline):
+        p_c = float(crunch_model.predict_proba(xr[crunch_cols].fillna(crunch_med))[:,1][0])
+        c_c, b0c = contributions(crunch_model, crunch_med, crunch_cols, xr.iloc[0])
+        rec['crunch'] = {'p_home': round(p_c,4), 'p_away': round(1-p_c,4), 'pick': row.home_team if p_c>=0.5 else row.away_team,
+                         'predicted_at': now, 'model_version': MODEL_VERSION+'-crunch', 'input_hash': input_hash, 'intercept_logit': round(b0c,4),
+                         'factors': sorted([{'feature': LABELS.get(k,k), 'key': k, 'logit': round(float(v),4)} for k,v in c_c.items()], key=lambda d:-abs(d['logit']))}
+        rec['latest'] = rec['crunch']; rec['latest_type'] = 'crunch'
+    else:
+        rec['crunch'] = None; rec['latest'] = rec['stats']; rec['latest_type'] = rec['stats_type']
     rec['score'] = reconcile(rec['score'], rec['latest']['pick'], row.home_team, row.away_team)
-    rec['latest_type'] = 'updated' if rec['updated'] else 'early'
+    LOG[row.game_id]['runs'][-1].update({'p_crunch': rec['crunch']['p_home'] if rec['crunch'] else None, 'p_stats': rec['stats']['p_home'],
+                                         'spread_line': rec['market']['spread_line'], 'ml_home': rec['market']['home_moneyline']})
     rec['runs'] = runs
     games_out.append(rec)
 json.dump(LOG, open(LOG_PATH,'w'), indent=0, default=float)
 
 # ---------------------------------------------------------------- history for dashboard: walk-forward preds of final early model
-hist = P_early.merge(F[['game_id','gameday','home_score','away_score']], on='game_id').merge(PS[['game_id','pred_margin','pred_total']], on='game_id', how='left')
+hist = P_crunch.merge(F[['game_id','gameday','home_score','away_score']], on='game_id').merge(PS[['game_id','pred_margin','pred_total']], on='game_id', how='left')
 hist['mkt'] = [devig(h,a) if pd.notna(h) and pd.notna(a) else None for h,a in zip(hist.home_moneyline,hist.away_moneyline)]
 hist_out = [{'game_id':r.game_id,'season':int(r.season),'week':int(r.week),'gameday':str(r.gameday.date()),'home':r.home_team,'away':r.away_team,
              'p_home':round(float(r.p_home),4),'mkt':None if r.mkt is None or pd.isna(r.mkt) else round(float(r.mkt),4),
@@ -189,7 +315,7 @@ hist_out = [{'game_id':r.game_id,'season':int(r.season),'week':int(r.week),'game
              'pred_home': None if pd.isna(r.pred_margin) else int(round((r.pred_total+r.pred_margin)/2)), 'pred_away': None if pd.isna(r.pred_margin) else int(round((r.pred_total-r.pred_margin)/2))} for r in hist.itertuples()]
 
 # confidence tiers (from walk-forward history of the final early model)
-hist_c = P_early.copy(); hist_c['conf'] = np.maximum(hist_c.p_home, 1-hist_c.p_home); hist_c['hit'] = ((hist_c.p_home>0.5)==(hist_c.home_win==1)) & hist_c.home_win.isin([0,1])
+hist_c = P_crunch.copy(); hist_c['conf'] = np.maximum(hist_c.p_home, 1-hist_c.p_home); hist_c['hit'] = ((hist_c.p_home>0.5)==(hist_c.home_win==1)) & hist_c.home_win.isin([0,1])
 TIERS = [('Lean',0.5,0.58),('Moderate',0.58,0.68),('Strong',0.68,1.01)]
 tiers_out = []
 for name,lo,hi in TIERS:
@@ -197,7 +323,8 @@ for name,lo,hi in TIERS:
     tiers_out.append({'tier':name,'lo':lo,'hi':min(hi,1.0),'n':int(len(t)),'hit_rate': float(t.hit.mean()) if len(t) else None})
 
 coef_table = {'early': dict(zip(early_cols, [round(float(c),4) for c in early_model.named_steps['logisticregression'].coef_[0]])),
-              'updated': dict(zip(upd_cols, [round(float(c),4) for c in upd_model.named_steps['logisticregression'].coef_[0]]))}
+              'updated': dict(zip(upd_cols, [round(float(c),4) for c in upd_model.named_steps['logisticregression'].coef_[0]])),
+              'crunch': dict(zip(crunch_cols, [round(float(c),4) for c in crunch_model.named_steps['logisticregression'].coef_[0]]))}
 
 bundle = {
  'generated_at': now, 'model_version': MODEL_VERSION, 'season': cur_season, 'week': cur_week,
@@ -205,22 +332,28 @@ bundle = {
           'injury_report_weeks_2026': meta['injury_weeks_2026'], 'injuries_available_for_week': injuries_available,
           'depth_chart_latest': meta['depth_chart_2026_latest'], 'ftn_latest_pull': meta['ftn_2026_latest_pull'],
           'sources': ['nflverse play-by-play (nflverse-data releases)', 'nflverse schedules/games.csv (nfldata)',
-                      'nflverse injuries (official NFL reports)', 'nflverse depth charts', 'FTN charting via nflverse (2022+)',
+                      'nflverse injuries (official NFL reports)', 'ESPN public API: current betting lines (open and current) and injury statuses, checked each run',
+                      'nflverse Next Gen Stats (player tracking)', 'nflverse depth charts', 'FTN charting via nflverse (2022+)',
                       'Open-Meteo hourly forecasts (open-meteo.com)']},
  'definitions': {
    'target': 'P(home team wins). Ties count 0.5 in Brier score; excluded from winner accuracy; a pick is only correct if that team wins outright.',
    'early_cutoff': 'Tuesday of game week. Uses only games completed before the week starts plus the kickoff-hour weather forecast available at run time. No injury reports.',
    'updated_cutoff': 'Re-run daily. Once the official injury report for the week exists (Wed-Fri practice reports, Friday game status), the updated model adds injury features; forecasts and expected starters are refreshed on every run. The first early prediction is kept unchanged alongside.',
    'scores': 'Projected score = two ridge regressions (alpha 100) fit on the same validated inputs: expected margin (home minus away) and expected total points (team offense/defense sums, pace, roof, wind, cold). Home = (total + margin)/2, away = (total - margin)/2, rounded. The winner pick always comes from the win-probability model; in near coin-flip games the rounded score can tie or point the other way, in which case the picked team is shown with a one-point lead and the score is marked adjusted.',
+   'crunch': 'Final pick = team efficiency (opponent-adjusted EPA) plus the betting line (de-vigged moneyline and point spread), at the owner\'s request. Historical training uses nflverse closing lines; live picks use the current ESPN line. Walk-forward 2022-24: 69.6% / Brier 0.2080 vs market alone 68.1% / 0.2092. Holdout 2025-26: 65.5% / 0.2185 vs market 65.8% / 0.2139. In other words it tracks the market closely; it is no longer an independent read.',
+   'stats_only': 'Stats-only pick = no betting data: efficiency, QB form, special teams, matchups, weather, Next Gen Stats offense (time to throw, rush yards over expected, receiver separation, YAC over expected), plus injury starter counts once statuses are known. Shown alongside so the gut-vs-model experiment keeps a version that never sees the odds.',
    'training': 'Logistic regression (L2, C=0.05) on home-minus-away feature differences. Walk-forward: each week predicted by a model fit only on games before that week; evaluation window 2022 wk1 onward. Model selection used 2022-2024; 2025-2026 reported as untouched holdout.',
    'not_in_model': ['Precipitation (no historical data to learn from; shown per game for context). Wind and cold ARE model inputs, learned from actual kickoff conditions and fed by the Open-Meteo forecast',
                     'Crowd/attendance/home-fan share (no verified feed)', 'Playoff stakes / announced resting of starters (no verified feed)',
                     'Snap-weighted player availability (sum of season snap share of players out/doubtful/questionable, by position group): tested against simple starter counts; starter counts scored better on walk-forward Brier (0.2197 vs 0.2206 on 2022-24, 0.2260 vs 0.2272 on 2025-26), so the updated model keeps the counts and the snap-weighted absences are shown on each game for context',
-                    'Non-QB player production stats (receiving, rushing, pass-rush): already captured by team efficiency metrics; not added separately',
+                    'Next Gen Stats defense-allowed metrics, CPOE and aggressiveness: tested; did not improve the 2022-24 Brier beyond the four offense metrics kept',
+                    'Next Gen Stats and injuries in the final (betting-line) model: tested; did not improve it (the line already moves on injuries), so they stay in the stats-only model',
+                    'Line movement and betting splits ("sharp money"): no free historical source of opening lines or bet percentages to learn from; movement is shown per game for context, the current line itself is the model input',
                     'Rest, travel, coaching tenure, rivalry: tested, did not improve walk-forward Brier, excluded from final model'],
  },
  'score_metrics': score_metrics,
- 'metrics': {'early': res_early, 'updated': res_upd, 'baseline': res_base,
+ 'live': {**live_meta, 'injuries_from_live': sum(inj_live_ok.values()), 'line_source_counts': {k: sum(1 for v in line_src.values() if v.startswith(k)) for k in ('ESPN','nflverse')}},
+ 'metrics': {'crunch': res_crunch, 'early': res_early, 'updated': res_upd, 'baseline': res_base,
              'holdout_2025_on': {}},
  'ablation': ablation, 'coefficients': coef_table, 'feature_labels': LABELS, 'confidence_tiers': tiers_out,
  'weather_meta': {'fetched_at': (json.load(open(f'{OUT}/forecasts.json'))['fetched_at'] if FC else None),
@@ -228,7 +361,7 @@ bundle = {
                   'model_note': 'Weather weights were learned from actual kickoff conditions in 2020-2026 games (as the proxy for a forecast). Walk-forward test: adding weather changed Brier by +0.0008 and accuracy by 0.0, i.e. within noise. Its weights are small and data-derived.'},
  'games': games_out, 'history': hist_out,
 }
-for name, P in (('early',P_early),('updated',P_upd),('baseline',P_base)):
+for name, P in (('crunch',P_crunch),('early',P_early),('updated',P_upd),('baseline',P_base)):
     h = P[P.season>=2025]; h = h.copy(); h['mkt'] = [devig(a,b) if pd.notna(a) and pd.notna(b) else np.nan for a,b in zip(h.home_moneyline,h.away_moneyline)]
     d = h[h.home_win.isin([0,1])]
     bundle['metrics']['holdout_2025_on'][name] = {'n':int(len(h)),'accuracy':float(((d.p_home>0.5)==(d.home_win==1)).mean()),'brier':brier(h.p_home,h.home_win),
