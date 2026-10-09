@@ -1,4 +1,4 @@
-# Gridiron Ledger
+# Hunch vs. Crunch
 
 Statistical picks for NFL and FBS college football, published as an installable website and refreshed every morning by GitHub Actions.
 
