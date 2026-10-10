@@ -49,7 +49,7 @@ jobs:
         run: |
           shopt -s nullglob
           moved=0
-          for z in *.zip; do unzip -o -q "$z" -x 'daily.yml' && echo "unpacked $z"; git rm -q -f "$z" 2>/dev/null || rm -f "$z"; moved=1; done
+          for z in *.zip .github/workflows/*.zip; do unzip -o -q "$z" -d . -x 'daily.yml' && echo "unpacked $z"; git rm -q -f "$z" 2>/dev/null || rm -f "$z"; moved=1; done
           for f in *__*; do
             dest="${f//__//}"; dest="$(printf '%s' "$dest" | sed -E 's/ \([0-9]+\)(\.[A-Za-z]+)$/\1/')"
             case "$dest" in nfl/*|college/*|scripts/*|site/*) mkdir -p "$(dirname "$dest")"; git mv -f "$f" "$dest" 2>/dev/null || mv -f "$f" "$dest"; echo "$f -> $dest"; moved=1;; esac
@@ -81,6 +81,8 @@ jobs:
       - name: College picks
         id: college
         continue-on-error: true
+        env:
+          CFBD_API_KEY: ${{ secrets.CFBD_API_KEY }}
         run: bash scripts/run_college.sh
       - uses: actions/configure-pages@v5
         id: pages
