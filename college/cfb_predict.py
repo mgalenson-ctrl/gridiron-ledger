@@ -162,6 +162,76 @@ def line_movement(row):
             'moves': [r for r in rows if r.get('t')][-12:],
             'note': 'Movement is open-to-current from the sportsbook ESPN shows. It shows where the line went, not who bet; betting-split ("sharp money") data is not available from a free source.'}
 
+# ---------------------------------------------------------------- value check: odds -> break-even -> model probability -> estimated edge
+# Cover probabilities use the model's projected margin plus its own out-of-sample errors (walk-forward residuals), so key numbers
+# like 3 and 7 come from real outcomes rather than an assumed bell curve. Validated below on seasons the residuals never saw.
+RESID = (PS.result - PS.pred_margin).dropna().values
+def ml_be(ml): return None if ml is None else (100/(ml+100) if ml > 0 else -ml/(-ml+100))
+def ml_profit(ml): return ml/100 if ml > 0 else 100/(-ml)
+def p_to_ml(p):
+    if p is None or p <= 0 or p >= 1: return None
+    return int(round(-100*p/(1-p))) if p >= 0.5 else int(round(100*(1-p)/p))
+def home_cover(margin, L, resid=None):
+    m = np.round(margin + (RESID if resid is None else resid)); w = (m > L).mean(); push = (m == L).mean()
+    return None if push >= 1 else float(w/(1-push))
+def value_check(row, rec, odds):
+    out = {'moneyline': None, 'spread': None, 'alt': []}
+    L = rec['latest']; pick = L['pick']; home = row.home_team
+    mlh, mla = rec['market'].get('home_moneyline'), rec['market'].get('away_moneyline')
+    if mlh is not None and mla is not None:
+        ml = mlh if pick == home else mla; p = L['p_home'] if pick == home else 1 - L['p_home']; be = ml_be(ml)
+        out['moneyline'] = {'pick': pick, 'odds': ml, 'p': round(p, 4), 'break_even': round(be, 4), 'edge': round(p - be, 4),
+                            'ev_per_100': round(100*(p*ml_profit(ml) - (1-p)), 1)}
+    sl = rec['market'].get('spread_line'); mg = rec['score'].get('margin')
+    if sl is not None and mg is not None and rec.get('ats'):
+        side = rec['ats']['team']; is_home = side == home
+        ph = home_cover(mg, sl); p = ph if is_home else (None if ph is None else 1 - ph)
+        so = (odds or {}).get('sp_odds_home' if is_home else 'sp_odds_away'); assumed = so is None; so = -110.0 if so is None else so
+        be = ml_be(so)
+        if p is not None:
+            out['spread'] = {'pick': side, 'line': rec['ats']['line'], 'odds': so, 'odds_assumed': assumed, 'p': round(p, 4), 'break_even': round(be, 4),
+                             'edge': round(p - be, 4), 'ev_per_100': round(100*(p*ml_profit(so) - (1-p)), 1)}
+        base = rec['ats']['line']   # side team's line (negative = laying points)
+        for d in (-10, -7, -3.5, -3, 3, 3.5, 7, 10):
+            tl = base + d                     # team gets tl points
+            hl = -tl if is_home else tl       # equivalent home-margin threshold
+            ph2 = home_cover(mg, hl); pc = ph2 if is_home else (None if ph2 is None else 1 - ph2)
+            if pc is not None and 0.1 <= pc <= 0.9:
+                out['alt'].append({'team': side, 'line': tl, 'p': round(pc, 4), 'fair_odds': p_to_ml(pc)})
+        out['alt'].sort(key=lambda a: a['line'])
+    return out
+
+def edge_validation(PSv, P_main, line_col, sign, ml_cols=None):
+    """Walk-forward check: cover probabilities from earlier seasons' errors only, scored on later seasons."""
+    D = PSv[['game_id','season','pred_margin','result']].merge(F[['game_id', line_col]], on='game_id').dropna()
+    D['line'] = sign*D[line_col]; seasons = sorted(D.season.unique()); rows = []
+    for s in seasons[1:]:
+        res = (D[D.season < s].result - D[D.season < s].pred_margin).values
+        for r in D[D.season == s].itertuples():
+            for d in (-7, -3.5, -3, 0, 3, 3.5, 7):
+                Lh = r.line + d
+                if r.result == Lh: continue
+                p = home_cover(r.pred_margin, Lh, res)
+                if p is not None: rows.append((d, p, float(r.result > Lh)))
+    R = pd.DataFrame(rows, columns=['d','p','y'])
+    alt = {'n': int(len(R)), 'brier': float(((R.p-R.y)**2).mean()), 'brier_coinflip': float(((0.5-R.y)**2).mean()),
+           'calibration': [{'lo': float(b.left), 'hi': float(b.right), 'n': int(len(g)), 'pred': float(g.p.mean()), 'actual': float(g.y.mean())}
+                           for b, g in R.groupby(pd.cut(R.p, [0,.2,.3,.4,.5,.6,.7,.8,1]), observed=True)]}
+    M = R[R.d == 0].copy(); M['sp'] = np.maximum(M.p, 1-M.p); M['hit'] = np.where(M.p >= .5, M.y, 1-M.y)
+    main = [{'min_p': t, 'n': int((M.sp >= t).sum()), 'cover_rate': float(M[M.sp >= t].hit.mean()) if (M.sp >= t).sum() else None} for t in (.5, .55, .58, .6)]
+    out = {'seasons_scored': [int(x) for x in seasons[1:]], 'alt_lines': alt, 'main_line': main, 'break_even_110': 0.5238}
+    if ml_cols:
+        Q = P_main[P_main.home_win.isin([0,1])].dropna(subset=list(ml_cols)); rr = []
+        for r in Q.itertuples():
+            for side in ('h','a'):
+                p = r.p_home if side == 'h' else 1-r.p_home; ml = getattr(r, ml_cols[0] if side == 'h' else ml_cols[1])
+                won = (r.home_win == 1) if side == 'h' else (r.home_win == 0)
+                rr.append((p-ml_be(ml), ml_profit(ml) if won else -1.0))
+        Rm = pd.DataFrame(rr, columns=['edge','ret'])
+        out['moneyline'] = [{'min_edge': t, 'bets': int((Rm.edge > t).sum()), 'win_rate': float((Rm[Rm.edge > t].ret > 0).mean()), 'roi': float(Rm[Rm.edge > t].ret.mean())}
+                            for t in (0, .02, .03, .05)]
+    return out
+
 def KICKOFF(row):
     try: return pd.Timestamp(row.start_utc).tz_convert('UTC').to_pydatetime()
     except Exception: return None
@@ -186,6 +256,7 @@ for idx, row in wk.iterrows():
                      'intercept_logit': round(b0,4), 'missing_inputs': missing},
            'updated': None, 'weather': wx_note.get(row.game_id), 'score': reconcile(score_pred(idx), row.home_team if p_early>=0.5 else row.away_team, row.home_team, row.away_team),
            'market': {'p_home_devig': None if pd.isna(row.spread) else round(float(spread_prob(row.spread)),4),
+                      'home_moneyline': ((LIVE.get(str(row.game_id)) or {}).get('odds') or {}).get('ml_home'), 'away_moneyline': ((LIVE.get(str(row.game_id)) or {}).get('odds') or {}).get('ml_away'),
                       'spread_line': None if pd.isna(row.spread) else float(-row.spread),
                       'total_line': None if pd.isna(row.over_under) else float(row.over_under),
                       'source': line_src.get(row.game_id, 'unavailable')},
@@ -224,6 +295,14 @@ for idx, row in wk.iterrows():
     rec['score'] = reconcile(rec['score'], rec['latest']['pick'], row.home_team, row.away_team)
     runs[-1].update({'p_crunch': rec['crunch']['p_home'] if rec['crunch'] else None, 'p_stats': rec['stats']['p_home'], 'spread_line': rec['market']['spread_line']})
     rec['runs'] = runs
+    # ---- against-the-spread side: projected margin vs the current line (home expected margin)
+    _sl = rec['market'].get('spread_line'); _m = rec['score'].get('margin')
+    if _sl is not None and _m is not None and round(_m - _sl, 1) != 0:
+        _home = _m > _sl
+        rec['ats'] = {'team': row.home_team if _home else row.away_team, 'line': (-_sl if _home else _sl), 'edge': round(abs(_m - _sl), 1)}
+    else:
+        rec['ats'] = None
+    rec['value'] = value_check(row, rec, (LIVE.get(str(row.game_id)) or {}).get('odds'))
     # ---- lock at kickoff: after a game starts, show the last pre-kickoff prediction and stop logging runs
     _ko = KICKOFF(row)
     _entry = LOG[str(row.game_id)]
@@ -237,6 +316,7 @@ for idx, row in wk.iterrows():
             rec = {**_entry['frozen'], 'early_first': rec['early_first'], 'runs': _entry['runs'], 'locked': True, 'locked_note': None}
         else:
             _last = _entry['runs'][-1] if _entry['runs'] else None
+            rec['value'] = None; rec['ats'] = None
             rec['crunch'] = None; rec['line'] = None; rec['latest'] = dict(rec['stats']); rec['latest_type'] = rec['stats_type']
             if _last:   # show the probability that was actually on record before kickoff
                 rec['latest'].update({'p_home': _last['p_home'], 'p_away': round(1-_last['p_home'],4), 'pick': row.home_team if _last['p_home']>=0.5 else row.away_team, 'predicted_at': _last['at']})
@@ -251,13 +331,25 @@ for idx, row in wk.iterrows():
 json.dump(LOG, open(LOG_PATH,'w'), indent=0, default=float)
 
 # ---------------------------------------------------------------- history for dashboard: walk-forward preds of final early model
+def ats_table(A):
+    """A: game_id, season, p_home, home_team, pred_margin, result, line (home expected margin). Pushes and pick'ems excluded."""
+    A = A.dropna(subset=['pred_margin','result','line']); A = A[A.line != 0]
+    r = A.result - A.line; A = A[r != 0]; r = r[r != 0]
+    fav = np.where(A.line > 0, r > 0, r < 0); side = np.where(A.pred_margin > A.line, r > 0, r < 0); pick = np.where(A.p_home >= 0.5, r > 0, r < 0)
+    def row(m): return {'n': int(m.sum()), 'model_side': float(side[m].mean()) if m.sum() else None, 'winner_pick': float(pick[m].mean()) if m.sum() else None, 'favorite': float(fav[m].mean()) if m.sum() else None}
+    out = {'all': row(np.ones(len(A), bool)), 'by_season': {int(s): row((A.season == s).values) for s in sorted(A.season.unique())}, 'break_even': 0.5238}
+    return out
+_A = P_crunch[['game_id','season','p_home']].merge(PS[['game_id','pred_margin','result']], on='game_id').merge(F[['game_id','spread']], on='game_id')
+_A['line'] = -_A['spread']
+ats_metrics = ats_table(_A)
+edge_val = edge_validation(PS, P_crunch, 'spread', -1, None)
 hist = P_crunch.merge(F[['game_id','gameday','home_score','away_score']], on='game_id').merge(PS[['game_id','pred_margin','pred_total']], on='game_id', how='left')
 hist['mkt'] = [spread_prob(x) if pd.notna(x) else None for x in hist.spread]
 hist = hist[hist.season>=2025]  # keep the app bundle small: last two seasons of results
 hist_out = [{'game_id':int(r.game_id),'season':int(r.season),'week':int(r.week),'gameday':str(pd.Timestamp(r.gameday).date()),'home':r.home_team,'away':r.away_team,
              'p_home':round(float(r.p_home),4),'mkt':None if r.mkt is None or pd.isna(r.mkt) else round(float(r.mkt),4),
              'home_score':int(r.home_score),'away_score':int(r.away_score),'home_win':float(r.home_win),
-             'pred_home': None if pd.isna(r.pred_margin) else int(round((r.pred_total+r.pred_margin)/2)), 'pred_away': None if pd.isna(r.pred_margin) else int(round((r.pred_total-r.pred_margin)/2))} for r in hist.itertuples()]
+             'pred_home': None if pd.isna(r.pred_margin) else int(round((r.pred_total+r.pred_margin)/2)), 'pred_away': None if pd.isna(r.pred_margin) else int(round((r.pred_total-r.pred_margin)/2)), 'pred_margin': None if pd.isna(r.pred_margin) else round(float(r.pred_margin),1), 'spread': None if pd.isna(r.spread) else float(-r.spread)} for r in hist.itertuples()]
 
 # confidence tiers (from walk-forward history of the final early model)
 hist_c = P_crunch.copy(); hist_c['conf'] = np.maximum(hist_c.p_home, 1-hist_c.p_home); hist_c['hit'] = ((hist_c.p_home>0.5)==(hist_c.home_win==1)) & hist_c.home_win.isin([0,1])
@@ -288,7 +380,7 @@ bundle = {
                     'Crowd/attendance/home-fan share (no verified feed)', 'Playoff stakes / announced resting of starters (no verified feed)',
                     'Non-QB player production stats: already captured by team efficiency metrics'],
  },
- 'score_metrics': score_metrics,
+ 'score_metrics': score_metrics, 'ats_metrics': ats_metrics, 'edge_validation': edge_val,
  'live': {**live_meta, 'line_source_counts': {k: sum(1 for v in line_src.values() if v.startswith(k)) for k in ('ESPN','CFBD')}},
  'metrics': {'crunch': res_crunch, 'early': res_early, 'updated': res_upd, 'baseline': res_base,
              'holdout_2025_on': {}},

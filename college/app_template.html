@@ -94,7 +94,10 @@ details.pick>summary{display:grid;grid-template-columns:1fr auto;grid-template-a
 details.pick>summary::-webkit-details-marker{display:none}
 details.pick>summary:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
 details.pick[open]>summary{border-bottom:1px solid var(--line)}
-.why{padding:10px 14px 12px;display:grid;gap:8px}
+.why{padding:10px 14px 12px;display:grid;gap:8px;grid-template-columns:minmax(0,1fr)}
+.why .live,.why .tscroll{min-width:0;max-width:100%}
+.why table{font-size:12px}
+.why th,.why td{padding:5px 6px}
 .why ul{margin:0;padding-left:18px;max-width:none;display:grid;gap:5px;font-size:14px;line-height:1.4}
 .why li.against{color:var(--muted)}
 .why .more{justify-self:start;background:none;border:1px solid var(--line);border-radius:6px;padding:5px 10px;font:inherit;font-size:13px;color:var(--fg);cursor:pointer}
@@ -243,6 +246,7 @@ function lineChip(g){ const l=g.line; if(!l||l.cur_spread_home==null) return '';
   const moved = l.open_spread_home!=null && l.open_spread_home!==l.cur_spread_home;
   return `<span class="chip${l.flags.length?' warn':''}">Line ${spTxt(l.cur_spread_home,g)}${moved?` (opened ${spTxt(l.open_spread_home,g)})`:''}</span>`; }
 function newsChip(g){ const n=g.injury_news; if(!n||n.baseline_only) return ''; const k=n.items.filter(i=>Date.now()-new Date(i.seen)<24*3600e3).length; return k?`<span class="chip warn">${k} injury update${k>1?'s':''} today</span>`:''; }
+function atsChip(g){ return g.ats?`<span class="chip">Spread pick: ${g.ats.team} ${lnTxt(g.ats.line)}</span>`:''; }
 function statsChip(g){ return (g.crunch&&g.stats&&g.stats.pick!==g.latest.pick)?`<span class="chip">Stats-only pick: ${g.stats.pick}</span>`:''; }
 function liveBlock(g){
   const parts=[], l=g.line;
@@ -260,10 +264,53 @@ function liveBlock(g){
   if(n && n.items.length){
     parts.push(`<p style="margin:0 0 4px"><b>${n.baseline_only?'Injury list (changes are tracked from here on)':'Injury news, last 72 hours'}</b></p><ul style="margin:0 0 6px">${n.items.slice(0,6).map(i=>`<li>${esc(i.team)} ${esc(i.name)} (${esc(i.pos||'')}${i.starter?', starter':''}): <b>${esc(i.status)}</b>${i.prev&&i.prev!==i.status?` (was ${esc(i.prev)})`:''}${n.baseline_only?'':` <span class="mono muted">${ago(i.seen)}</span>`}</li>`).join('')}</ul>`);
   }
+  if(g.ats) parts.push(`<p style="margin:0 0 6px"><b>Against the spread</b>: ${g.ats.team} ${lnTxt(g.ats.line)}. The projected margin beats the line by ${g.ats.edge} pts. <span class="muted">Historically this has covered about half the time; break-even is 52.4%.</span></p>`);
+  const vb=valueBlock(g); if(vb) parts.push(vb);
   if(g.crunch && g.stats) parts.push(`<p style="margin:0 0 6px"><b>Without betting data</b>, the stats-only model says ${g.stats.pick} ${pct(Math.max(g.stats.p_home,1-g.stats.p_home))}${g.stats.pick!==g.latest.pick?' (a different winner)':''}.</p>`);
-  if(!g.crunch) parts.push(`<p style="margin:0 0 6px" class="muted">No betting line found for this game yet, so this pick is the stats-only model.</p>`);
+  if(!g.crunch && !g.locked) parts.push(`<p style="margin:0 0 6px" class="muted">No betting line found for this game yet, so this pick is the stats-only model.</p>`);
   return parts.length?`<div class="live" style="border-top:1px solid var(--line);padding-top:8px">${parts.join('')}</div>`:'';
 }
+/* ---------- against the spread ---------- */
+const lnTxt = v => v===0?'PK':(v>0?'+'+v:''+v);
+function atsMark(r){ if(r.spread==null||r.pred_margin==null||r.pred_margin===r.spread) return '';
+  const res=(r.home_score-r.away_score)-r.spread; if(res===0) return ' <span class="muted mono">ATS push</span>';
+  const ok = (r.pred_margin>r.spread)===(res>0); return ` <span class="mono ${ok?'ok':'miss'}">ATS ${ok?'✓':'✗'}</span>`; }
+function atsRecord(rows){ let w=0,l=0,fw=0,fl=0;
+  rows.forEach(r=>{ if(r.spread==null||r.spread===0||r.pred_margin==null||r.pred_margin===r.spread) return; const res=(r.home_score-r.away_score)-r.spread; if(res===0) return;
+    ((r.pred_margin>r.spread)===(res>0))?w++:l++; ((r.spread>0)===(res>0))?fw++:fl++; });
+  return {w,l,fw,fl}; }
+function atsTable(){ const A=B.ats_metrics; if(!A) return '';
+  const f=v=>v==null?'—':(v*100).toFixed(1)+'%', cls=v=>v!=null&&v>=A.break_even?'better':'';
+  return `<h2>Against the spread</h2>
+  <p>How often each approach covered the betting spread in walk-forward testing (pushes excluded). At standard −110 odds you need ${f(A.break_even)} just to break even. Numbers near 50% mean no edge over the line.</p>
+  <div class="tscroll"><table><thead><tr><th>Season</th><th>Games</th><th>Model's spread pick</th><th>Model's winner pick</th><th>Vegas favorite</th></tr></thead><tbody>
+  ${Object.entries(A.by_season).map(([s,v])=>`<tr><td>${s}</td><td>${v.n}</td><td class="${cls(v.model_side)}">${f(v.model_side)}</td><td>${f(v.winner_pick)}</td><td>${f(v.favorite)}</td></tr>`).join('')}
+  <tr><td><b>All</b></td><td><b>${A.all.n}</b></td><td class="${cls(A.all.model_side)}"><b>${f(A.all.model_side)}</b></td><td><b>${f(A.all.winner_pick)}</b></td><td><b>${f(A.all.favorite)}</b></td></tr></tbody></table></div>
+  <p class="mono muted">Model's spread pick = the side its projected margin favors against the line. Winner pick = the team it picks to win, judged against the spread.</p>`; }
+/* ---------- value check ---------- */
+const oddsTxt = o => o==null?'—':(o>0?'+'+Math.round(o):''+Math.round(o));
+const edgeTxt = e => (e>=0?'+':'')+(e*100).toFixed(1)+' pts';
+function valueBlock(g){ const v=g.value; if(!v||(!v.moneyline&&!v.spread)) return '';
+  const row=(kind,x,label)=>`<tr><td>${kind}</td><td>${esc(label)}</td><td>${oddsTxt(x.odds)}${x.odds_assumed?'*':''}</td><td>${pct(x.p)}</td><td>${pct(x.break_even)}</td><td class="${x.edge>0?'better':''}">${edgeTxt(x.edge)}</td></tr>`;
+  let h=`<p style="margin:6px 0 4px"><b>Value check</b></p><div class="tscroll"><table><thead><tr><th>Bet</th><th>Pick</th><th>Odds</th><th>Model</th><th>Need</th><th>Edge</th></tr></thead><tbody>`;
+  if(v.moneyline) h+=row('Moneyline', v.moneyline, v.moneyline.pick);
+  if(v.spread) h+=row('Spread', v.spread, `${v.spread.pick} ${lnTxt(v.spread.line)}`);
+  h+=`</tbody></table></div>`;
+  if(v.spread&&v.spread.odds_assumed) h+=`<p class="mono muted" style="margin:2px 0">*Spread price not posted; standard −110 assumed.</p>`;
+  if(v.alt&&v.alt.length) h+=`<details style="margin:6px 0"><summary style="cursor:pointer">Alternate spreads (${esc(v.alt[0].team)})</summary><div class="tscroll"><table><thead><tr><th>Line</th><th>Model cover chance</th><th>Fair odds</th></tr></thead><tbody>${v.alt.map(a=>`<tr><td>${esc(a.team)} ${lnTxt(a.line)}</td><td>${pct(a.p)}</td><td>${oddsTxt(a.fair_odds)}</td></tr>`).join('')}</tbody></table></div><p class="mono muted" style="margin:2px 0">Fair odds = the price at which the model sees no edge. A sportsbook price better than this is where an edge would be. Alternate-line prices are not in the free data feed, so compare against your book.</p></details>`;
+  const EV=B.edge_validation; h+=`<p class="muted" style="margin:4px 0 0;font-size:13px">Need = break-even chance at those odds. Edge = model chance minus need. In past seasons these estimates did not reliably turn into profit${EV&&EV.moneyline?` (moneyline picks with a 2+ pt edge returned ${(EV.moneyline[1].roi*100).toFixed(1)}% per bet)`:''}; treat them as a gauge, not a signal.</p>`;
+  return h; }
+function edgeRecord(){ const E=B.edge_validation; if(!E) return '';
+  const f=v=>v==null?'—':(v*100).toFixed(1)+'%';
+  let h=`<h2>Do the edge estimates hold up?</h2><p>Each check uses only information available before the games it scores (seasons ${E.seasons_scored.join(', ')}).</p>
+  <h3>Cover chances at the main line and alternate lines</h3>
+  <p>Brier score ${E.alt_lines.brier.toFixed(4)} vs ${E.alt_lines.brier_coinflip.toFixed(4)} for a coin flip across ${E.alt_lines.n.toLocaleString()} line checks (lines moved by 0, ±3, ±3.5 and ±7 points). Lower is better.</p>
+  <div class="tscroll"><table><thead><tr><th>Model said</th><th>Checks</th><th>Predicted</th><th>Covered</th></tr></thead><tbody>${E.alt_lines.calibration.map(c=>`<tr><td>${pct(c.lo)}–${pct(c.hi)}</td><td>${c.n}</td><td>${pct(c.pred)}</td><td>${pct(c.actual)}</td></tr>`).join('')}</tbody></table></div>
+  <h3>Main-line spread picks by model confidence</h3>
+  <div class="tscroll"><table><thead><tr><th>Model cover chance</th><th>Games</th><th>Actually covered</th></tr></thead><tbody>${E.main_line.map(m=>`<tr><td>${pct(m.min_p)} or more</td><td>${m.n}</td><td class="${m.cover_rate!=null&&m.cover_rate>=E.break_even_110?'better':''}">${f(m.cover_rate)}</td></tr>`).join('')}</tbody></table></div>
+  <p class="mono muted">Break-even at −110 is ${f(E.break_even_110)}. Small groups swing a lot; a result above break-even on a few hundred games can still be luck.</p>`;
+  if(E.moneyline) h+=`<h3>Moneyline picks by estimated edge</h3><div class="tscroll"><table><thead><tr><th>Estimated edge</th><th>Bets</th><th>Won</th><th>Return per $1</th></tr></thead><tbody>${E.moneyline.map(m=>`<tr><td>over ${(m.min_edge*100).toFixed(0)} pts</td><td>${m.bets}</td><td>${f(m.win_rate)}</td><td class="${m.roi>0?'better':''}">${(m.roi>=0?'+':'')+(m.roi*100).toFixed(1)}%</td></tr>`).join('')}</tbody></table></div><p class="mono muted">Past moneylines are closing prices, the same prices the model saw, which is why estimated edges are small.</p>`;
+  return h; }
 let state = {tab:'week', game:null, conf:'', sort:'time'};
 try{ const t=localStorage.getItem('gl.tab'); if(t) state.tab=t; const c=localStorage.getItem('gl.conf'); if(c) state.conf=c; }catch(e){}
 
@@ -296,7 +343,7 @@ function renderWeek(){
       const flags = [];
       if(g.qb_flags.length) flags.push('<span class="chip warn">QB uncertain</span>');
       if(g.locked) flags.unshift('<span class="chip">Locked at kickoff</span>');
-      flags.push(lineChip(g), statsChip(g));
+      flags.push(lineChip(g), atsChip(g), statsChip(g));
       html += `<details class="pick" id="d-${g.game_id}"><summary>
         <div class="main"><div class="winner">${pick} <small>over ${loser}${pick===g.away?' (away)':''}</small></div><div class="hint">tap for why</div></div>
         <div class="conf"><div class="p">${pct(conf)}</div><span class="tier ${tier.tier}">${tier.tier}</span></div>
@@ -420,6 +467,7 @@ function renderResults(){
     <div class="tiles"><div class="tile"><div class="k">Model record</div><div class="v">${acc}–${decided.length-acc}</div><div class="s">${pct(acc/decided.length)} winners</div></div>
     <div class="tile"><div class="k">Brier score</div><div class="v">${brier.toFixed(4)}</div><div class="s">lower is better; 0.25 = coin flip</div></div>
     <div class="tile"><div class="k">Market favorite</div><div class="v">${mk.length?pct(macc/mk.length):'—'}</div><div class="s">closing-line benchmark</div></div>
+    ${(()=>{const a=atsRecord(rows); return a.w+a.l?`<div class="tile"><div class="k">Against the spread</div><div class="v">${a.w}–${a.l}</div><div class="s">${pct(a.w/(a.w+a.l))} model · favorite ${pct(a.fw/(a.fw+a.fl))}</div></div>`:''})()}
     <div class="tile"><div class="k">Home team</div><div class="v">${pct(decided.filter(r=>r.home_win===1).length/decided.length)}</div><div class="s">always-pick-home</div></div></div>`;
   weeks.forEach(w=>{
     const wr = rows.filter(r=>r.week===w);
@@ -428,7 +476,7 @@ function renderResults(){
     wr.forEach(r=>{
       const pick = r.p_home>=0.5?r.home:r.away, conf = Math.max(r.p_home,1-r.p_home);
       const won = r.home_win===0.5?'tie':(((r.p_home>0.5)===(r.home_win===1))?'ok':'miss');
-      html += `<div class="res"><span class="${won}">${won==='ok'?'✓':won==='miss'?'✗':'='}</span><span>${r.away} ${r.away_score} at ${r.home} ${r.home_score}${r.pred_home!=null?` <span class="muted mono">(proj ${r.pred_away}–${r.pred_home})</span>`:''}</span><span class="mono">${pick} ${pct(conf)}</span><span class="mono muted">${r.mkt!=null?'mkt '+(r.mkt>=0.5?r.home:r.away)+' '+pct(Math.max(r.mkt,1-r.mkt)):''}</span></div>`;
+      html += `<div class="res"><span class="${won}">${won==='ok'?'✓':won==='miss'?'✗':'='}</span><span>${r.away} ${r.away_score} at ${r.home} ${r.home_score}${atsMark(r)}${r.pred_home!=null?` <span class="muted mono">(proj ${r.pred_away}–${r.pred_home})</span>`:''}</span><span class="mono">${pick} ${pct(conf)}</span><span class="mono muted">${r.mkt!=null?'mkt '+(r.mkt>=0.5?r.home:r.away)+' '+pct(Math.max(r.mkt,1-r.mkt)):''}</span></div>`;
     });
   });
   el.innerHTML = html;
@@ -470,6 +518,8 @@ function renderModel(){
       <tr><td>Market favorite (consensus spread)</td><td>${pct(h.early.market_accuracy)}</td><td>${h.early.market_brier.toFixed(4)}</td></tr>
       <tr><td>Pregame Elo alone</td><td>${pct(h.early.elo_accuracy)}</td><td>—</td></tr>
     </tbody></table></div>
+    ${atsTable()}
+    ${edgeRecord()}
     <h2>Projected scores</h2>
     <div class="tiles">
       <div class="tile"><div class="k">Margin error</div><div class="v">±${B.score_metrics.margin_mae.toFixed(1)}</div><div class="s">mean abs. error, pts (market spread ±${B.score_metrics.spread_mae.toFixed(1)})</div></div>
