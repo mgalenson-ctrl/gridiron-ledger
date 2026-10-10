@@ -7,6 +7,14 @@ from sklearn.pipeline import make_pipeline
 from scipy.stats import norm
 OUT='/home/claude/cfbpredict/out'
 F = pd.read_pickle(f'{OUT}/game_features.pkl')
+# Preseason team strength from CollegeFootballData.com (scripts/cfbd_fetch.py): recruiting talent and returning production.
+import os as _os
+_PRE = '/tmp/cfb/data/cfbd_preseason.csv'
+PRESEASON_AVAILABLE = _os.path.exists(_PRE)
+if PRESEASON_AVAILABLE:
+    _p = pd.read_csv(_PRE)
+    for _side, _col in (('h', 'home_team'), ('a', 'away_team')):
+        F = F.merge(_p.rename(columns={'team': _col, 'talent': f'{_side}_talent', 'ret_ppa': f'{_side}_ret_ppa'}), on=['season', _col], how='left')
 
 GROUPS = {
  'baseline': ['adj_off_off_epa','adj_def_off_epa'],
@@ -22,10 +30,17 @@ GROUPS = {
  'weather': ['wx_wind','wx_cold'],
  'conf_game': ['conf_game_flag'],
  'market': ['mkt_logit','mkt_spread'],
+ 'preseason': ['talent','ret_ppa','talent_early','ret_early'],
 }
-GAME_LEVEL = {'conf_game_flag','wx_wind','wx_cold','mkt_logit','mkt_spread'}
+GAME_LEVEL = {'conf_game_flag','wx_wind','wx_cold','mkt_logit','mkt_spread','talent_early','ret_early'}
 def build_X(df):
     X = pd.DataFrame(index=df.index)
+    for _s in ('h', 'a'):
+        for _f in ('talent', 'ret_ppa'):
+            if f'{_s}_{_f}' not in df: df[f'{_s}_{_f}'] = np.nan
+    _early = (1 - (df.wk.astype(float) - 1) / 8).clip(lower=0)   # full weight in week 1, fades to zero by week 9
+    df['talent_early'] = (df.h_talent - df.a_talent) * _early
+    df['ret_early'] = (df.h_ret_ppa - df.a_ret_ppa) * _early
     # betting market: point spread (home line; negative = home favored) and its implied win probability (16-pt normal) as a logit
     _p = np.clip(norm.cdf(-pd.to_numeric(df.spread, errors='coerce')/16.0), 0.01, 0.99)
     df['mkt_logit'] = np.log(_p/(1-_p)); df['mkt_spread'] = -pd.to_numeric(df.spread, errors='coerce')
@@ -40,6 +55,8 @@ def build_X(df):
             elif f in GAME_LEVEL: X[f] = df[f].astype(float)
             else: X[f'd_{f}'] = df[f'h_{f}'] - df[f'a_{f}']
     X['home_adv'] = 1.0 - df.neutral.astype(float)
+    for c in ('d_talent', 'd_ret_ppa', 'talent_early', 'ret_early'):
+        if c in X and X[c].isna().all(): X[c] = 0.0   # no CFBD data this run: neutral value
     return X
 def cols_for(groups):
     c=['home_adv']
@@ -92,8 +109,10 @@ def build_T(df):
         T[f's_{f}'] = df[f'h_{f}'] + df[f'a_{f}']
     T['roofed'] = (df.roof=='dome').astype(float)
     T['conf_game']=df.conf_game.astype(float); T['d_fbs'] = df.h_fbs - df.a_fbs
+    T['mkt_total'] = pd.to_numeric(df['over_under'], errors='coerce')   # posted over/under
     return T
 T_all = build_T(F)
+T_COLS_NOLINE = [c for c in T_all.columns if c != 'mkt_total']
 def fit_reg(X,y,alpha):
     m=y.notna(); med=X[m].median(); model=make_pipeline(StandardScaler(), Ridge(alpha=alpha)); model.fit(X[m].fillna(med), y[m]); return model, med
 def walk_forward_scores(margin_cols, alpha=100.0, start=(2024,1)):
@@ -104,7 +123,9 @@ def walk_forward_scores(margin_cols, alpha=100.0, start=(2024,1)):
         tr = F.played & ((F.season<s)|((F.season==s)&(F.wk<w))); te = F.played & (F.season==s)&(F.wk==w)
         if te.sum()==0 or tr.sum()<200: continue
         mm,mmed=fit_reg(XM[tr],F.result[tr],alpha); tm,tmed=fit_reg(T_all[tr],F.total[tr],alpha)
-        out.append(pd.DataFrame({'game_id':F.loc[te,'game_id'].values,'pred_margin':mm.predict(XM[te].fillna(mmed)),'pred_total':tm.predict(T_all[te].fillna(tmed))}))
+        tn,tnmed=fit_reg(T_all.loc[tr,T_COLS_NOLINE],F.total[tr],alpha)
+        pt=np.where(T_all.loc[te,'mkt_total'].notna(), tm.predict(T_all[te].fillna(tmed)), tn.predict(T_all.loc[te,T_COLS_NOLINE].fillna(tnmed)))
+        out.append(pd.DataFrame({'game_id':F.loc[te,'game_id'].values,'pred_margin':mm.predict(XM[te].fillna(mmed)),'pred_total':pt}))
     return pd.concat(out).merge(F[['game_id','season','wk','result','total','spread','over_under']], on='game_id')
 
 if __name__=='__main__':
@@ -113,7 +134,7 @@ if __name__=='__main__':
             ('+rest_travel',['baseline','rest_travel']),('+level',['baseline','level']),('+conf_game',['baseline','conf_game']),('+elo',['baseline','elo']),
             ('elo_only',['elo']),('base+qb+sd+matchup+level',['baseline','qb','special_discipline','matchup','level']),
             ('base+qb+sd+matchup+level+elo',['baseline','qb','special_discipline','matchup','level','elo']),
-            ('all',[g for g in GROUPS if g not in ('weather','market')]),
+            ('all',[g for g in GROUPS if g not in ('weather','market','preseason')]),
             ('market only (betting line)',['market']),('stats+market (final)',['baseline','efficiency','elo','form_l3','conf_game','market'])]
     results={}; allP={}
     for name,groups in ladder:

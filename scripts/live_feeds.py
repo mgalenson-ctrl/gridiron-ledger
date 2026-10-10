@@ -62,6 +62,8 @@ def parse_odds(o):
            'total_open': num(dig(o, 'total', 'over', 'open', 'line')),
            'home_fav_at_open': dig(o, 'homeTeamOdds', 'favoriteAtOpen'),
            'sp_odds_home': num(dig(o, 'pointSpread', 'home', 'close', 'odds')) if num(dig(o, 'pointSpread', 'home', 'close', 'odds')) is not None else num(dig(o, 'homeTeamOdds', 'spreadOdds')),
+           'ou_over_odds': num(dig(o, 'total', 'over', 'close', 'odds')) if num(dig(o, 'total', 'over', 'close', 'odds')) is not None else num(o.get('overOdds')),
+           'ou_under_odds': num(dig(o, 'total', 'under', 'close', 'odds')) if num(dig(o, 'total', 'under', 'close', 'odds')) is not None else num(o.get('underOdds')),
            'sp_odds_away': num(dig(o, 'pointSpread', 'away', 'close', 'odds')) if num(dig(o, 'pointSpread', 'away', 'close', 'odds')) is not None else num(dig(o, 'awayTeamOdds', 'spreadOdds'))}
     if all(out[k] is None for k in ('spread_home', 'ml_home', 'total')): return None
     return out

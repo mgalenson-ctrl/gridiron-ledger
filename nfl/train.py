@@ -193,8 +193,10 @@ def build_T(df):
     T['roofed'] = df.roof.isin(['dome','closed']).astype(float)
     T['wx_wind'] = df.wx_wind.astype(float); T['wx_cold'] = (45-df.wx_temp).clip(lower=0).astype(float)
     T['div_game'] = df.div_game.fillna(0).astype(float)
+    T['mkt_total'] = pd.to_numeric(df['total_line'], errors='coerce')   # posted over/under
     return T
 T_all = build_T(F)
+T_COLS_NOLINE = [c for c in T_all.columns if c != 'mkt_total']
 def fit_reg(X, y, alpha):
     m = y.notna(); med = X[m].median()
     model = make_pipeline(StandardScaler(), Ridge(alpha=alpha)); model.fit(X[m].fillna(med), y[m]); return model, med
@@ -207,6 +209,8 @@ def walk_forward_scores(margin_cols, alpha=30.0, start=(2022,1)):
         tr = F.played & ((F.season<s)|((F.season==s)&(F.week<w))); te = F.played & (F.season==s)&(F.week==w)
         if te.sum()==0: continue
         mm, mmed = fit_reg(XM[tr], F.result[tr], alpha); tm, tmed = fit_reg(T_all[tr], F.total[tr], alpha)
-        out.append(pd.DataFrame({'game_id':F.loc[te,'game_id'].values, 'pred_margin': mm.predict(XM[te].fillna(mmed)), 'pred_total': tm.predict(T_all[te].fillna(tmed))}))
+        tn, tnmed = fit_reg(T_all.loc[tr, T_COLS_NOLINE], F.total[tr], alpha)
+        pt = np.where(T_all.loc[te, 'mkt_total'].notna(), tm.predict(T_all[te].fillna(tmed)), tn.predict(T_all.loc[te, T_COLS_NOLINE].fillna(tnmed)))
+        out.append(pd.DataFrame({'game_id':F.loc[te,'game_id'].values, 'pred_margin': mm.predict(XM[te].fillna(mmed)), 'pred_total': pt}))
     P = pd.concat(out).merge(F[['game_id','season','week','result','total','spread_line','total_line']], on='game_id')
     return P

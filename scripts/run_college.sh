@@ -10,6 +10,7 @@ rm -rf $D && git clone -q --depth 1 --filter=blob:none --no-checkout https://git
 mkdir -p /tmp/cfb/data && cd /home/claude/cfbpredict
 for y in 2023 2024 2025 2026; do python3 extract_pbp.py $y; done
 python3 team_info.py
+python3 "$GITHUB_WORKSPACE/scripts/cfbd_fetch.py" || echo "CFBD preseason data unavailable; continuing without it"
 python3 cfb_build.py
 python3 cfb_train.py
 python3 "$GITHUB_WORKSPACE/scripts/weather_fetch.py" college || echo "weather step failed; continuing without forecasts"

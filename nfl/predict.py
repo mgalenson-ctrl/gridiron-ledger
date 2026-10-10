@@ -131,6 +131,7 @@ SCORE_ALPHA = 100.0
 T_all = build_T(F)
 margin_model, margin_med = fit_reg(X_all.loc[F.played, crunch_cols], F.result[F.played], SCORE_ALPHA)
 total_model, total_med = fit_reg(T_all[F.played], F.total[F.played], SCORE_ALPHA)
+total_model_nl, total_med_nl = fit_reg(T_all.loc[F.played, T_COLS_NOLINE], F.total[F.played], SCORE_ALPHA)   # used when no total is posted
 PS = walk_forward_scores(crunch_cols, SCORE_ALPHA)
 PSd = PS.dropna(subset=['result','total'])
 def mae(a,b): return float(np.mean(np.abs(a-b)))
@@ -140,7 +141,7 @@ score_metrics = {'n': int(len(PSd)), 'margin_mae': mae(PSd.pred_margin, PSd.resu
                  'holdout_2025_on': {'margin_mae': mae(PSd[PSd.season>=2025].pred_margin, PSd[PSd.season>=2025].result), 'spread_mae': mae(PSd[PSd.season>=2025].spread_line, PSd[PSd.season>=2025].result),
                                      'total_mae': mae(PSd[PSd.season>=2025].pred_total, PSd[PSd.season>=2025].total), 'market_total_mae': mae(PSd[PSd.season>=2025].total_line, PSd[PSd.season>=2025].total)}}
 def score_pred(idx):
-    m = float(margin_model.predict(X_all.loc[[idx], crunch_cols].fillna(margin_med))[0]); t = float(total_model.predict(T_all.loc[[idx]].fillna(total_med))[0])
+    m = float(margin_model.predict(X_all.loc[[idx], crunch_cols].fillna(margin_med))[0]); t = float(total_model.predict(T_all.loc[[idx]].fillna(total_med))[0]) if pd.notna(T_all.loc[idx,'mkt_total']) else float(total_model_nl.predict(T_all.loc[[idx], T_COLS_NOLINE].fillna(total_med_nl))[0])
     h = (t+m)/2; a = (t-m)/2
     return {'margin': round(m,1), 'total': round(t,1), 'home': int(round(h)), 'away': int(round(a)), 'adjusted': False}
 def reconcile(score, pick, home, away):
@@ -276,7 +277,67 @@ def value_check(row, rec, odds):
             if pc is not None and 0.1 <= pc <= 0.9:
                 out['alt'].append({'team': side, 'line': tl, 'p': round(pc, 4), 'fair_odds': p_to_ml(pc)})
         out['alt'].sort(key=lambda a: a['line'])
+    out['total'] = total_check(rec, odds)
     return out
+
+RESID_T = (PS.total - PS.pred_total).dropna().values
+def over_prob(pt, L, resid=None):
+    m = np.round(pt + (RESID_T if resid is None else resid)); w = (m > L).mean(); push = (m == L).mean()
+    return None if push >= 1 else float(w/(1-push))
+def total_check(rec, odds):
+    tl = rec['market'].get('total_line'); pt = rec['score'].get('total')
+    if tl is None or pt is None: return None
+    po = over_prob(pt, tl)
+    if po is None: return None
+    side = 'Over' if po >= 0.5 else 'Under'; p = po if side == 'Over' else 1 - po
+    oo = (odds or {}).get('ou_over_odds' if side == 'Over' else 'ou_under_odds'); assumed = oo is None; oo = -110.0 if oo is None else oo
+    be = ml_be(oo); sims = pt + RESID_T
+    alt = []
+    for d in (-10, -7, -3, 3, 7, 10):
+        L = tl + d; q = over_prob(pt, L)
+        if q is not None and 0.1 <= q <= 0.9: alt.append({'line': L, 'over': round(q, 4), 'fair_over': p_to_ml(q), 'fair_under': p_to_ml(1 - q)})
+    return {'pick': side, 'line': tl, 'proj': round(pt, 1), 'odds': oo, 'odds_assumed': assumed, 'p': round(p, 4), 'break_even': round(be, 4),
+            'edge': round(p - be, 4), 'ev_per_100': round(100*(p*ml_profit(oo) - (1-p)), 1),
+            'range80': [int(np.floor(np.percentile(sims, 10))), int(np.ceil(np.percentile(sims, 90)))], 'alt': alt}
+def totals_validation(PSv, line_col):
+    D = PSv[['game_id','season','pred_total','total', line_col]].dropna(); seasons = sorted(D.season.unique()); rows = []
+    for s in seasons[1:]:
+        res = (D[D.season < s].total - D[D.season < s].pred_total).values
+        for r in D[D.season == s].itertuples():
+            for d in (-7, -3, 0, 3, 7):
+                L = getattr(r, line_col) + d
+                if r.total == L: continue
+                q = over_prob(r.pred_total, L, res)
+                if q is not None: rows.append((d, q, float(r.total > L)))
+    R = pd.DataFrame(rows, columns=['d','p','y'])
+    cal = [{'lo': float(b.left), 'hi': float(b.right), 'n': int(len(g)), 'pred': float(g.p.mean()), 'actual': float(g.y.mean())} for b, g in R.groupby(pd.cut(R.p, [0,.2,.3,.4,.5,.6,.7,.8,1]), observed=True)]
+    M = R[R.d == 0].copy(); M['sp'] = np.maximum(M.p, 1-M.p); M['hit'] = np.where(M.p >= .5, M.y, 1-M.y)
+    main = [{'min_p': t, 'n': int((M.sp >= t).sum()), 'hit_rate': float(M[M.sp >= t].hit.mean()) if (M.sp >= t).sum() else None} for t in (.5, .55, .58, .6)]
+    A = PSv[['season','pred_total','total', line_col]].dropna(); A = A[(A.total != A[line_col]) & (A.pred_total != A[line_col])]
+    side = (A.pred_total > A[line_col]) == (A.total > A[line_col])
+    by = {int(s): {'n': int(len(g)), 'model_side': float(side[g.index].mean()), 'over_rate': float((g.total > g[line_col]).mean())} for s, g in A.groupby('season')}
+    return {'seasons_scored': [int(x) for x in seasons[1:]], 'line_checks': int(len(R)), 'brier': float(((R.p-R.y)**2).mean()), 'brier_coinflip': float(((0.5-R.y)**2).mean()),
+            'calibration': cal, 'main_line': main, 'record': {'all': {'n': int(len(A)), 'model_side': float(side.mean()), 'over_rate': float((A.total > A[line_col]).mean())}, 'by_season': by},
+            'mae_model': float(np.abs(A.pred_total - A.total).mean()), 'mae_line': float(np.abs(A[line_col] - A.total).mean())}
+
+def clv_summary(LOG, played_ids):
+    """Closing-line value: did the line move toward the model's FIRST spread/total pick by kickoff? Built up from this season's run logs."""
+    sp, tt = [], []
+    for gid, e in LOG.items():
+        if str(gid) not in played_ids: continue
+        R = [r for r in e.get('runs', []) if r.get('ats_team') and r.get('spread_line') is not None]
+        if len(R) >= 2:
+            f, c = R[0], R[-1]; home_pick = f.get('ats_home')
+            if home_pick is not None:
+                sp.append((c['spread_line'] - f['spread_line']) if home_pick else (f['spread_line'] - c['spread_line']))
+        Q = [r for r in e.get('runs', []) if r.get('ou_pick') and r.get('total_line') is not None]
+        if len(Q) >= 2:
+            f, c = Q[0], Q[-1]
+            tt.append((c['total_line'] - f['total_line']) if f['ou_pick'] == 'Over' else (f['total_line'] - c['total_line']))
+    def summ(v):
+        v = np.array(v, dtype=float)
+        return {'n': int(len(v)), 'avg_pts': float(v.mean()) if len(v) else None, 'toward': int((v > 0).sum()), 'away': int((v < 0).sum()), 'unchanged': int((v == 0).sum())}
+    return {'spread': summ(sp), 'total': summ(tt)}
 
 def edge_validation(PSv, P_main, line_col, sign, ml_cols=None):
     """Walk-forward check: cover probabilities from earlier seasons' errors only, scored on later seasons."""
@@ -384,6 +445,11 @@ for idx, row in wk.iterrows():
     else:
         rec['ats'] = None
     rec['value'] = value_check(row, rec, (LIVE.get(row.game_id) or {}).get('odds'))
+    _tc = (rec['value'] or {}).get('total'); rec['ou'] = {'pick': _tc['pick'], 'line': _tc['line'], 'proj': _tc['proj']} if _tc else None
+    _lr = LOG[row.game_id]['runs'][-1] if LOG[row.game_id]['runs'] and LOG[row.game_id]['runs'][-1].get('at') == now else None
+    if _lr is not None:
+        _lr.update({'ats_team': (rec.get('ats') or {}).get('team'), 'ats_home': ((rec.get('ats') or {}).get('team') == row.home_team) if rec.get('ats') else None,
+                    'ou_pick': (rec.get('ou') or {}).get('pick'), 'total_line': rec['market'].get('total_line'), 'spread_line': rec['market'].get('spread_line')})
     # ---- lock at kickoff: after a game starts, show the last pre-kickoff prediction and stop logging runs
     _ko = KICKOFF(row)
     _entry = LOG[row.game_id]
@@ -397,7 +463,7 @@ for idx, row in wk.iterrows():
             rec = {**_entry['frozen'], 'early_first': rec['early_first'], 'runs': _entry['runs'], 'locked': True, 'locked_note': None}
         else:
             _last = _entry['runs'][-1] if _entry['runs'] else None
-            rec['value'] = None; rec['ats'] = None
+            rec['value'] = None; rec['ats'] = None; rec['ou'] = None
             rec['crunch'] = None; rec['line'] = None; rec['latest'] = dict(rec['stats']); rec['latest_type'] = rec['stats_type']
             if _last:   # show the probability that was actually on record before kickoff
                 rec['latest'].update({'p_home': _last['p_home'], 'p_away': round(1-_last['p_home'],4), 'pick': row.home_team if _last['p_home']>=0.5 else row.away_team, 'predicted_at': _last['at']})
@@ -424,12 +490,13 @@ _A = P_crunch[['game_id','season','p_home']].merge(PS[['game_id','pred_margin','
 _A['line'] = _A['spread_line']
 ats_metrics = ats_table(_A)
 edge_val = edge_validation(PS, P_crunch, 'spread_line', 1, ('home_moneyline','away_moneyline'))
-hist = P_crunch.merge(F[['game_id','gameday','home_score','away_score','spread_line']], on='game_id').merge(PS[['game_id','pred_margin','pred_total']], on='game_id', how='left')
+totals_val = totals_validation(PS, 'total_line')
+hist = P_crunch.merge(F[['game_id','gameday','home_score','away_score','spread_line','total_line']], on='game_id').merge(PS[['game_id','pred_margin','pred_total']], on='game_id', how='left')
 hist['mkt'] = [devig(h,a) if pd.notna(h) and pd.notna(a) else None for h,a in zip(hist.home_moneyline,hist.away_moneyline)]
 hist_out = [{'game_id':r.game_id,'season':int(r.season),'week':int(r.week),'gameday':str(r.gameday.date()),'home':r.home_team,'away':r.away_team,
              'p_home':round(float(r.p_home),4),'mkt':None if r.mkt is None or pd.isna(r.mkt) else round(float(r.mkt),4),
              'home_score':int(r.home_score),'away_score':int(r.away_score),'home_win':float(r.home_win),
-             'pred_home': None if pd.isna(r.pred_margin) else int(round((r.pred_total+r.pred_margin)/2)), 'pred_away': None if pd.isna(r.pred_margin) else int(round((r.pred_total-r.pred_margin)/2)), 'pred_margin': None if pd.isna(r.pred_margin) else round(float(r.pred_margin),1), 'spread': None if pd.isna(r.spread_line) else float(r.spread_line)} for r in hist.itertuples()]
+             'pred_home': None if pd.isna(r.pred_margin) else int(round((r.pred_total+r.pred_margin)/2)), 'pred_away': None if pd.isna(r.pred_margin) else int(round((r.pred_total-r.pred_margin)/2)), 'pred_total': None if pd.isna(r.pred_total) else round(float(r.pred_total),1), 'total_line': None if pd.isna(r.total_line) else float(r.total_line), 'pred_margin': None if pd.isna(r.pred_margin) else round(float(r.pred_margin),1), 'spread': None if pd.isna(r.spread_line) else float(r.spread_line)} for r in hist.itertuples()]
 
 # confidence tiers (from walk-forward history of the final early model)
 hist_c = P_crunch.copy(); hist_c['conf'] = np.maximum(hist_c.p_home, 1-hist_c.p_home); hist_c['hit'] = ((hist_c.p_home>0.5)==(hist_c.home_win==1)) & hist_c.home_win.isin([0,1])
@@ -468,7 +535,7 @@ bundle = {
                     'Line movement and betting splits ("sharp money"): no free historical source of opening lines or bet percentages to learn from; movement is shown per game for context, the current line itself is the model input',
                     'Rest, travel, coaching tenure, rivalry: tested, did not improve walk-forward Brier, excluded from final model'],
  },
- 'score_metrics': score_metrics, 'ats_metrics': ats_metrics, 'edge_validation': edge_val,
+ 'score_metrics': score_metrics, 'ats_metrics': ats_metrics, 'edge_validation': edge_val, 'totals_validation': totals_val, 'clv': clv_summary(LOG, set(str(x) for x in F[F.played].game_id)),
  'live': {**live_meta, 'injuries_from_live': sum(inj_live_ok.values()), 'line_source_counts': {k: sum(1 for v in line_src.values() if v.startswith(k)) for k in ('ESPN','nflverse')}},
  'metrics': {'crunch': res_crunch, 'early': res_early, 'updated': res_upd, 'baseline': res_base,
              'holdout_2025_on': {}},
