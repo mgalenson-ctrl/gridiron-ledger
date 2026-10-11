@@ -21,13 +21,39 @@ os.makedirs(DIST, exist_ok=True)
 for f in os.listdir(STATIC):
     src = os.path.join(STATIC, f); dst = os.path.join(DIST, f)
     (shutil.copytree(src, dst, dirs_exist_ok=True) if os.path.isdir(src) else shutil.copy(src, dst))
+def _season(gid, gameday, fallback):
+    g = str(gid)
+    if len(g) > 5 and g[:4].isdigit() and g[4] == '_': return int(g[:4])
+    try: y, m = int(str(gameday)[:4]), int(str(gameday)[5:7]); return y if m >= 3 else y - 1
+    except Exception: return fallback
+def accuracy_records():
+    """Completed picks for the accuracy dashboard, both leagues.
+    live: the pick as locked before kickoff and graded once at FINAL ([league, season, week, result]); result 1 = correct,
+          0 = incorrect, null = tie (excluded). Games with no saved pregame pick, upcoming and in-progress games are not included.
+    bt:   walk-forward back-test (each game predicted by a model trained only on earlier weeks); ties marked null."""
+    out = {'live': [], 'bt': []}
+    for key in ('nfl', 'college'):
+        bp = os.path.join(ROOT, key, 'out', 'bundle.json')
+        if not os.path.exists(bp): continue
+        b = json.load(open(bp)); seen = set()
+        finals = [(a.get('game_id'), a) for a in b.get('archive') or []] + [(g.get('game_id'), g.get('final')) for g in b.get('games') or [] if g.get('final')]
+        for gid, f in finals:
+            if not f or not f.get('pick') or f.get('ungraded') or str(gid) in seen or f.get('week') is None: continue
+            seen.add(str(gid))
+            out['live'].append([key, _season(gid, f.get('gameday'), b.get('season')), int(f['week']), None if f.get('correct') is None else int(bool(f['correct']))])
+        for h in b.get('history') or []:
+            if h.get('home_win') is None or h.get('p_home') is None: continue
+            out['bt'].append([key, int(h['season']), int(h['week']), None if h['home_win'] == 0.5 else int((h['p_home'] > 0.5) == (h['home_win'] == 1))])
+    return out
+ACC = json.dumps(accuracy_records(), separators=(',', ':'))
+_ar = json.loads(ACC); print('accuracy records: live', len(_ar['live']), 'back-test', len(_ar['bt']))
 cards = []; built = 0
 for key, label, title in SPORTS:
     out = os.path.join(DIST, key); os.makedirs(out, exist_ok=True)
     bpath = os.path.join(ROOT, key, 'out', 'bundle.json'); tpl = open(os.path.join(ROOT, key, 'app_template.html')).read()
     if os.path.exists(bpath):
         b = json.load(open(bpath)); raw = json.dumps(b, separators=(',', ':')).replace('</', '<\\/')
-        page = head(title, '../') + tpl.replace('__BUNDLE__', raw) + FOOT + '</body></html>'
+        page = head(title, '../') + tpl.replace('__BUNDLE__', raw).replace('__ACCDATA__', ACC) + FOOT + '</body></html>'
         open(os.path.join(out, 'index.html'), 'w').write(page); built += 1
         top = sorted(b['games'], key=lambda g: -max(g['latest']['p_home'], 1 - g['latest']['p_home']))[:3]
         cards.append((key, label, f"Week {b['week']} · {len(b['games'])} games", b['generated_at'], [(g['latest']['pick'], max(g['latest']['p_home'], 1 - g['latest']['p_home'])) for g in top]))

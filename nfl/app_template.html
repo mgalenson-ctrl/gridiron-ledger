@@ -3,19 +3,25 @@
 <style>
 /* Layout: a scoreboard ledger. Single column on phones, two-column game detail on desktop. Ink on paper-grey with a turf-green accent; probabilities set in mono. */
 :root{
-  --bg:#f3f3ef; --surface:#ffffff; --line:#d9dad3; --fg:#17201b; --muted:#5e665f;
-  --accent:#1f7a4d; --accent-fg:#ffffff; --accent-soft:#dcefe3;
-  --warn:#9a6200; --warn-soft:#fbefd6; --away:#3a5aa8; --home:#1f7a4d;
-  --done-bg:#e9eae4; --done-chip:#f6f6f2;
+  --bg:#f1f4ee; --surface:#ffffff; --line:#dbe2d4; --fg:#142014; --muted:#5a6857;
+  --accent:#1f7d35; --accent-fg:#ffffff; --accent-soft:#dcf2dd;
+  --warn:#a35c00; --warn-soft:#fdeed6; --away:#2f5bd3; --home:#1f7d35;
+  --done-bg:#e6ebe1; --done-chip:#f4f6f1;
+  --hdr-bg:repeating-linear-gradient(90deg,#2c7a34 0 38px,#2f8438 38px 76px); --hdr-fg:#ffffff; --hdr-sub:rgba(255,255,255,.86); --hdr-acc:#ffffff; --hdr-edge:#ffffff; --hdr-shadow:0 3px 0 #2c7a34;
+  --card-shadow:0 1px 2px rgba(0,0,0,.06),0 4px 14px rgba(0,0,0,.06);
   --display:"Archivo",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
   color-scheme:light;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#121613; --surface:#1b211c; --line:#2d352f; --fg:#e8ebe6; --muted:#9aa49c;
-  --accent:#4fbf85; --accent-fg:#0f1711; --accent-soft:#1d3528; --warn:#e2a83c; --warn-soft:#3a2d12; --away:#8aa3e6; --home:#4fbf85; --done-bg:#161a17; --done-chip:#222823; color-scheme:dark}}
+  --bg:#17111f; --surface:#221a2e; --line:#3a2e4a; --fg:#f7eef6; --muted:#b3a3bb;
+  --accent:#ff7a59; --accent-fg:#1a0f14; --accent-soft:#3d2228; --warn:#ffd166; --warn-soft:#3a3018; --away:#7cc4ff; --home:#ff7a59; --done-bg:#1b1424; --done-chip:#2a2036;
+  --hdr-bg:linear-gradient(120deg,#5b1f5e,#c2405a 60%,#f07a45); --hdr-fg:#ffffff; --hdr-sub:rgba(255,255,255,.82); --hdr-acc:#ffd166; --hdr-edge:transparent; --hdr-shadow:0 2px 14px rgba(0,0,0,.35);
+  --card-shadow:0 6px 20px rgba(0,0,0,.35); color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#121613; --surface:#1b211c; --line:#2d352f; --fg:#e8ebe6; --muted:#9aa49c;
-  --accent:#4fbf85; --accent-fg:#0f1711; --accent-soft:#1d3528; --warn:#e2a83c; --warn-soft:#3a2d12; --away:#8aa3e6; --home:#4fbf85; --done-bg:#161a17; --done-chip:#222823; color-scheme:dark}
+  --bg:#17111f; --surface:#221a2e; --line:#3a2e4a; --fg:#f7eef6; --muted:#b3a3bb;
+  --accent:#ff7a59; --accent-fg:#1a0f14; --accent-soft:#3d2228; --warn:#ffd166; --warn-soft:#3a3018; --away:#7cc4ff; --home:#ff7a59; --done-bg:#1b1424; --done-chip:#2a2036;
+  --hdr-bg:linear-gradient(120deg,#5b1f5e,#c2405a 60%,#f07a45); --hdr-fg:#ffffff; --hdr-sub:rgba(255,255,255,.82); --hdr-acc:#ffd166; --hdr-edge:transparent; --hdr-shadow:0 2px 14px rgba(0,0,0,.35);
+  --card-shadow:0 6px 20px rgba(0,0,0,.35); color-scheme:dark}
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--fg);font-family:var(--display);font-size:15px;line-height:1.45;margin:0}
 .wrap{max-width:980px;margin:0 auto;padding-inline:16px;padding-block:0 48px}
@@ -76,6 +82,25 @@ th:first-child,td:first-child{text-align:left;white-space:normal}
 th{font-weight:600;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.04em}
 .tscroll{overflow-x:auto}
 td.better{color:var(--accent);font-weight:600}
+details.accdash{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:4px 0 12px}
+details.accdash>summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+details.accdash>summary::-webkit-details-marker{display:none}
+details.accdash>summary h2{margin:0;font-size:17px}
+details.accdash>summary .head{font-family:var(--mono);font-size:13px}
+.accf{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:10px 0}
+.accf label{display:flex;flex-direction:column;font-family:var(--mono);font-size:11px;color:var(--muted);gap:2px}
+.accf select{font:inherit;font-size:16px;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:5px 4px;min-width:0;width:100%}
+@media (max-width:520px){.accf{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.acct{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
+.acct .tile{padding:10px}
+.acct .tile.big{grid-column:1/-1;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.acct .tile.big .v{font-size:34px}
+.acct .tile.off{opacity:.45}
+.acctrend{margin:10px 0 2px;display:grid;gap:4px}
+.acctrend .r{display:grid;grid-template-columns:6.5em 1fr 7em;gap:8px;align-items:center;font-family:var(--mono);font-size:12px}
+.acctrend .bar{height:10px;background:var(--line);border-radius:5px;overflow:hidden}
+.acctrend .bar i{display:block;height:100%;background:var(--accent);border-radius:5px}
+.accnote{font-family:var(--mono);font-size:11px;color:var(--muted);margin:8px 0 0}
 .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
 .tile{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px}
 .tile .k{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
@@ -129,10 +154,25 @@ details.pick[open] .hint{display:none}
 .chip.warn{border-color:var(--warn);color:var(--warn)}
 .legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--muted);margin:14px 0 4px}
 @media(prefers-reduced-motion:no-preference){.card,details.pick{transition:border-color .15s}.card:hover,details.pick:hover{border-color:var(--accent)}}
+/* Theme: Gameday Turf (light) / Sunset (dark) */
+header.top{background:var(--hdr-bg);border-bottom:4px solid var(--hdr-edge);box-shadow:var(--hdr-shadow);margin-inline:-16px;padding-inline:16px}
+.brand h1{color:var(--hdr-fg);text-transform:uppercase;letter-spacing:.04em;font-size:23px}
+.brand .wk,#qmsg,.brand h1 .muted{color:var(--hdr-sub)}
+nav.tabs button{color:var(--hdr-sub)} nav.tabs button[aria-selected="true"]{color:var(--hdr-fg);border-bottom-color:var(--hdr-acc)}
+nav.tabs button:focus-visible{outline-color:var(--hdr-fg)}
+.searchbar input{border-color:transparent}
+.searchbar input:focus{outline-color:var(--hdr-acc)}
+details.pick,.card,details.accdash,.tile{border-radius:12px}
+details.pick,.card,details.accdash{box-shadow:var(--card-shadow)}
+details.pick{border-left:5px solid var(--accent)}
+details.pick.done{border-left-color:var(--line)}
+.pick .meter{height:6px;border-radius:3px} .pick .conf .p{font-weight:600}
+.brandr{display:inline-flex;align-items:center}
+.themebtn{font:inherit;font-family:var(--mono);font-size:12px;color:var(--hdr-fg);background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:3px 10px;cursor:pointer;margin-left:8px}
 </style>
 <div class="wrap">
 <header class="top">
-  <div class="brand"><h1>Hunch vs. Crunch</h1><span class="wk" id="wkLabel"></span></div>
+  <div class="brand"><h1>Hunch vs. Crunch</h1><span class="brandr"><span class="wk" id="wkLabel"></span><button type="button" class="themebtn" id="themeBtn" aria-label="Color theme">◐ Auto</button></span></div>
   <nav class="tabs" role="tablist" id="tabs">
     <button role="tab" data-tab="week" aria-selected="true">Picks</button>
     <button role="tab" data-tab="results">Results</button>
@@ -148,6 +188,7 @@ details.pick[open] .hint{display:none}
 <section role="tabpanel" id="tab-about" hidden></section>
 </div>
 <script id="bundle" type="application/json">__BUNDLE__</script>
+<script type="application/json" id="accdata">__ACCDATA__</script>
 <script>
 const B = JSON.parse(document.getElementById('bundle').textContent);
 const $ = s => document.querySelector(s);
@@ -343,6 +384,71 @@ function archiveBlock(){ const A=(B.archive||[]); if(!A.length) return '';
   const byW={}; A.forEach(a=>{ (byW[a.week] ||= []).push(a); });
   return `<details class="arch"><summary>Earlier weeks (${A.length} game${A.length===1?"":"s"}, picks as locked at kickoff)</summary>${Object.keys(byW).sort((a,b)=>b-a).map(w=>{ const r=byW[w], c=r.filter(a=>a.correct===true).length, n=r.filter(a=>a.correct!=null).length;
     return `<div class="day">Week ${w} · ${c}–${n-c}</div>${r.map(a=>`<div class="res done" data-teams="${esc(teamKey(a.home,a.away))}"><span>${resMark(a)}</span><span>${esc(a.pick)} ${pct(a.p_pick)} <span class="muted">· final ${esc(a.away)} ${a.away_score} – ${esc(a.home)} ${a.home_score}${a.proj&&a.proj[0]!=null?` · proj ${a.proj[0]}–${a.proj[1]}`:''}</span></span><span class="mono muted">${a.ats_correct!=null?`ATS ${a.ats_correct?'✓':'✗'}`:''}</span><span class="mono muted">${a.ou_correct!=null?`O/U ${a.ou_correct?'✓':'✗'}`:''}</span></div>`).join('')}`; }).join('')}</details>`; }
+/* ---------- model accuracy dashboard (completed games only; both leagues) ---------- */
+let ACC = {live:[], bt:[]};
+try{ ACC = JSON.parse(document.getElementById('accdata').textContent); }catch(e){ ACC = null; }
+const LG_NAME = {nfl:'NFL', college:'College'};
+function accState(){
+  if(!state.acc){ state.acc = {lg:'all', src:'live', season:null, wk:'all', open:true};
+    try{ const s=JSON.parse(localStorage.getItem('gl.acc')||'null'); if(s) Object.assign(state.acc, s); }catch(e){} }
+  return state.acc;
+}
+function accSave(){ try{ localStorage.setItem('gl.acc', JSON.stringify(state.acc)); }catch(e){} }
+function accTally(rows){ let w=0,l=0,t=0; rows.forEach(r=>{ if(r[3]===1) w++; else if(r[3]===0) l++; else t++; }); return {w,l,t,n:w+l,p:(w+l)?w/(w+l):null}; }
+function accDash(){
+  if(!ACC) return '';
+  const a = accState(), all = ACC[a.src]||[];
+  const seasons = [...new Set(all.map(r=>r[1]))].sort((x,y)=>y-x);
+  if(!seasons.includes(a.season)) a.season = seasons[0] ?? null;
+  const inSeason = all.filter(r=>r[1]===a.season);
+  const byLg = inSeason.filter(r=>a.lg==='all'||r[0]===a.lg);
+  const weeks = [...new Set(byLg.map(r=>r[2]))].sort((x,y)=>x-y);
+  if(a.wk!=='all' && !weeks.includes(+a.wk)) a.wk='all';
+  const wkOk = r => a.wk==='all' || r[2]===+a.wk;
+  const rows = byLg.filter(wkOk), T = accTally(rows);
+  const lgT = k => accTally(inSeason.filter(r=>r[0]===k && wkOk(r)));
+  const P = x => x==null ? '—' : (100*x).toFixed(1)+'%';
+  const opt = (v,l,cur) => `<option value="${v}" ${String(v)===String(cur)?'selected':''}>${l}</option>`;
+  const lgTile = k => { const t=lgT(k), off = a.lg!=='all' && a.lg!==k;
+    return `<div class="tile${off?' off':''}"><div class="k">${LG_NAME[k]} accuracy</div><div class="v">${off?'—':P(t.p)}</div><div class="s">${off?'filtered out':`${t.w}–${t.l}${t.t?` · ${t.t} tie${t.t>1?'s':''} excluded`:''}`}</div></div>`; };
+  const lgs = a.lg==='all' ? ['nfl','college'] : [a.lg];
+  const tr = []; lgs.forEach(k=>{ [...new Set(byLg.filter(r=>r[0]===k).map(r=>r[2]))].sort((x,y)=>x-y).forEach(w=>{ const t=accTally(byLg.filter(r=>r[0]===k&&r[2]===w)); if(t.n) tr.push([k,w,t]); }); });
+  const trend = a.wk==='all' && tr.length>1 ? `<div class="acctrend">${tr.map(([k,w,t])=>`<div class="r"><span>${a.lg==='all'?(k==='nfl'?'NFL':'CFB')+' wk ':'Week '}${w}</span><span class="bar"><i style="width:${(100*t.p).toFixed(1)}%"></i></span><span>${t.w}–${t.l} · ${Math.round(100*t.p)}%</span></div>`).join('')}</div>` : '';
+  const srcNote = a.src==='live'
+    ? 'Live picks: the model’s pick as locked before kickoff, graded once when the game went final. Earlier predictions are never recalculated.'
+    : 'Back-test: each game was predicted by a model trained only on games before that week (walk-forward). Not picks published at the time.';
+  const head = T.n ? `${T.w}–${T.l} · ${P(T.p)}` : 'no completed games yet';
+  return `<details class="accdash" id="accdash" ${a.open?'open':''}><summary><h2>Model accuracy</h2><span class="head">${head}</span></summary>
+  <div class="accf">
+    <label>League<select id="accLg">${opt('all','All',a.lg)}${opt('nfl','NFL',a.lg)}${opt('college','College',a.lg)}</select></label>
+    <label>Picks<select id="accSrc">${opt('live','Live (locked)',a.src)}${opt('bt','Back-test',a.src)}</select></label>
+    <label>Season<select id="accSeason">${seasons.length?seasons.map(s=>opt(s,s,a.season)).join(''):opt('', '—', '')}</select></label>
+    <label>Week<select id="accWk">${opt('all','All',a.wk)}${weeks.map(w=>opt(w,'Week '+w,a.wk)).join('')}</select></label>
+  </div>
+  ${T.n ? `<div class="acct">
+    <div class="tile big"><div><div class="k">Overall accuracy</div><div class="v">${P(T.p)}</div></div><div class="s">${T.n} completed pick${T.n===1?'':'s'}${a.lg==='all'?' · NFL + College':' · '+LG_NAME[a.lg]}${a.wk==='all'?'':' · Week '+a.wk} · ${a.season}</div></div>
+    <div class="tile"><div class="k">Correct picks</div><div class="v">✅ ${T.w}</div></div>
+    <div class="tile"><div class="k">Incorrect picks</div><div class="v">❌ ${T.l}</div></div>
+    ${lgTile('nfl')}${lgTile('college')}
+  </div>${trend}` : `<p class="muted">No completed games for this selection yet. Picks are counted once a game is final.</p>`}
+  <p class="accnote">Accuracy = correct picks ÷ completed picks × 100. Upcoming and in-progress games are not counted; ties${T.t?` (${T.t} here)`:''} and canceled games are excluded.${a.lg==='all'&&a.wk!=='all'?' Week numbers follow each league’s own schedule.':''} ${srcNote}</p></details>`;
+}
+function accRefresh(){ const el=document.getElementById('accdash'); if(!el) return; el.outerHTML = accDash(); }
+document.addEventListener('change', e=>{ const id=e.target.id, a=accState(); if(!['accLg','accSrc','accSeason','accWk'].includes(id)) return;
+  if(id==='accLg'){ a.lg=e.target.value; a.wk='all'; }
+  if(id==='accSrc'){ a.src=e.target.value; a.season=null; a.wk='all'; }
+  if(id==='accSeason'){ a.season=+e.target.value; a.wk='all'; }
+  if(id==='accWk'){ a.wk=e.target.value; }
+  e.stopPropagation(); accSave(); accRefresh(); }, true);
+document.addEventListener('toggle', e=>{ if(e.target.id==='accdash'){ accState().open=e.target.open; accSave(); } }, true);
+
+/* ---------- theme toggle: Auto (follows iPhone) / Light (Turf) / Dark (Sunset) ---------- */
+function applyTheme(t){ const r=document.documentElement; if(t==='light'||t==='dark') r.dataset.theme=t; else delete r.dataset.theme;
+  const b=document.getElementById('themeBtn'); if(b) b.textContent = t==='light'?'☀︎ Light':t==='dark'?'☾ Dark':'◐ Auto'; }
+let THEME='auto'; try{ THEME=localStorage.getItem('gl.theme')||'auto'; }catch(e){}
+applyTheme(THEME);
+document.getElementById('themeBtn').addEventListener('click',()=>{ THEME = THEME==='auto'?'light':THEME==='light'?'dark':'auto'; try{localStorage.setItem('gl.theme',THEME)}catch(e){} applyTheme(THEME); });
+
 /* ---------- team search ---------- */
 const TEAM_NAMES = {"ARI": "Arizona Cardinals", "ATL": "Atlanta Falcons", "BAL": "Baltimore Ravens", "BUF": "Buffalo Bills", "CAR": "Carolina Panthers", "CHI": "Chicago Bears", "CIN": "Cincinnati Bengals", "CLE": "Cleveland Browns", "DAL": "Dallas Cowboys", "DEN": "Denver Broncos", "DET": "Detroit Lions", "GB": "Green Bay Packers", "HOU": "Houston Texans", "IND": "Indianapolis Colts", "JAX": "Jacksonville Jaguars", "KC": "Kansas City Chiefs", "LA": "Los Angeles Rams", "LAR": "Los Angeles Rams", "LAC": "Los Angeles Chargers", "LV": "Las Vegas Raiders", "MIA": "Miami Dolphins", "MIN": "Minnesota Vikings", "NE": "New England Patriots Pats", "NO": "New Orleans Saints", "NYG": "New York Giants", "NYJ": "New York Jets", "PHI": "Philadelphia Eagles", "PIT": "Pittsburgh Steelers", "SEA": "Seattle Seahawks", "SF": "San Francisco 49ers Niners", "TB": "Tampa Bay Buccaneers Bucs", "TEN": "Tennessee Titans", "WAS": "Washington Commanders"};
 const teamKey = (...ts) => ts.filter(Boolean).map(t => `${t} ${TEAM_NAMES[t]||''}`).join(' ').toLowerCase();
@@ -375,7 +481,7 @@ function renderWeek(){
   const el = $('#tab-week');
   if(state.game){ el.innerHTML = renderDetail(B.games.find(g=>String(g.game_id)===String(state.game))); return; }
   const inj = B.data.injuries_available_for_week;
-  let html = `<div class="status"><span><span class="dot"></span>${B.live&&B.live.fetched_at?`Lines &amp; injuries checked ${ago(B.live.fetched_at)}`:'Live lines unavailable this run'}</span><span>· ${B.games.filter(g=>g.latest_type==='crunch').length} of ${B.games.length} picks use the current line</span><span>· forecasts applied to ${B.games.filter(g=>g.weather&&g.weather.status==='forecast').length} outdoor games</span><span>· updates hourly on game days</span>${weekRecord()}</div>`;
+  let html = accDash() + `<div class="status"><span><span class="dot"></span>${B.live&&B.live.fetched_at?`Lines &amp; injuries checked ${ago(B.live.fetched_at)}`:'Live lines unavailable this run'}</span><span>· ${B.games.filter(g=>g.latest_type==='crunch').length} of ${B.games.length} picks use the current line</span><span>· forecasts applied to ${B.games.filter(g=>g.weather&&g.weather.status==='forecast').length} outdoor games</span><span>· updates hourly on game days</span>${weekRecord()}</div>`;
   const byDay = {};
   B.games.forEach(g=>{ (byDay[g.gameday] ||= []).push(g); });
   Object.keys(byDay).sort().forEach(d=>{
