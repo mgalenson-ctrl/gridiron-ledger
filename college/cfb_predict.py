@@ -81,9 +81,11 @@ for idx, row in F[(F.season==cur_season)&(F.week==cur_week)].iterrows():
         wx_note[row.game_id] = {'status': (fc or {}).get('status','unavailable'), 'summary':'Forecast unavailable; weather inputs imputed with training medians.'}
 # ---------------------------------------------------------------- live lines (ESPN scoreboard): current spread, opening spread, moneyline
 LIVE = {}; live_meta = {'fetched_at': None, 'n_with_odds': 0, 'errors': []}
+STATUS = {}
 if os.path.exists(f'{OUT}/live.json'):
     lj = json.load(open(f'{OUT}/live.json'))
     if (datetime.now(timezone.utc) - datetime.fromisoformat(lj['fetched_at'])).total_seconds()/3600 <= 3:
+        STATUS = lj.get('status', {}) or {}
         LIVE = lj.get('games', {}); live_meta = {k: lj.get(k) for k in ('fetched_at','n_with_odds','errors','source')}
 LINE_HIST = json.load(open(f'{OUT}/line_history.json')) if os.path.exists(f'{OUT}/line_history.json') else {}
 line_src = {}
@@ -311,6 +313,33 @@ def edge_validation(PSv, P_main, line_col, sign, ml_cols=None):
                             for t in (0, .02, .03, .05)]
     return out
 
+# ---------------------------------------------------------------- grading finished games against the LOCKED pregame pick (never recomputed)
+def grade_entry(entry, home, away, hs, as_, source, meta):
+    """Grade once; later runs only refresh the score (e.g. an official correction) and keep the original pick."""
+    prev = entry.get('final') or {}
+    fz = entry.get('frozen') or {}
+    if prev.get('pick'):
+        pick, p_pick, ats, ou = prev['pick'], prev.get('p_pick'), prev.get('ats'), prev.get('ou')
+    elif fz.get('latest'):
+        L = fz['latest']; pick = L['pick']; p_pick = round(max(L['p_home'], 1 - L['p_home']), 4); ats = fz.get('ats'); ou = fz.get('ou')
+    elif entry.get('runs'):
+        r = entry['runs'][-1]; ph = r.get('p_crunch') if r.get('p_crunch') is not None else r['p_home']
+        pick = home if ph >= 0.5 else away; p_pick = round(max(ph, 1 - ph), 4); ats = ou = None
+    else:
+        return None
+    winner = home if hs > as_ else (away if as_ > hs else None)
+    out = {**meta, 'home': home, 'away': away, 'home_score': int(hs), 'away_score': int(as_), 'source': source,
+           'pick': pick, 'p_pick': p_pick, 'winner': winner, 'correct': None if winner is None else bool(pick == winner),
+           'ats': ats, 'ou': ou, 'graded_at': prev.get('graded_at', now)}
+    if ats and ats.get('team') is not None and ats.get('line') is not None:
+        m = (hs - as_) if ats['team'] == home else (as_ - hs)
+        out['ats_correct'] = None if m + ats['line'] == 0 else bool(m + ats['line'] > 0)
+    if ou and ou.get('line') is not None:
+        t = hs + as_
+        out['ou_correct'] = None if t == ou['line'] else bool((t > ou['line']) == (ou['pick'] == 'Over'))
+    entry['final'] = out
+    return out
+
 def KICKOFF(row):
     try: return pd.Timestamp(row.start_utc).tz_convert('UTC').to_pydatetime()
     except Exception: return None
@@ -411,7 +440,32 @@ for idx, row in wk.iterrows():
     else:
         _entry['frozen'] = {k: v for k, v in rec.items() if k not in ('runs', 'early_first')}
         rec['locked'] = False; rec['locked_note'] = None
+    _st = STATUS.get(str(row.game_id)) or {}
+    rec['final'] = None; rec['live_state'] = None
+    _hs = _as = _src = None
+    if bool(row.played) and pd.notna(row.home_score): _hs, _as, _src = row.home_score, row.away_score, 'official box score'
+    elif _st.get('completed') and _st.get('home_score') is not None and _st.get('away_score') is not None: _hs, _as, _src = _st['home_score'], _st['away_score'], 'ESPN final'
+    if _hs is not None and rec.get('locked'):
+        rec['final'] = grade_entry(LOG[str(row.game_id)], row.home_team, row.away_team, _hs, _as, _src,
+                                   {'week': int(row.week), 'gameday': rec['gameday'], 'proj': [rec['score']['away'], rec['score']['home']]})
+        if rec['final'] is None:   # finished, but no pregame prediction was saved for it: show the score, don't grade
+            rec['final'] = {'home_score': int(_hs), 'away_score': int(_as), 'source': _src, 'correct': None, 'ungraded': True}
+    elif _st.get('state') == 'in':
+        rec['live_state'] = {'detail': _st.get('detail'), 'home_score': _st.get('home_score'), 'away_score': _st.get('away_score')}
     games_out.append(rec)
+# earlier weeks: grade any logged game that has finished (e.g. Monday night after the week rolled over), then list them
+_cur = set(str(g) for g in wk.game_id)
+_played = F[F.played & (F.season == cur_season)].set_index(F[F.played & (F.season == cur_season)].game_id.astype(str))
+archive = []
+for _gid, _e in LOG.items():
+    if str(_gid) in _cur: continue
+    if not (_e.get('final') or {}).get('pick') and str(_gid) in _played.index:
+        _r = _played.loc[str(_gid)]
+        grade_entry(_e, _r.home_team, _r.away_team, _r.home_score, _r.away_score, 'official box score',
+                    {'week': int(_r.week), 'gameday': str(pd.Timestamp(_r.gameday).date()) if 'gameday' in _r else None, 'proj': (_e.get('frozen') or {}).get('score', {}).get('away') and [(_e['frozen']['score']['away']), (_e['frozen']['score']['home'])]})
+    _f = _e.get('final')
+    if _f and _f.get('pick') and str(_gid) in _played.index: archive.append({'game_id': str(_gid), **_f})
+archive.sort(key=lambda a: (-(a.get('week') or 0), a.get('gameday') or ''))
 json.dump(LOG, open(LOG_PATH,'w'), indent=0, default=float)
 
 # ---------------------------------------------------------------- history for dashboard: walk-forward preds of final early model
@@ -465,7 +519,7 @@ bundle = {
                     'Crowd/attendance/home-fan share (no verified feed)', 'Playoff stakes / announced resting of starters (no verified feed)',
                     'Non-QB player production stats: already captured by team efficiency metrics'],
  },
- 'score_metrics': score_metrics, 'ats_metrics': ats_metrics, 'edge_validation': edge_val, 'totals_validation': totals_val, 'preseason_test': PRESEASON_TEST, 'clv': clv_summary(LOG, set(str(x) for x in F[F.played].game_id)),
+ 'score_metrics': score_metrics, 'ats_metrics': ats_metrics, 'edge_validation': edge_val, 'totals_validation': totals_val, 'preseason_test': PRESEASON_TEST, 'archive': archive, 'clv': clv_summary(LOG, set(str(x) for x in F[F.played].game_id)),
  'live': {**live_meta, 'line_source_counts': {k: sum(1 for v in line_src.values() if v.startswith(k)) for k in ('ESPN','CFBD')}},
  'metrics': {'crunch': res_crunch, 'early': res_early, 'updated': res_upd, 'baseline': res_base,
              'holdout_2025_on': {}},

@@ -6,15 +6,16 @@
   --bg:#f3f3ef; --surface:#ffffff; --line:#d9dad3; --fg:#17201b; --muted:#5e665f;
   --accent:#1f7a4d; --accent-fg:#ffffff; --accent-soft:#dcefe3;
   --warn:#9a6200; --warn-soft:#fbefd6; --away:#3a5aa8; --home:#1f7a4d;
+  --done-bg:#e9eae4; --done-chip:#f6f6f2;
   --display:"Archivo",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
   color-scheme:light;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --bg:#121613; --surface:#1b211c; --line:#2d352f; --fg:#e8ebe6; --muted:#9aa49c;
-  --accent:#4fbf85; --accent-fg:#0f1711; --accent-soft:#1d3528; --warn:#e2a83c; --warn-soft:#3a2d12; --away:#8aa3e6; --home:#4fbf85; color-scheme:dark}}
+  --accent:#4fbf85; --accent-fg:#0f1711; --accent-soft:#1d3528; --warn:#e2a83c; --warn-soft:#3a2d12; --away:#8aa3e6; --home:#4fbf85; --done-bg:#161a17; --done-chip:#222823; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#121613; --surface:#1b211c; --line:#2d352f; --fg:#e8ebe6; --muted:#9aa49c;
-  --accent:#4fbf85; --accent-fg:#0f1711; --accent-soft:#1d3528; --warn:#e2a83c; --warn-soft:#3a2d12; --away:#8aa3e6; --home:#4fbf85; color-scheme:dark}
+  --accent:#4fbf85; --accent-fg:#0f1711; --accent-soft:#1d3528; --warn:#e2a83c; --warn-soft:#3a2d12; --away:#8aa3e6; --home:#4fbf85; --done-bg:#161a17; --done-chip:#222823; color-scheme:dark}
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--fg);font-family:var(--display);font-size:15px;line-height:1.45;margin:0}
 .wrap{max-width:980px;margin:0 auto;padding-inline:16px;padding-block:0 48px}
@@ -22,6 +23,10 @@ header.top{position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg)
 .brand{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .brand h1{font-size:22px;margin:0;letter-spacing:-.01em;font-weight:700;font-stretch:87.5%}
 .brand .wk{font-family:var(--mono);font-size:13px;color:var(--muted)}
+.searchbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 0 10px}
+.searchbar input{flex:1;min-width:200px;font:inherit;font-size:16px;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--fg)}
+.searchbar input:focus{outline:2px solid var(--accent);outline-offset:0}
+#qmsg{font-size:12px}
 nav.tabs{display:flex;gap:4px;overflow-x:auto;margin-top:10px;scrollbar-width:none}
 nav.tabs button{background:none;border:0;border-bottom:3px solid transparent;padding:8px 10px;font:inherit;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap}
 nav.tabs button[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--accent)}
@@ -89,6 +94,12 @@ ul{padding-left:20px;max-width:70ch}
 .status .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);display:inline-block;margin-right:4px}
 .picks{display:grid;grid-template-columns:1fr;gap:8px}
 @media(min-width:720px){.picks{grid-template-columns:1fr 1fr}}
+details.pick.done{background:var(--done-bg);border-color:var(--line)}
+details.pick.done .winner{color:var(--muted)}
+.chip.final{background:var(--done-chip);border-color:var(--line);font-weight:600}
+.res.done{grid-template-columns:auto 1fr auto auto}
+details.arch{margin-top:14px;border:1px solid var(--line);border-radius:10px;padding:8px 12px;background:var(--done-bg)}
+details.arch>summary{cursor:pointer;font-weight:600}
 details.pick{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:0;overflow:hidden}
 details.pick>summary{display:grid;grid-template-columns:1fr auto;grid-template-areas:"main conf" "meter meter" "meta meta";gap:4px 12px;align-items:center;padding:12px 14px;cursor:pointer;list-style:none}
 details.pick>summary::-webkit-details-marker{display:none}
@@ -128,6 +139,7 @@ details.pick[open] .hint{display:none}
     <button role="tab" data-tab="model">Model performance</button>
     <button role="tab" data-tab="about">Method &amp; data</button>
   </nav>
+  <div class="searchbar"><input type="search" id="q" placeholder="Search team: Bears, CHI, Ohio State…" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Search by team"><span id="qmsg" class="mono muted"></span></div>
 </header>
 <div class="fresh" id="fresh"></div>
 <section role="tabpanel" id="tab-week"></section>
@@ -321,6 +333,30 @@ function totalsRecord(){ const V=B.totals_validation; if(!V) return ''; const f=
   <div class="tscroll"><table><thead><tr><th>Model said</th><th>Checks</th><th>Predicted</th><th>Went over (95% range)</th></tr></thead><tbody>${V.calibration.map(c=>`<tr><td>${pct(c.lo)}–${pct(c.hi)}</td><td>${c.n}</td><td>${pct(c.pred)}</td><td>${pct(c.actual)} <span class="muted mono">(${wilson(c.actual,c.n)})</span></td></tr>`).join('')}</tbody></table></div>
   <div class="tscroll"><table><thead><tr><th>Model chance on its side</th><th>Games</th><th>Hit (95% range)</th></tr></thead><tbody>${V.main_line.map(m=>`<tr><td>${pct(m.min_p)} or more</td><td>${m.n}</td><td class="${m.hit_rate!=null&&m.hit_rate>=0.5238?'better':''}">${f(m.hit_rate)} <span class="muted mono">(${wilson(m.hit_rate||0,m.n)})</span></td></tr>`).join('')}</tbody></table></div>
   <p class="mono muted">The 95% range is where the true rate plausibly sits given the sample size. If it includes 52.4%, the result can't be told apart from break-even.</p>`; }
+/* ---------- completed games ---------- */
+const resMark = f => f.ungraded?'':(f.correct===true?'✅':(f.correct===false?'❌':'➖'));
+function finalChip(g){ const f=g.final; if(!f) return g.live_state?`<span class="chip warn">Live${g.live_state.away_score!=null?`: ${g.away} ${g.live_state.away_score} – ${g.home} ${g.live_state.home_score}`:''}${g.live_state.detail?` · ${esc(g.live_state.detail)}`:''}</span>`:'';
+  const x=[]; if(f.ats_correct!=null) x.push(`spread ${f.ats_correct?'✓':'✗'}`); if(f.ou_correct!=null) x.push(`total ${f.ou_correct?'✓':'✗'}`);
+  return `<span class="chip final">Final: ${g.away} ${f.away_score} – ${g.home} ${f.home_score}</span>${x.length?`<span class="chip">${x.join(' · ')}</span>`:''}`; }
+function weekRecord(){ const fs=B.games.map(g=>g.final).filter(f=>f&&f.correct!=null); if(!fs.length) return ''; const w=fs.filter(f=>f.correct).length; return `<span>· this week ${w}–${fs.length-w}</span>`; }
+function archiveBlock(){ const A=(B.archive||[]); if(!A.length) return '';
+  const byW={}; A.forEach(a=>{ (byW[a.week] ||= []).push(a); });
+  return `<details class="arch"><summary>Earlier weeks (${A.length} game${A.length===1?"":"s"}, picks as locked at kickoff)</summary>${Object.keys(byW).sort((a,b)=>b-a).map(w=>{ const r=byW[w], c=r.filter(a=>a.correct===true).length, n=r.filter(a=>a.correct!=null).length;
+    return `<div class="day">Week ${w} · ${c}–${n-c}</div>${r.map(a=>`<div class="res done" data-teams="${esc(teamKey(a.home,a.away))}"><span>${resMark(a)}</span><span>${esc(a.pick)} ${pct(a.p_pick)} <span class="muted">· final ${esc(a.away)} ${a.away_score} – ${esc(a.home)} ${a.home_score}${a.proj&&a.proj[0]!=null?` · proj ${a.proj[0]}–${a.proj[1]}`:''}</span></span><span class="mono muted">${a.ats_correct!=null?`ATS ${a.ats_correct?'✓':'✗'}`:''}</span><span class="mono muted">${a.ou_correct!=null?`O/U ${a.ou_correct?'✓':'✗'}`:''}</span></div>`).join('')}`; }).join('')}</details>`; }
+/* ---------- team search ---------- */
+const TEAM_NAMES = {"ARI": "Arizona Cardinals", "ATL": "Atlanta Falcons", "BAL": "Baltimore Ravens", "BUF": "Buffalo Bills", "CAR": "Carolina Panthers", "CHI": "Chicago Bears", "CIN": "Cincinnati Bengals", "CLE": "Cleveland Browns", "DAL": "Dallas Cowboys", "DEN": "Denver Broncos", "DET": "Detroit Lions", "GB": "Green Bay Packers", "HOU": "Houston Texans", "IND": "Indianapolis Colts", "JAX": "Jacksonville Jaguars", "KC": "Kansas City Chiefs", "LA": "Los Angeles Rams", "LAR": "Los Angeles Rams", "LAC": "Los Angeles Chargers", "LV": "Las Vegas Raiders", "MIA": "Miami Dolphins", "MIN": "Minnesota Vikings", "NE": "New England Patriots Pats", "NO": "New Orleans Saints", "NYG": "New York Giants", "NYJ": "New York Jets", "PHI": "Philadelphia Eagles", "PIT": "Pittsburgh Steelers", "SEA": "Seattle Seahawks", "SF": "San Francisco 49ers Niners", "TB": "Tampa Bay Buccaneers Bucs", "TEN": "Tennessee Titans", "WAS": "Washington Commanders"};
+const teamKey = (...ts) => ts.filter(Boolean).map(t => `${t} ${TEAM_NAMES[t]||''}`).join(' ').toLowerCase();
+const normQ = q => q.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').trim();
+function teamMatch(key, q){ if(!q) return true; const k=key.normalize('NFD').replace(/[̀-ͯ]/g,'');
+  return q.split(/\s+/).every(t => t.length<=3 ? new RegExp('(^|[^a-z0-9])'+t.replace(/[^a-z0-9]/g,'')).test(k) : k.includes(t)); }
+function applySearch(){ const q=normQ(state.q||''); let shown=0, total=0;
+  document.querySelectorAll('[data-teams]').forEach(el=>{ const ok=teamMatch(el.dataset.teams,q); el.hidden=!ok; total++; if(ok && el.closest('section') && !el.closest('section').hidden) shown++; });
+  document.querySelectorAll('section[role="tabpanel"] .day').forEach(d=>{ if(!q){ d.hidden=false; return; }
+    let n=d.nextElementSibling, vis=false; while(n && !n.classList.contains('day')){ if(n.matches('[data-teams]') ? !n.hidden : [...n.querySelectorAll('[data-teams]')].some(c=>!c.hidden)) { vis=true; break; } n=n.nextElementSibling; }
+    d.hidden=!vis; });
+  document.querySelectorAll('details.arch').forEach(a=>{ const any=[...a.querySelectorAll('[data-teams]')].some(c=>!c.hidden); a.hidden=!!q && !any; if(q && any) a.open=true; });
+  const m=document.getElementById('qmsg'); if(m) m.textContent = q ? (shown ? `${shown} game${shown===1?'':'s'} shown` : 'No games match. Try a city, nickname or abbreviation.') : '';
+}
 let state = {tab:'week', game:null};
 try{ const t=localStorage.getItem('gl.tab'); if(t) state.tab=t; }catch(e){}
 
@@ -339,7 +375,7 @@ function renderWeek(){
   const el = $('#tab-week');
   if(state.game){ el.innerHTML = renderDetail(B.games.find(g=>String(g.game_id)===String(state.game))); return; }
   const inj = B.data.injuries_available_for_week;
-  let html = `<div class="status"><span><span class="dot"></span>${B.live&&B.live.fetched_at?`Lines &amp; injuries checked ${ago(B.live.fetched_at)}`:'Live lines unavailable this run'}</span><span>· ${B.games.filter(g=>g.latest_type==='crunch').length} of ${B.games.length} picks use the current line</span><span>· forecasts applied to ${B.games.filter(g=>g.weather&&g.weather.status==='forecast').length} outdoor games</span><span>· updates hourly on game days</span></div>`;
+  let html = `<div class="status"><span><span class="dot"></span>${B.live&&B.live.fetched_at?`Lines &amp; injuries checked ${ago(B.live.fetched_at)}`:'Live lines unavailable this run'}</span><span>· ${B.games.filter(g=>g.latest_type==='crunch').length} of ${B.games.length} picks use the current line</span><span>· forecasts applied to ${B.games.filter(g=>g.weather&&g.weather.status==='forecast').length} outdoor games</span><span>· updates hourly on game days</span>${weekRecord()}</div>`;
   const byDay = {};
   B.games.forEach(g=>{ (byDay[g.gameday] ||= []).push(g); });
   Object.keys(byDay).sort().forEach(d=>{
@@ -348,10 +384,11 @@ function renderWeek(){
       const L = g.latest, p = L.p_home, pick = L.pick, loser = pick===g.home?g.away:g.home, conf = Math.max(p,1-p), tier = tierOf(conf);
       const flags = [];
       if(g.qb_flags.length) flags.push('<span class="chip warn">QB uncertain</span>');
-      if(g.locked) flags.unshift('<span class="chip">Locked at kickoff</span>');
+      if(g.locked && !g.final) flags.unshift('<span class="chip">Locked at kickoff</span>');
+      flags.unshift(finalChip(g));
       flags.push(lineChip(g), atsChip(g), ouChip(g), newsChip(g), statsChip(g));
-      html += `<details class="pick" id="d-${g.game_id}"><summary>
-        <div class="main"><div class="winner">${pick} <small>over ${loser}${pick===g.away?' (away)':''}</small></div><div class="hint">tap for why</div></div>
+      html += `<details class="pick${g.final?' done':''}" id="d-${g.game_id}" data-teams="${esc(teamKey(g.home,g.away)+' '+[g.home_conf,g.away_conf].filter(Boolean).join(' ').toLowerCase())}"><summary>
+        <div class="main"><div class="winner">${g.final?resMark(g.final)+' ':''}${pick} <small>over ${loser}${pick===g.away?' (away)':''}</small></div><div class="hint">${g.final?(g.final.ungraded?'not graded: no pregame pick was saved':'pregame pick · tap for why'):'tap for why'}</div></div>
         <div class="conf"><div class="p">${pct(conf)}</div><span class="tier ${tier.tier}">${tier.tier}</span></div>
         <div class="meter"><i style="width:${(conf-0.5)*200}%"></i></div>
         <div class="meta"><span>${fmtTime(g.gametime_et)}</span><span>${g.away} at ${g.home}</span><span class="chip">${g.score?`${g.away} ${g.score.away} – ${g.home} ${g.score.home}${g.score.adjusted?'*':''}`:''}</span>${wxChip(g)}${flags.join('')}</div>
@@ -359,6 +396,7 @@ function renderWeek(){
     });
     html += '</div>';
   });
+  html += archiveBlock();
   html += `<p class="mono muted" style="margin:10px 0 0">Reasons are written from the model's largest factor contributions for each game and quote the underlying numbers; they are not editorial opinions.</p><div class="legend">${B.confidence_tiers.map(t=>`<span><span class="tier ${t.tier}" style="padding:1px 7px;border-radius:999px;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase">${t.tier}</span> ${pct(t.lo)}–${pct(t.hi)} · hit ${pct(t.hit_rate)} of ${t.n} past picks</span>`).join('')}</div>
   <p class="mono muted" style="margin:6px 0 0">Confidence = model win probability of the pick. Hit rates are from walk-forward predictions, 2022–${B.season}. Tap a game for the reasons, matchup numbers and forecast.</p>`;
   el.innerHTML = html;
@@ -479,7 +517,7 @@ function renderResults(){
     wr.forEach(r=>{
       const pick = r.p_home>=0.5?r.home:r.away, conf = Math.max(r.p_home,1-r.p_home);
       const won = r.home_win===0.5?'tie':(((r.p_home>0.5)===(r.home_win===1))?'ok':'miss');
-      html += `<div class="res"><span class="${won}">${won==='ok'?'✓':won==='miss'?'✗':'='}</span><span>${r.away} ${r.away_score} at ${r.home} ${r.home_score}${atsMark(r)}${ouMark(r)}${r.pred_home!=null?` <span class="muted mono">(proj ${r.pred_away}–${r.pred_home})</span>`:''}</span><span class="mono">${pick} ${pct(conf)}</span><span class="mono muted">${r.mkt!=null?'mkt '+(r.mkt>=0.5?r.home:r.away)+' '+pct(Math.max(r.mkt,1-r.mkt)):''}</span></div>`;
+      html += `<div class="res" data-teams="${esc(teamKey(r.home,r.away))}"><span class="${won}">${won==='ok'?'✓':won==='miss'?'✗':'='}</span><span>${r.away} ${r.away_score} at ${r.home} ${r.home_score}${atsMark(r)}${ouMark(r)}${r.pred_home!=null?` <span class="muted mono">(proj ${r.pred_away}–${r.pred_home})</span>`:''}</span><span class="mono">${pick} ${pct(conf)}</span><span class="mono muted">${r.mkt!=null?'mkt '+(r.mkt>=0.5?r.home:r.away)+' '+pct(Math.max(r.mkt,1-r.mkt)):''}</span></div>`;
     });
   });
   el.innerHTML = html;
@@ -567,5 +605,9 @@ function renderAbout(){
     <p>Every prediction run writes an immutable snapshot (model version, input hash, every input value, every probability, coefficients) to <span class="mono">out/snapshots/</span> alongside this app's data bundle. The input hash shown on each game ties the displayed probability to that snapshot. Nothing in this page is sample data; where a value is missing it is labeled as such.</p>`;
 }
 
+{ const _rw=renderWeek, _rr=renderResults, _st=showTab; renderWeek=function(){ _rw(); applySearch(); }; renderResults=function(){ _rr(); applySearch(); }; showTab=function(t){ _st(t); applySearch(); }; }
 renderWeek(); renderResults(); renderModel(); renderAbout(); showTab(state.tab);
+try{ const sq=sessionStorage.getItem('gl.q'); if(sq){ state.q=sq; $('#q').value=sq; } }catch(e){}
+$('#q').addEventListener('input', e=>{ state.q=e.target.value; try{sessionStorage.setItem('gl.q',state.q)}catch(x){} if(state.game){ state.game=null; renderWeek(); } applySearch(); });
+applySearch();
 </script>

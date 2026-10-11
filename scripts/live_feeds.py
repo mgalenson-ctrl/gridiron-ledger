@@ -69,6 +69,19 @@ def parse_odds(o):
     return out
 
 
+def event_status(ev):
+    """ESPN event -> {'state': pre|in|post, 'completed', 'home_score', 'away_score', 'detail'} (None if unreadable)."""
+    comp = (ev.get('competitions') or [{}])[0]
+    st = dig(ev, 'status', 'type') or dig(comp, 'status', 'type') or {}
+    out = {'state': st.get('state'), 'completed': bool(st.get('completed')), 'detail': st.get('shortDetail') or st.get('detail')}
+    for c in comp.get('competitors') or []:
+        sc = c.get('score'); sc = sc.get('value') if isinstance(sc, dict) else sc
+        try: sc = int(float(sc))
+        except (TypeError, ValueError): sc = None
+        if c.get('homeAway') in ('home', 'away'): out[c['homeAway'] + '_score'] = sc
+    return out if out['state'] else None
+
+
 def load(path, default):
     try: return json.load(open(path))
     except Exception: return default
@@ -92,9 +105,18 @@ def nfl():
     g['gameday'] = pd.to_datetime(g.gameday)
     today = pd.Timestamp(NOW.date())
     up = g[g.result.isna() & (g.gameday >= today - pd.Timedelta(days=1)) & (g.gameday <= today + pd.Timedelta(days=9)) & g.espn.notna()]
-    games, errors = {}, []
+    games, errors, status = {}, [], {}
     lh = load('/home/claude/nflpredict/out/line_history.json', {})
     ih = load('/home/claude/nflpredict/out/injury_history.json', {})
+    espn2gid = {str(int(e)): gid for e, gid in zip(g.espn, g.game_id) if pd.notna(e)}
+    for k in range(-4, 1):   # game status and final scores, today and the previous four days
+        d = (NOW + timedelta(days=k)).astimezone(timezone(timedelta(hours=-5))).strftime('%Y%m%d')
+        try:
+            for ev in get(f'https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?dates={d}').get('events') or []:
+                gid = espn2gid.get(str(ev.get('id'))); stt = event_status(ev)
+                if gid and stt: status[gid] = stt
+        except Exception as e:  # noqa: BLE001
+            errors.append(f'scoreboard {d}: {type(e).__name__}: {e}')
     for r in up.itertuples():
         gid = r.game_id
         try:
@@ -138,11 +160,11 @@ def nfl():
         time.sleep(0.3)
     json.dump(lh, open('/home/claude/nflpredict/out/line_history.json', 'w'), indent=0)
     json.dump(ih, open('/home/claude/nflpredict/out/injury_history.json', 'w'), indent=0)
-    return games, errors, '/home/claude/nflpredict/out/live.json'
+    return games, errors, '/home/claude/nflpredict/out/live.json', status
 
 
 def college():
-    games, errors = {}, []
+    games, errors, status = {}, [], {}
     lh = load('/home/claude/cfbpredict/out/line_history.json', {})
     # ESPN rejects date ranges on this endpoint; ask for the current week (same week the model predicts), then fall back to single days
     urls = []
@@ -173,6 +195,8 @@ def college():
     try:
         for ev in events:
             comp = (ev.get('competitions') or [{}])[0]
+            stt = event_status(ev)
+            if stt: status[str(ev.get('id'))] = stt
             state = dig(ev, 'status', 'type', 'state') or dig(comp, 'status', 'type', 'state')
             if state and state != 'pre': continue   # started or final: in-game lines are not pre-game lines
             odds = parse_odds((comp.get('odds') or [None])[0])
@@ -182,14 +206,15 @@ def college():
     except Exception as e:  # noqa: BLE001
         errors.append(f'scoreboard: {type(e).__name__}: {e}')
     json.dump(lh, open('/home/claude/cfbpredict/out/line_history.json', 'w'), indent=0)
-    return games, errors, '/home/claude/cfbpredict/out/live.json'
+    return games, errors, '/home/claude/cfbpredict/out/live.json', status
 
 
 if __name__ == '__main__':
     sport = sys.argv[1]
-    games, errors, path = nfl() if sport == 'nfl' else college()
+    games, errors, path, status = nfl() if sport == 'nfl' else college()
     n_odds = sum(1 for v in games.values() if v.get('odds'))
     json.dump({'fetched_at': NOW_S, 'source': 'ESPN public site API (site.api.espn.com)', 'games': games, 'errors': errors,
-               'n_games': len(games), 'n_with_odds': n_odds}, open(path, 'w'), indent=0)
+               'n_games': len(games), 'n_with_odds': n_odds, 'status': status}, open(path, 'w'), indent=0)
+    print(f"{sport}: status for {len(status)} games ({sum(1 for v in status.values() if v.get('completed'))} final)")
     print(f'{sport}: {len(games)} games, {n_odds} with odds, {len(errors)} errors')
     for e in errors[:5]: print('  ', e)
