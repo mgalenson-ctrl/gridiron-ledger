@@ -517,6 +517,35 @@ for idx, row in wk.iterrows():
         rec['live_state'] = {'detail': _st.get('detail'), 'home_score': _st.get('home_score'), 'away_score': _st.get('away_score')}
     games_out.append(rec)
 # earlier weeks: grade any logged game that has finished (e.g. Monday night after the week rolled over), then list them
+# ---------------------------------------------------------------- next week: early look (view only; never logged, locked or graded)
+# Shown once at least half of this week's games are final (Sunday evening / Monday), so the coming week can be previewed while the
+# current week finishes. Uses the same final models; team stats only include games already played, so it firms up after the week ends.
+next_week = None
+_nw = cur_week + 1
+_wk_played = float(F[(F.season==cur_season)&(F.week==cur_week)].played.mean()) if len(wk) else 0.0
+_nxt = F[(F.season==cur_season)&(F.week==_nw)&(~F.played)]
+if _wk_played >= 0.5 and len(_nxt):
+    _ng = []
+    for idx, row in _nxt.iterrows():
+        xr = X_all.loc[[idx]]
+        p_s = float(early_model.predict_proba(xr[early_cols].fillna(early_med))[:,1][0])
+        has_ml = pd.notna(row.home_moneyline) and pd.notna(row.away_moneyline)
+        p = float(crunch_model.predict_proba(xr[crunch_cols].fillna(crunch_med))[:,1][0]) if has_ml else p_s
+        pick = row.home_team if p >= 0.5 else row.away_team
+        sc = reconcile(score_pred(idx), pick, row.home_team, row.away_team)
+        sl = None if pd.isna(row.spread_line) else float(row.spread_line)
+        ats = None
+        if sl is not None and round(sc['margin'] - sl, 1) != 0:
+            _h = sc['margin'] > sl; ats = {'team': row.home_team if _h else row.away_team, 'line': (-sl if _h else sl)}
+        _ng.append({'game_id': row.game_id, 'gameday': str(row.gameday.date()), 'gametime_et': row.gametime,
+                    'home': row.home_team, 'away': row.away_team, 'pick': pick, 'p_pick': round(max(p, 1-p), 4),
+                    'basis': 'line' if has_ml else 'stats', 'stats_pick': row.home_team if p_s >= 0.5 else row.away_team,
+                    'score': sc, 'spread_line': sl, 'total_line': None if pd.isna(row.total_line) else float(row.total_line), 'ats': ats})
+    _ng.sort(key=lambda g: (g['gameday'], str(g['gametime_et']), -g['p_pick']))
+    next_week = {'season': cur_season, 'week': _nw, 'generated_at': now, 'games': _ng,
+                 'note': f'Early look at week {_nw}. Team stats include games played so far; week {cur_week} games still in progress or upcoming are not yet counted. '
+                         'These are previews only: they are not logged, locked or graded. The official pick is the one locked at kickoff.'}
+    print('next week early look:', _nw, len(_ng), 'games')
 _cur = set(str(g) for g in wk.game_id)
 _played = F[F.played & (F.season == cur_season)].set_index(F[F.played & (F.season == cur_season)].game_id.astype(str))
 archive = []
@@ -597,7 +626,7 @@ bundle = {
  'weather_meta': {'fetched_at': (json.load(open(f'{OUT}/forecasts.json'))['fetched_at'] if FC else None),
                   'sources': 'Open-Meteo hourly forecasts at the venue; kickoff-hour values averaged over the first 3 hours.',
                   'model_note': 'Weather weights were learned from actual kickoff conditions in 2020-2026 games (as the proxy for a forecast). Walk-forward test: adding weather changed Brier by +0.0008 and accuracy by 0.0, i.e. within noise. Its weights are small and data-derived.'},
- 'games': games_out, 'history': hist_out,
+ 'games': games_out, 'history': hist_out, 'next_week': next_week,
 }
 for name, P in (('crunch',P_crunch),('early',P_early),('updated',P_upd),('baseline',P_base)):
     h = P[P.season>=2025]; h = h.copy(); h['mkt'] = [devig(a,b) if pd.notna(a) and pd.notna(b) else np.nan for a,b in zip(h.home_moneyline,h.away_moneyline)]

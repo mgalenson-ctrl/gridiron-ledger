@@ -154,6 +154,15 @@ details.pick[open] .hint{display:none}
 .chip.warn{border-color:var(--warn);color:var(--warn)}
 .legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--muted);margin:14px 0 4px}
 @media(prefers-reduced-motion:no-preference){.card,details.pick{transition:border-color .15s}.card:hover,details.pick:hover{border-color:var(--accent)}}
+details.nextwk{margin:18px 0 6px;border-top:2px dashed var(--line);padding-top:6px}
+details.nextwk>summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+details.nextwk>summary::-webkit-details-marker{display:none}
+details.nextwk>summary h2{margin:8px 0 0}
+.nw{background:var(--surface);border:1px dashed var(--line);border-radius:12px;padding:10px 12px;margin:0 0 8px;display:grid;gap:6px}
+.nwt{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}.nwt b{font-size:18px;font-stretch:87.5%}
+.nwp{margin-left:auto;font-size:16px;display:inline-flex;align-items:center;gap:6px}
+.nwp .tier{display:inline-block;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-family:var(--display)}
+.nw .meta{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:12px}
 /* Theme: Gameday Turf (light) / Sunset (dark) */
 header.top{background:var(--hdr-bg);border-bottom:4px solid var(--hdr-edge);box-shadow:var(--hdr-shadow);margin-inline:-16px;padding-inline:16px}
 .brand h1{color:var(--hdr-fg);text-transform:uppercase;letter-spacing:.04em;font-size:23px}
@@ -449,6 +458,20 @@ let THEME='auto'; try{ THEME=localStorage.getItem('gl.theme')||'auto'; }catch(e)
 applyTheme(THEME);
 document.getElementById('themeBtn').addEventListener('click',()=>{ THEME = THEME==='auto'?'light':THEME==='light'?'dark':'auto'; try{localStorage.setItem('gl.theme',THEME)}catch(e){} applyTheme(THEME); });
 
+/* ---------- next week: early look (preview only; not logged, locked or graded) ---------- */
+function nextWeekBlock(){ const N=B.next_week; if(!N||!N.games||!N.games.length) return '';
+  const days=[...new Set(N.games.map(g=>g.gameday))];
+  let h=`<details class="nextwk" open><summary><h2>Next week · early look</h2><span class="mono muted">Week ${N.week} · ${N.games.length} games</span></summary>
+  <p class="accnote" style="margin:4px 0 8px">${esc(N.note)}</p>`;
+  days.forEach(d=>{ h+=`<div class="day">${fmtDay(d)}</div>`;
+    N.games.filter(g=>g.gameday===d).forEach(g=>{ const opp=g.pick===g.home?g.away:g.home, tier=tierOf(g.p_pick);
+      h+=`<div class="nw" data-teams="${esc(teamKey(g.home,g.away))}"><div class="nwt"><b>${esc(g.pick)}</b> <span class="muted">over ${esc(opp)}${g.pick===g.away?' (away)':''}</span>
+        <span class="nwp mono">${pct(g.p_pick)} <span class="tier ${tier.tier}">${tier.tier}</span></span></div>
+        <div class="meta mono muted"><span>${fmtTime(g.gametime_et)}</span><span>${esc(g.away)} at ${esc(g.home)}</span><span class="chip">${esc(g.away)} ${g.score.away} – ${esc(g.home)} ${g.score.home}</span>${g.ats?`<span class="chip">Spread pick: ${esc(g.ats.team)} ${g.ats.line>0?'+':''}${g.ats.line}</span>`:''}${g.basis==='stats'?'<span class="chip">no line yet: stats only</span>':(g.stats_pick!==g.pick?`<span class="chip">Stats-only pick: ${esc(g.stats_pick)}</span>`:'')}<span class="chip warn">Early</span></div></div>`; });
+  });
+  return h+'</details>';
+}
+
 /* ---------- team search ---------- */
 const TEAM_NAMES = {"ARI": "Arizona Cardinals", "ATL": "Atlanta Falcons", "BAL": "Baltimore Ravens", "BUF": "Buffalo Bills", "CAR": "Carolina Panthers", "CHI": "Chicago Bears", "CIN": "Cincinnati Bengals", "CLE": "Cleveland Browns", "DAL": "Dallas Cowboys", "DEN": "Denver Broncos", "DET": "Detroit Lions", "GB": "Green Bay Packers", "HOU": "Houston Texans", "IND": "Indianapolis Colts", "JAX": "Jacksonville Jaguars", "KC": "Kansas City Chiefs", "LA": "Los Angeles Rams", "LAR": "Los Angeles Rams", "LAC": "Los Angeles Chargers", "LV": "Las Vegas Raiders", "MIA": "Miami Dolphins", "MIN": "Minnesota Vikings", "NE": "New England Patriots Pats", "NO": "New Orleans Saints", "NYG": "New York Giants", "NYJ": "New York Jets", "PHI": "Philadelphia Eagles", "PIT": "Pittsburgh Steelers", "SEA": "Seattle Seahawks", "SF": "San Francisco 49ers Niners", "TB": "Tampa Bay Buccaneers Bucs", "TEN": "Tennessee Titans", "WAS": "Washington Commanders"};
 const teamKey = (...ts) => ts.filter(Boolean).map(t => `${t} ${TEAM_NAMES[t]||''}`).join(' ').toLowerCase();
@@ -460,7 +483,7 @@ function applySearch(){ const q=normQ(state.q||''); let shown=0, total=0;
   document.querySelectorAll('section[role="tabpanel"] .day').forEach(d=>{ if(!q){ d.hidden=false; return; }
     let n=d.nextElementSibling, vis=false; while(n && !n.classList.contains('day')){ if(n.matches('[data-teams]') ? !n.hidden : [...n.querySelectorAll('[data-teams]')].some(c=>!c.hidden)) { vis=true; break; } n=n.nextElementSibling; }
     d.hidden=!vis; });
-  document.querySelectorAll('details.arch').forEach(a=>{ const any=[...a.querySelectorAll('[data-teams]')].some(c=>!c.hidden); a.hidden=!!q && !any; if(q && any) a.open=true; });
+  document.querySelectorAll('details.arch,details.nextwk').forEach(a=>{ const any=[...a.querySelectorAll('[data-teams]')].some(c=>!c.hidden); a.hidden=!!q && !any; if(q && any) a.open=true; });
   const m=document.getElementById('qmsg'); if(m) m.textContent = q ? (shown ? `${shown} game${shown===1?'':'s'} shown` : 'No games match. Try a city, nickname or abbreviation.') : '';
 }
 let state = {tab:'week', game:null};
@@ -502,6 +525,7 @@ function renderWeek(){
     });
     html += '</div>';
   });
+  html += nextWeekBlock();
   html += archiveBlock();
   html += `<p class="mono muted" style="margin:10px 0 0">Reasons are written from the model's largest factor contributions for each game and quote the underlying numbers; they are not editorial opinions.</p><div class="legend">${B.confidence_tiers.map(t=>`<span><span class="tier ${t.tier}" style="padding:1px 7px;border-radius:999px;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase">${t.tier}</span> ${pct(t.lo)}–${pct(t.hi)} · hit ${pct(t.hit_rate)} of ${t.n} past picks</span>`).join('')}</div>
   <p class="mono muted" style="margin:6px 0 0">Confidence = model win probability of the pick. Hit rates are from walk-forward predictions, 2022–${B.season}. Tap a game for the reasons, matchup numbers and forecast.</p>`;
