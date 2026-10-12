@@ -97,9 +97,10 @@ details.accdash>summary .head{font-family:var(--mono);font-size:13px}
 .acct .tile.big .v{font-size:34px}
 .acct .tile.off{opacity:.45}
 .acctrend{margin:10px 0 2px;display:grid;gap:4px}
-.acctrend .r{display:grid;grid-template-columns:6.5em 1fr 7em;gap:8px;align-items:center;font-family:var(--mono);font-size:12px}
+.acctrend .r{display:grid;grid-template-columns:6.5em 1fr 10.5em;gap:8px;white-space:nowrap;align-items:center;font-family:var(--mono);font-size:12px}
 .acctrend .bar{height:10px;background:var(--line);border-radius:5px;overflow:hidden}
 .acctrend .bar i{display:block;height:100%;background:var(--accent);border-radius:5px}
+.acctrend .bar.bt i{background:repeating-linear-gradient(135deg,var(--accent) 0 4px,color-mix(in srgb,var(--accent) 45%,transparent) 4px 8px)}
 .accnote{font-family:var(--mono);font-size:11px;color:var(--muted);margin:8px 0 0}
 .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
 .tile{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px}
@@ -409,10 +410,15 @@ function archiveBlock(){ const A=(B.archive||[]); if(!A.length) return '';
 /* ---------- model accuracy dashboard (completed games only; both leagues) ---------- */
 let ACC = {live:[], bt:[]};
 try{ ACC = JSON.parse(document.getElementById('accdata').textContent); }catch(e){ ACC = null; }
+if(ACC){ /* full season: live (locked) picks where tracked; walk-forward back-test for weeks before live tracking began */
+  const lk = new Set(ACC.live.map(r=>r[0]+'|'+r[1]+'|'+r[2]));
+  ACC.live = ACC.live.map(r=>[...r.slice(0,4),'L']); ACC.bt = ACC.bt.map(r=>[...r.slice(0,4),'B']);
+  ACC.all = ACC.live.concat(ACC.bt.filter(r=>!lk.has(r[0]+'|'+r[1]+'|'+r[2])));
+}
 const LG_NAME = {nfl:'NFL', college:'College'};
 function accState(){
-  if(!state.acc){ state.acc = {lg:'all', src:'live', season:null, wk:'all', open:true};
-    try{ const s=JSON.parse(localStorage.getItem('gl.acc')||'null'); if(s) Object.assign(state.acc, s); }catch(e){} }
+  if(!state.acc){ state.acc = {lg:'all', src:'all', season:null, wk:'all', open:true};
+    try{ const s=JSON.parse(localStorage.getItem('gl.acc')||'null'); if(s){ if(!s.v2){ delete s.src; delete s.wk; } Object.assign(state.acc, s); } }catch(e){} state.acc.v2=1; }
   return state.acc;
 }
 function accSave(){ try{ localStorage.setItem('gl.acc', JSON.stringify(state.acc)); }catch(e){} }
@@ -434,18 +440,22 @@ function accDash(){
   const lgTile = k => { const t=lgT(k), off = a.lg!=='all' && a.lg!==k;
     return `<div class="tile${off?' off':''}"><div class="k">${LG_NAME[k]} accuracy</div><div class="v">${off?'—':P(t.p)}</div><div class="s">${off?'filtered out':`${t.w}–${t.l}${t.t?` · ${t.t} tie${t.t>1?'s':''} excluded`:''}`}</div></div>`; };
   const lgs = a.lg==='all' ? ['nfl','college'] : [a.lg];
-  const tr = []; lgs.forEach(k=>{ [...new Set(byLg.filter(r=>r[0]===k).map(r=>r[2]))].sort((x,y)=>x-y).forEach(w=>{ const t=accTally(byLg.filter(r=>r[0]===k&&r[2]===w)); if(t.n) tr.push([k,w,t]); }); });
-  const trend = a.wk==='all' && tr.length>1 ? `<div class="acctrend">${tr.map(([k,w,t])=>`<div class="r"><span>${a.lg==='all'?(k==='nfl'?'NFL':'CFB')+' wk ':'Week '}${w}</span><span class="bar"><i style="width:${(100*t.p).toFixed(1)}%"></i></span><span>${t.w}–${t.l} · ${Math.round(100*t.p)}%</span></div>`).join('')}</div>` : '';
-  const srcNote = a.src==='live'
+  const tr = []; lgs.forEach(k=>{ [...new Set(byLg.filter(r=>r[0]===k).map(r=>r[2]))].sort((x,y)=>x-y).forEach(w=>{ const rr=byLg.filter(r=>r[0]===k&&r[2]===w), t=accTally(rr); t.bt = a.src==='all' && rr.length && rr.every(r=>r[4]==='B'); if(t.n) tr.push([k,w,t]); }); });
+  const trend = a.wk==='all' && tr.length>1 ? `<div class="acctrend">${tr.map(([k,w,t])=>`<div class="r"><span>${a.lg==='all'?(k==='nfl'?'NFL':'CFB')+' wk ':'Week '}${w}</span><span class="bar${t.bt?' bt':''}"><i style="width:${(100*t.p).toFixed(1)}%"></i></span><span>${t.w}–${t.l} · ${Math.round(100*t.p)}%${t.bt?' <span class="muted">BT</span>':''}</span></div>`).join('')}</div>` : '';
+  const firstLive = k => { const w=ACC.live.filter(r=>r[0]===k&&r[1]===a.season).map(r=>r[2]); return w.length?Math.min(...w):null; };
+  const comboNote = () => (a.lg==='all'?['nfl','college']:[a.lg]).map(k=>{ const f=firstLive(k); return f==null?`${LG_NAME[k]}: all back-test`:(f>1?`${LG_NAME[k]}: weeks 1–${f-1} back-test (BT), week ${f} on live`:`${LG_NAME[k]}: all live`); }).join(' · ');
+  const srcNote = a.src==='all'
+    ? `Full season: live picks (locked before kickoff) for every week they were tracked; earlier weeks use the back-test, where each game was predicted by the same model trained only on games before that week. ${comboNote()}.`
+    : a.src==='live'
     ? 'Live picks: the model’s pick as locked before kickoff, graded once when the game went final. Earlier predictions are never recalculated.'
     : 'Back-test: each game was predicted by a model trained only on games before that week (walk-forward). Not picks published at the time.';
   const head = T.n ? `${T.w}–${T.l} · ${P(T.p)}` : 'no completed games yet';
   return `<details class="accdash" id="accdash" ${a.open?'open':''}><summary><h2>Model accuracy</h2><span class="head">${head}</span></summary>
   <div class="accf">
     <label>League<select id="accLg">${opt('all','All',a.lg)}${opt('nfl','NFL',a.lg)}${opt('college','College',a.lg)}</select></label>
-    <label>Picks<select id="accSrc">${opt('live','Live (locked)',a.src)}${opt('bt','Back-test',a.src)}</select></label>
+    <label>Picks<select id="accSrc">${opt('all','Full season',a.src)}${opt('live','Live only',a.src)}${opt('bt','Back-test only',a.src)}</select></label>
     <label>Season<select id="accSeason">${seasons.length?seasons.map(s=>opt(s,s,a.season)).join(''):opt('', '—', '')}</select></label>
-    <label>Week<select id="accWk">${opt('all','All',a.wk)}${weeks.map(w=>opt(w,'Week '+w,a.wk)).join('')}</select></label>
+    <label>Week<select id="accWk">${opt('all','All',a.wk)}${weeks.map(w=>{ const k=byLg.filter(r=>r[2]===w), b=k.filter(r=>r[4]==='B').length; return opt(w,'Week '+w+(a.src==='all'&&b?(b===k.length?' · back-test':' · part back-test'):''),a.wk); }).join('')}</select></label>
   </div>
   ${T.n ? `<div class="acct">
     <div class="tile big"><div><div class="k">Overall accuracy</div><div class="v">${P(T.p)}</div></div><div class="s">${T.n} completed pick${T.n===1?'':'s'}${a.lg==='all'?' · NFL + College':' · '+LG_NAME[a.lg]}${a.wk==='all'?'':' · Week '+a.wk} · ${a.season}</div></div>
