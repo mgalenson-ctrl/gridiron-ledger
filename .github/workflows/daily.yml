@@ -5,6 +5,9 @@ on:
     - cron: "15 12-23 * * 0,1,4,5,6" # hourly on game days (Thu-Mon), 7:15 AM-6:15 PM Central
     - cron: "15 0-4 * * 0,1,2,5,6"   # and through the evening games (UTC wraps past midnight)
   workflow_dispatch:
+  push:                              # starts right away when you upload an update (a zip or folder__file files)
+    branches: [main]
+    paths: ['*.zip', '.github/workflows/*.zip', '*__*']
 permissions:
   contents: write
   pages: write
@@ -44,7 +47,7 @@ jobs:
           git config user.name "gridiron-ledger-bot"
           git config user.email "actions@users.noreply.github.com"
           git add -A
-          git diff --cached --quiet || (git commit -m "Arrange project folders" && git push)
+          git diff --cached --quiet || (git commit -m "Arrange project folders" && git pull --rebase -q && git push)
       - name: Put uploaded files in place (files named like nfl__predict.py go to nfl/predict.py)
         run: |
           shopt -s nullglob
@@ -56,13 +59,13 @@ jobs:
           done
           git config user.name "gridiron-ledger-bot"
           git config user.email "actions@users.noreply.github.com"
-          if [ $moved = 1 ]; then git add -A; git commit -m "Put uploaded files in place"; git push; fi
+          if [ $moved = 1 ]; then git add -A; git commit -m "Put uploaded files in place"; git pull --rebase -q; git push; fi
       - name: Apply the site name
         run: |
           sed -i 's/Gridiron Ledger/Hunch vs. Crunch/g' nfl/app_template.html college/app_template.html site/build_site.py site/static/manifest.webmanifest README.md
           sed -i 's/"short_name":"Gridiron"/"short_name":"Hunch v Crunch"/' site/static/manifest.webmanifest
           git add nfl/app_template.html college/app_template.html site/build_site.py site/static/manifest.webmanifest README.md
-          git diff --cached --quiet || (git commit -m "Rename to Hunch vs. Crunch" && git push)
+          git diff --cached --quiet || (git commit -m "Rename to Hunch vs. Crunch" && git pull --rebase -q && git push)
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13"
