@@ -118493,6 +118493,21 @@
 "ats_home": false,
 "ou_pick": "Over",
 "total_line": 46.5
+},
+{
+"at": "2026-11-02T17:17:21+00:00",
+"type": "updated",
+"p_home": 0.472,
+"model_version": "v2.0.0",
+"weather_status": "forecast",
+"p_crunch": 0.5463,
+"p_stats": 0.472,
+"spread_line": 3.0,
+"ml_home": -170.0,
+"ats_team": "CHI",
+"ats_home": false,
+"ou_pick": "Over",
+"total_line": 46.5
 }
 ],
 "frozen": {
@@ -118509,12 +118524,12 @@
 "surface": "fieldturf",
 "div_game": 0,
 "early": {
-"p_home": 0.5365,
-"p_away": 0.4635,
+"p_home": 0.5358,
+"p_away": 0.4642,
 "pick": "SEA",
-"predicted_at": "2026-11-02T16:14:06+00:00",
+"predicted_at": "2026-11-02T17:17:21+00:00",
 "model_version": "v2.0.0",
-"input_hash": "1c79dfaac0910758",
+"input_hash": "2c345b709705b018",
 "cutoff": "Tuesday of game week; uses games through 2026-11-01",
 "factors": [
 {
@@ -118548,14 +118563,14 @@
 "logit": -0.0816
 },
 {
+"feature": "Wind at kickoff",
+"key": "wx_wind",
+"logit": -0.0789
+},
+{
 "feature": "Takeaways per game",
 "key": "d_takeaways_per_game",
 "logit": 0.0739
-},
-{
-"feature": "Wind at kickoff",
-"key": "wx_wind",
-"logit": -0.0711
 },
 {
 "feature": "Giveaways per game",
@@ -118598,14 +118613,14 @@
 "logit": -0.0122
 },
 {
-"feature": "Wind \u00d7 pass-leaning offense",
-"key": "wx_wind_x_passlean",
-"logit": -0.0115
-},
-{
 "feature": "Field-goal accuracy 40+ yds",
 "key": "d_fg_long_rate",
 "logit": 0.0112
+},
+{
+"feature": "Wind \u00d7 pass-leaning offense",
+"key": "wx_wind_x_passlean",
+"logit": -0.0076
 },
 {
 "feature": "Yards after catch over expected (Next Gen Stats)",
@@ -118628,11 +118643,6 @@
 "logit": 0.0033
 },
 {
-"feature": "Wind \u00d7 long field-goal edge",
-"key": "wx_wind_x_fg",
-"logit": -0.003
-},
-{
 "feature": "QB interception rate",
 "key": "d_qb_int_rate",
 "logit": -0.0029
@@ -118653,6 +118663,11 @@
 "logit": 0.0024
 },
 {
+"feature": "Wind \u00d7 long field-goal edge",
+"key": "wx_wind_x_fg",
+"logit": -0.0018
+},
+{
 "feature": "QB change from last game",
 "key": "d_qb_change",
 "logit": 0.0004
@@ -118667,12 +118682,12 @@
 "missing_inputs": []
 },
 "updated": {
-"p_home": 0.4726,
-"p_away": 0.5274,
+"p_home": 0.472,
+"p_away": 0.528,
 "pick": "CHI",
-"predicted_at": "2026-11-02T16:14:06+00:00",
+"predicted_at": "2026-11-02T17:17:21+00:00",
 "model_version": "v2.0.0-updated",
-"input_hash": "1c79dfaac0910758",
+"input_hash": "2c345b709705b018",
 "intercept_logit": 0.1783,
 "factors": [
 {
@@ -118713,7 +118728,7 @@
 {
 "feature": "Wind at kickoff",
 "key": "wx_wind",
-"logit": -0.0677
+"logit": -0.0751
 },
 {
 "feature": "Takeaways per game",
@@ -118771,11 +118786,6 @@
 "logit": 0.0129
 },
 {
-"feature": "Wind \u00d7 pass-leaning offense",
-"key": "wx_wind_x_passlean",
-"logit": -0.0106
-},
-{
 "feature": "Special-teams EPA/game",
 "key": "d_st_epa_per_game",
 "logit": -0.0098
@@ -118786,6 +118796,11 @@
 "logit": -0.0098
 },
 {
+"feature": "Wind \u00d7 pass-leaning offense",
+"key": "wx_wind_x_passlean",
+"logit": -0.007
+},
+{
 "feature": "Yards after catch over expected (Next Gen Stats)",
 "key": "d_ngs_yacoe",
 "logit": 0.0046
@@ -118793,11 +118808,6 @@
 {
 "feature": "QB interception rate",
 "key": "d_qb_int_rate",
-"logit": -0.003
-},
-{
-"feature": "Wind \u00d7 long field-goal edge",
-"key": "wx_wind_x_fg",
 "logit": -0.003
 },
 {
@@ -118814,6 +118824,11 @@
 "feature": "QB completion % over expected",
 "key": "d_qb_cpoe",
 "logit": 0.0025
+},
+{
+"feature": "Wind \u00d7 long field-goal edge",
+"key": "wx_wind_x_fg",
+"logit": -0.0018
 },
 {
 "feature": "Rush yards over expected per carry (Next Gen Stats)",
@@ -118844,59 +118859,52 @@
 },
 "weather": {
 "status": "forecast",
-"temp_f": 45.699999999999996,
-"wind_mph": 1.0666666666666667,
-"gust_mph": 2.2,
-"pop_pct": 6,
+"temp_f": 45.36666666666667,
+"wind_mph": 0.6,
+"gust_mph": 2.0,
+"pop_pct": 5,
 "valid_for": "2026-11-03T01:00Z",
 "forecast_created": null,
-"fetched_at": "2026-11-02T16:13:05+00:00",
+"fetched_at": "2026-11-02T17:16:23+00:00",
 "source": "open-meteo",
 "retractable": false
 },
 "score": {
-"margin": 2.7,
-"total": 48.5,
+"margin": 2.5,
+"total": 48.6,
 "home": 26,
 "away": 23,
 "adjusted": false
 },
 "market": {
-"home_moneyline": -180.0,
-"away_moneyline": 150.0,
-"p_home_devig": 0.6164,
+"home_moneyline": -170.0,
+"away_moneyline": 142.0,
+"p_home_devig": 0.6038,
 "spread_line": 3.0,
 "total_line": 46.5,
-"source": "ESPN (DraftKings) at 2026-11-02T16:13:43+00:00"
+"source": "ESPN (DraftKings) at 2026-11-02T17:17:01+00:00"
 },
 "line": {
 "open_spread_home": -4.5,
 "cur_spread_home": -3.0,
 "open_p_home": 0.6575,
-"cur_p_home": 0.6164,
+"cur_p_home": 0.6038,
 "open_ml": [
 -218.0,
 180.0
 ],
 "cur_ml": [
--180.0,
-150.0
+-170.0,
+142.0
 ],
 "total_open": 47.5,
 "total": 46.5,
 "provider": "DraftKings",
 "flags": [
-"Spread moved 1.5 pts toward CHI"
+"Spread moved 1.5 pts toward CHI",
+"Win odds shifted 5 pts toward CHI"
 ],
 "moves": [
-{
-"t": "2026-10-28T12:13:37+00:00",
-"spread_home": -3.0,
-"ml_home": -166.0,
-"ml_away": 140.0,
-"total": 46.5,
-"provider": "DraftKings"
-},
 {
 "t": "2026-10-29T19:02:25+00:00",
 "spread_home": -3.0,
@@ -118982,6 +118990,14 @@
 "spread_home": -3.0,
 "ml_home": -180.0,
 "ml_away": 150.0,
+"total": 46.5,
+"provider": "DraftKings"
+},
+{
+"t": "2026-11-02T17:17:01+00:00",
+"spread_home": -3.0,
+"ml_home": -170.0,
+"ml_away": 142.0,
 "total": 46.5,
 "provider": "DraftKings"
 }
@@ -119217,12 +119233,12 @@
 },
 "qb_flags": [],
 "stats": {
-"p_home": 0.4726,
-"p_away": 0.5274,
+"p_home": 0.472,
+"p_away": 0.528,
 "pick": "CHI",
-"predicted_at": "2026-11-02T16:14:06+00:00",
+"predicted_at": "2026-11-02T17:17:21+00:00",
 "model_version": "v2.0.0-updated",
-"input_hash": "1c79dfaac0910758",
+"input_hash": "2c345b709705b018",
 "intercept_logit": 0.1783,
 "factors": [
 {
@@ -119263,7 +119279,7 @@
 {
 "feature": "Wind at kickoff",
 "key": "wx_wind",
-"logit": -0.0677
+"logit": -0.0751
 },
 {
 "feature": "Takeaways per game",
@@ -119321,11 +119337,6 @@
 "logit": 0.0129
 },
 {
-"feature": "Wind \u00d7 pass-leaning offense",
-"key": "wx_wind_x_passlean",
-"logit": -0.0106
-},
-{
 "feature": "Special-teams EPA/game",
 "key": "d_st_epa_per_game",
 "logit": -0.0098
@@ -119336,6 +119347,11 @@
 "logit": -0.0098
 },
 {
+"feature": "Wind \u00d7 pass-leaning offense",
+"key": "wx_wind_x_passlean",
+"logit": -0.007
+},
+{
 "feature": "Yards after catch over expected (Next Gen Stats)",
 "key": "d_ngs_yacoe",
 "logit": 0.0046
@@ -119343,11 +119359,6 @@
 {
 "feature": "QB interception rate",
 "key": "d_qb_int_rate",
-"logit": -0.003
-},
-{
-"feature": "Wind \u00d7 long field-goal edge",
-"key": "wx_wind_x_fg",
 "logit": -0.003
 },
 {
@@ -119364,6 +119375,11 @@
 "feature": "QB completion % over expected",
 "key": "d_qb_cpoe",
 "logit": 0.0025
+},
+{
+"feature": "Wind \u00d7 long field-goal edge",
+"key": "wx_wind_x_fg",
+"logit": -0.0018
 },
 {
 "feature": "Rush yards over expected per carry (Next Gen Stats)",
@@ -119394,12 +119410,12 @@
 },
 "stats_type": "updated",
 "crunch": {
-"p_home": 0.5536,
-"p_away": 0.4464,
+"p_home": 0.5463,
+"p_away": 0.4537,
 "pick": "SEA",
-"predicted_at": "2026-11-02T16:14:06+00:00",
+"predicted_at": "2026-11-02T17:17:21+00:00",
 "model_version": "v2.0.0-crunch",
-"input_hash": "1c79dfaac0910758",
+"input_hash": "2c345b709705b018",
 "intercept_logit": 0.1758,
 "factors": [
 {
@@ -119408,14 +119424,14 @@
 "logit": -0.2167
 },
 {
-"feature": "Betting market win probability (moneyline)",
-"key": "mkt_logit",
-"logit": 0.1379
-},
-{
 "feature": "Betting market point spread",
 "key": "mkt_spread",
 "logit": 0.1102
+},
+{
+"feature": "Betting market win probability (moneyline)",
+"key": "mkt_logit",
+"logit": 0.1083
 },
 {
 "feature": "Opponent-adjusted offensive EPA/play",
@@ -119430,12 +119446,12 @@
 ]
 },
 "latest": {
-"p_home": 0.5536,
-"p_away": 0.4464,
+"p_home": 0.5463,
+"p_away": 0.4537,
 "pick": "SEA",
-"predicted_at": "2026-11-02T16:14:06+00:00",
+"predicted_at": "2026-11-02T17:17:21+00:00",
 "model_version": "v2.0.0-crunch",
-"input_hash": "1c79dfaac0910758",
+"input_hash": "2c345b709705b018",
 "intercept_logit": 0.1758,
 "factors": [
 {
@@ -119444,14 +119460,14 @@
 "logit": -0.2167
 },
 {
-"feature": "Betting market win probability (moneyline)",
-"key": "mkt_logit",
-"logit": 0.1379
-},
-{
 "feature": "Betting market point spread",
 "key": "mkt_spread",
 "logit": 0.1102
+},
+{
+"feature": "Betting market win probability (moneyline)",
+"key": "mkt_logit",
+"logit": 0.1083
 },
 {
 "feature": "Opponent-adjusted offensive EPA/play",
@@ -119469,87 +119485,87 @@
 "ats": {
 "team": "CHI",
 "line": 3.0,
-"edge": 0.3
+"edge": 0.5
 },
 "value": {
 "moneyline": {
 "pick": "SEA",
-"odds": -180.0,
-"p": 0.5536,
-"break_even": 0.6429,
-"edge": -0.0893,
-"ev_per_100": -13.9
+"odds": -170.0,
+"p": 0.5463,
+"break_even": 0.6296,
+"edge": -0.0833,
+"ev_per_100": -13.2
 },
 "spread": {
 "pick": "CHI",
 "line": 3.0,
 "odds": 100.0,
 "odds_assumed": false,
-"p": 0.5175,
+"p": 0.5261,
 "break_even": 0.5,
-"edge": 0.0175,
-"ev_per_100": 3.5
+"edge": 0.0261,
+"ev_per_100": 5.2
 },
 "alt": [
 {
 "team": "CHI",
 "line": -7.0,
-"p": 0.1851,
-"fair_odds": 440
+"p": 0.1893,
+"fair_odds": 428
 },
 {
 "team": "CHI",
 "line": -4.0,
-"p": 0.2545,
-"fair_odds": 293
+"p": 0.2604,
+"fair_odds": 284
 },
 {
 "team": "CHI",
 "line": -0.5,
-"p": 0.3757,
-"fair_odds": 166
+"p": 0.3805,
+"fair_odds": 163
 },
 {
 "team": "CHI",
 "line": 0.0,
-"p": 0.3887,
-"fair_odds": 157
+"p": 0.3955,
+"fair_odds": 153
 },
 {
 "team": "CHI",
 "line": 6.0,
-"p": 0.6289,
-"fair_odds": -169
+"p": 0.6358,
+"fair_odds": -175
 },
 {
 "team": "CHI",
 "line": 6.5,
-"p": 0.641,
-"fair_odds": -179
+"p": 0.6465,
+"fair_odds": -183
 },
 {
 "team": "CHI",
 "line": 10.0,
-"p": 0.7443,
-"fair_odds": -291
+"p": 0.7496,
+"fair_odds": -299
 },
 {
 "team": "CHI",
 "line": 13.0,
-"p": 0.8123,
-"fair_odds": -433
+"p": 0.8169,
+"fair_odds": -446
 }
 ],
 "total": {
 "pick": "Over",
 "line": 46.5,
-"proj": 48.5,
+"proj": 48.6,
 "odds": -110.0,
 "odds_assumed": false,
-"p": 0.5441,
+"p": 0.5465,
 "break_even": 0.5238,
-"edge": 0.0203,
-"ev_per_100": 3.9,
+"edge": 0.0227,
+"ev_per_100": 4.3,
 "range80": [
 33,
 66
@@ -119557,39 +119573,39 @@
 "alt": [
 {
 "line": 36.5,
-"over": 0.8253,
-"fair_over": -472,
-"fair_under": 472
+"over": 0.8292,
+"fair_over": -486,
+"fair_under": 486
 },
 {
 "line": 39.5,
-"over": 0.7498,
-"fair_over": -300,
-"fair_under": 300
+"over": 0.753,
+"fair_over": -305,
+"fair_under": 305
 },
 {
 "line": 43.5,
-"over": 0.6322,
-"fair_over": -172,
-"fair_under": 172
+"over": 0.6354,
+"fair_over": -174,
+"fair_under": 174
 },
 {
 "line": 49.5,
-"over": 0.448,
-"fair_over": 123,
-"fair_under": -123
+"over": 0.4512,
+"fair_over": 122,
+"fair_under": -122
 },
 {
 "line": 53.5,
-"over": 0.3153,
-"fair_over": 217,
-"fair_under": -217
+"over": 0.3169,
+"fair_over": 216,
+"fair_under": -216
 },
 {
 "line": 56.5,
-"over": 0.2589,
-"fair_over": 286,
-"fair_under": -286
+"over": 0.2613,
+"fair_over": 283,
+"fair_under": -283
 }
 ]
 }
@@ -119597,7 +119613,7 @@
 "ou": {
 "pick": "Over",
 "line": 46.5,
-"proj": 48.5
+"proj": 48.6
 }
 }
 }
