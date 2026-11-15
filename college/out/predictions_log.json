@@ -103721,7 +103721,7 @@ null
 "elo": {
 "home": 1515.0,
 "away": null,
-"p_home": NaN
+"p_home": null
 },
 "early": {
 "p_home": 0.9566,
@@ -112030,7 +112030,7 @@ null
 "elo": {
 "home": 1739.0,
 "away": null,
-"p_home": NaN
+"p_home": null
 },
 "early": {
 "p_home": 0.9251,
@@ -167682,7 +167682,7 @@ null
 "elo": {
 "home": 1111.0,
 "away": null,
-"p_home": NaN
+"p_home": null
 },
 "early": {
 "p_home": 0.9154,
@@ -459710,7 +459710,7 @@ null
 "elo": {
 "home": 1877.0,
 "away": null,
-"p_home": NaN
+"p_home": null
 },
 "early": {
 "p_home": 0.9891,
@@ -528388,6 +528388,36 @@ null
 "line": 43.5,
 "proj": 46.7
 }
+},
+"final": {
+"week": 11,
+"gameday": "2026-11-14",
+"proj": [
+26,
+25
+],
+"home": "Texas A&M",
+"away": "Tennessee",
+"home_score": 7,
+"away_score": 22,
+"source": "official box score",
+"pick": "Tennessee",
+"p_pick": 0.5675,
+"winner": "Tennessee",
+"correct": true,
+"ats": {
+"team": "Texas A&M",
+"line": 1.5,
+"edge": 0.6
+},
+"ou": {
+"pick": "Over",
+"line": 43.5,
+"proj": 46.7
+},
+"graded_at": "2026-11-15T00:52:16+00:00",
+"ats_correct": false,
+"ou_correct": false
 }
 },
 "401856864": {
@@ -528822,6 +528852,20 @@ null
 "ats_home": true,
 "ou_pick": "Under",
 "total_line": 55.5
+},
+{
+"at": "2026-11-15T00:52:16+00:00",
+"type": "early",
+"p_home": 0.5109,
+"model_version": "cfb-v2.0.0",
+"weather_status": "forecast",
+"p_crunch": 0.4884,
+"p_stats": 0.5109,
+"spread_line": -1.5,
+"ats_team": "Arizona",
+"ats_home": true,
+"ou_pick": "Under",
+"total_line": 55.5
 }
 ],
 "frozen": {
@@ -528847,118 +528891,118 @@ null
 "p_home": 0.33
 },
 "early": {
-"p_home": 0.5119,
-"p_away": 0.4881,
+"p_home": 0.5109,
+"p_away": 0.4891,
 "pick": "Arizona",
-"predicted_at": "2026-11-14T22:28:48+00:00",
+"predicted_at": "2026-11-15T00:52:16+00:00",
 "model_version": "cfb-v2.0.0",
-"input_hash": "fbb813f2ea0e44d9",
+"input_hash": "3b17704394bc70c8",
 "cutoff": "Tuesday of game week; uses games through 2026-11-14",
 "factors": [
 {
 "feature": "Adj. points per drive allowed",
 "key": "d_adj_def_ppd",
-"logit": -0.2725
+"logit": -0.2695
 },
 {
 "feature": "Pregame Elo rating (CFBD)",
 "key": "d_elo",
-"logit": -0.2641
+"logit": -0.2678
 },
 {
 "feature": "Opponent-adjusted offensive EPA/play",
 "key": "d_adj_off_off_epa",
-"logit": -0.155
+"logit": -0.1546
 },
 {
 "feature": "Conference game",
 "key": "conf_game",
-"logit": -0.1144
+"logit": -0.1147
 },
 {
 "feature": "Adj. points per drive",
 "key": "d_adj_off_ppd",
-"logit": -0.0967
+"logit": -0.1023
 },
 {
 "feature": "Adj. explosive plays allowed",
 "key": "d_adj_def_explosive_rate",
-"logit": 0.0861
+"logit": 0.089
 },
 {
 "feature": "Roster talent, early-season weight",
 "key": "talent_early",
-"logit": -0.0822
+"logit": -0.0819
 },
 {
 "feature": "Adj. rushing EPA/play",
 "key": "d_adj_off_rush_epa",
-"logit": -0.0594
+"logit": -0.0574
 },
 {
 "feature": "Adj. offensive success rate",
 "key": "d_adj_off_off_sr",
-"logit": 0.0445
+"logit": 0.0454
 },
 {
 "feature": "Last 3 games: points per drive",
 "key": "d_l3_ppd",
-"logit": 0.0399
+"logit": 0.0391
 },
 {
 "feature": "Home-field advantage",
 "key": "home_adv",
-"logit": 0.0272
+"logit": 0.0271
 },
 {
 "feature": "Adj. explosive-play rate",
 "key": "d_adj_off_explosive_rate",
-"logit": 0.0254
+"logit": 0.0261
 },
 {
 "feature": "Adj. defensive success rate",
 "key": "d_adj_def_off_sr",
-"logit": 0.021
+"logit": 0.0187
 },
 {
 "feature": "Returning production (share of last season)",
 "key": "d_ret_ppa",
-"logit": -0.0165
-},
-{
-"feature": "Adj. run defense",
-"key": "d_adj_def_rush_epa",
-"logit": 0.0128
+"logit": -0.0163
 },
 {
 "feature": "Opponent-adjusted defensive EPA/play",
 "key": "d_adj_def_off_epa",
-"logit": 0.0112
+"logit": 0.0119
+},
+{
+"feature": "Adj. run defense",
+"key": "d_adj_def_rush_epa",
+"logit": 0.0114
 },
 {
 "feature": "Adj. passing EPA/dropback",
 "key": "d_adj_off_pass_epa",
-"logit": -0.0075
+"logit": -0.007
 },
 {
 "feature": "Last 3 games: EPA/play allowed",
 "key": "d_l3_def_epa",
-"logit": 0.0065
+"logit": 0.006
 },
 {
 "feature": "Roster talent (recruiting composite)",
 "key": "d_talent",
-"logit": -0.0039
-},
-{
-"feature": "Last 3 games: offensive EPA/play",
-"key": "d_l3_off_epa",
-"logit": 0.0038
+"logit": -0.0038
 },
 {
 "feature": "Adj. pass defense",
 "key": "d_adj_def_pass_epa",
-"logit": 0.003
+"logit": 0.0036
+},
+{
+"feature": "Last 3 games: offensive EPA/play",
+"key": "d_l3_off_epa",
+"logit": 0.0034
 },
 {
 "feature": "Returning production, early-season weight",
@@ -528966,36 +529010,36 @@ null
 "logit": 0.0006
 }
 ],
-"intercept_logit": 0.8377,
+"intercept_logit": 0.8365,
 "missing_inputs": []
 },
 "updated": null,
 "weather": {
 "status": "forecast",
-"temp_f": 58.0,
-"wind_mph": 4.3,
-"gust_mph": 11.2,
+"temp_f": 59.300000000000004,
+"wind_mph": 3.9333333333333336,
+"gust_mph": 8.5,
 "pop_pct": 1,
 "valid_for": "2026-11-15T03:00Z",
 "forecast_created": null,
-"fetched_at": "2026-11-14T22:28:15+00:00",
+"fetched_at": "2026-11-15T00:51:46+00:00",
 "source": "open-meteo",
 "retractable": false
 },
 "score": {
 "margin": -0.9,
-"total": 55.9,
+"total": 55.8,
 "home": 29,
 "away": 30,
 "adjusted": true
 },
 "market": {
 "p_home_devig": 0.4627,
-"home_moneyline": -108.0,
-"away_moneyline": -112.0,
+"home_moneyline": 102.0,
+"away_moneyline": -122.0,
 "spread_line": -1.5,
 "total_line": 55.5,
-"source": "ESPN (DraftKings) at 2026-11-14T22:28:41+00:00"
+"source": "ESPN (DraftKings) at 2026-11-15T00:52:09+00:00"
 },
 "line": {
 "open_spread_home": 1.5,
@@ -529007,8 +529051,8 @@ null
 -118.0
 ],
 "cur_ml": [
--108.0,
--112.0
+102.0,
+-122.0
 ],
 "total_open": 51.5,
 "total": 55.5,
@@ -529094,6 +529138,14 @@ null
 "ml_away": -112.0,
 "total": 55.5,
 "provider": "DraftKings"
+},
+{
+"t": "2026-11-15T00:52:09+00:00",
+"spread_home": 1.5,
+"ml_home": 102.0,
+"ml_away": -122.0,
+"total": 55.5,
+"provider": "DraftKings"
 }
 ],
 "note": "Movement is open-to-current from the sportsbook ESPN shows. It shows where the line went, not who bet; betting-split (\"sharp money\") data is not available from a free source."
@@ -529120,19 +529172,19 @@ null
 "l3_ppd": 2.658008658008658,
 "elo": 1795.0,
 "qb_name": "Noah Fifita",
-"qb_epa": 0.054993345883612064,
+"qb_epa": 0.054817252088725454,
 "qb_cmp": 0.632225747027263,
-"qb_int_rate": 0.01720853984759074,
-"qb_sack_rate": 0.10225289435240952,
+"qb_int_rate": 0.017206124842869607,
+"qb_sack_rate": 0.10235141662763267,
 "qb_db_hist": 387.0,
-"third_rate": 0.5181092389561334,
-"rz_td_rate": 0.6076305827480758,
-"fg_rate": 0.7518811136192626,
+"third_rate": 0.5180584870515733,
+"rz_td_rate": 0.607600780494864,
+"fg_rate": 0.7517846566289473,
 "to_per_game": 0.8888888888888888,
 "takeaways_per_game": 0.4444444444444444,
 "pen_per_game": 8.11111111111111,
-"sack_rate_off": 0.06619911897997281,
-"sack_rate_def": 0.0716701205485656,
+"sack_rate_off": 0.06620749943845863,
+"sack_rate_def": 0.07167919360692629,
 "pass_rate": 0.5579307381963529,
 "plays_per_game": 68.11111111111111,
 "fourth_go_rate": 1.1111111111111112,
@@ -529162,19 +529214,19 @@ null
 "l3_ppd": 2.3568376068376065,
 "elo": 1918.0,
 "qb_name": "Devon Dampier",
-"qb_epa": 0.05290379623393043,
+"qb_epa": 0.05264350598901057,
 "qb_cmp": 0.649396778656422,
-"qb_int_rate": 0.022521077850520422,
-"qb_sack_rate": 0.07242628990283273,
+"qb_int_rate": 0.022517508149664404,
+"qb_sack_rate": 0.07257191903851243,
 "qb_db_hist": 223.0,
-"third_rate": 0.5154046351350677,
-"rz_td_rate": 0.674979218012372,
-"fg_rate": 0.708538042756606,
+"third_rate": 0.5153513088585372,
+"rz_td_rate": 0.6749516649858176,
+"fg_rate": 0.7084018681820432,
 "to_per_game": 1.1111111111111112,
 "takeaways_per_game": 1.4444444444444444,
 "pen_per_game": 6.333333333333333,
-"sack_rate_off": 0.047385366151270154,
-"sack_rate_def": 0.04978076900295632,
+"sack_rate_off": 0.04739511029382912,
+"sack_rate_def": 0.049789390783545134,
 "pass_rate": 0.4628830670016991,
 "plays_per_game": 69.11111111111111,
 "fourth_go_rate": 1.5555555555555556,
@@ -529185,118 +529237,118 @@ null
 },
 "qb_flags": [],
 "stats": {
-"p_home": 0.5119,
-"p_away": 0.4881,
+"p_home": 0.5109,
+"p_away": 0.4891,
 "pick": "Arizona",
-"predicted_at": "2026-11-14T22:28:48+00:00",
+"predicted_at": "2026-11-15T00:52:16+00:00",
 "model_version": "cfb-v2.0.0",
-"input_hash": "fbb813f2ea0e44d9",
+"input_hash": "3b17704394bc70c8",
 "cutoff": "Tuesday of game week; uses games through 2026-11-14",
 "factors": [
 {
 "feature": "Adj. points per drive allowed",
 "key": "d_adj_def_ppd",
-"logit": -0.2725
+"logit": -0.2695
 },
 {
 "feature": "Pregame Elo rating (CFBD)",
 "key": "d_elo",
-"logit": -0.2641
+"logit": -0.2678
 },
 {
 "feature": "Opponent-adjusted offensive EPA/play",
 "key": "d_adj_off_off_epa",
-"logit": -0.155
+"logit": -0.1546
 },
 {
 "feature": "Conference game",
 "key": "conf_game",
-"logit": -0.1144
+"logit": -0.1147
 },
 {
 "feature": "Adj. points per drive",
 "key": "d_adj_off_ppd",
-"logit": -0.0967
+"logit": -0.1023
 },
 {
 "feature": "Adj. explosive plays allowed",
 "key": "d_adj_def_explosive_rate",
-"logit": 0.0861
+"logit": 0.089
 },
 {
 "feature": "Roster talent, early-season weight",
 "key": "talent_early",
-"logit": -0.0822
+"logit": -0.0819
 },
 {
 "feature": "Adj. rushing EPA/play",
 "key": "d_adj_off_rush_epa",
-"logit": -0.0594
+"logit": -0.0574
 },
 {
 "feature": "Adj. offensive success rate",
 "key": "d_adj_off_off_sr",
-"logit": 0.0445
+"logit": 0.0454
 },
 {
 "feature": "Last 3 games: points per drive",
 "key": "d_l3_ppd",
-"logit": 0.0399
+"logit": 0.0391
 },
 {
 "feature": "Home-field advantage",
 "key": "home_adv",
-"logit": 0.0272
+"logit": 0.0271
 },
 {
 "feature": "Adj. explosive-play rate",
 "key": "d_adj_off_explosive_rate",
-"logit": 0.0254
+"logit": 0.0261
 },
 {
 "feature": "Adj. defensive success rate",
 "key": "d_adj_def_off_sr",
-"logit": 0.021
+"logit": 0.0187
 },
 {
 "feature": "Returning production (share of last season)",
 "key": "d_ret_ppa",
-"logit": -0.0165
-},
-{
-"feature": "Adj. run defense",
-"key": "d_adj_def_rush_epa",
-"logit": 0.0128
+"logit": -0.0163
 },
 {
 "feature": "Opponent-adjusted defensive EPA/play",
 "key": "d_adj_def_off_epa",
-"logit": 0.0112
+"logit": 0.0119
+},
+{
+"feature": "Adj. run defense",
+"key": "d_adj_def_rush_epa",
+"logit": 0.0114
 },
 {
 "feature": "Adj. passing EPA/dropback",
 "key": "d_adj_off_pass_epa",
-"logit": -0.0075
+"logit": -0.007
 },
 {
 "feature": "Last 3 games: EPA/play allowed",
 "key": "d_l3_def_epa",
-"logit": 0.0065
+"logit": 0.006
 },
 {
 "feature": "Roster talent (recruiting composite)",
 "key": "d_talent",
-"logit": -0.0039
-},
-{
-"feature": "Last 3 games: offensive EPA/play",
-"key": "d_l3_off_epa",
-"logit": 0.0038
+"logit": -0.0038
 },
 {
 "feature": "Adj. pass defense",
 "key": "d_adj_def_pass_epa",
-"logit": 0.003
+"logit": 0.0036
+},
+{
+"feature": "Last 3 games: offensive EPA/play",
+"key": "d_l3_off_epa",
+"logit": 0.0034
 },
 {
 "feature": "Returning production, early-season weight",
@@ -529304,73 +529356,73 @@ null
 "logit": 0.0006
 }
 ],
-"intercept_logit": 0.8377,
+"intercept_logit": 0.8365,
 "missing_inputs": []
 },
 "stats_type": "early",
 "crunch": {
-"p_home": 0.489,
-"p_away": 0.511,
+"p_home": 0.4884,
+"p_away": 0.5116,
 "pick": "Utah",
-"predicted_at": "2026-11-14T22:28:48+00:00",
+"predicted_at": "2026-11-15T00:52:16+00:00",
 "model_version": "cfb-v2.0.0-crunch",
-"input_hash": "fbb813f2ea0e44d9",
-"intercept_logit": 0.9771,
+"input_hash": "3b17704394bc70c8",
+"intercept_logit": 0.9743,
 "factors": [
 {
 "feature": "Betting market point spread",
 "key": "mkt_spread",
-"logit": -0.4105
+"logit": -0.4089
 },
 {
 "feature": "Betting market win probability (from the spread)",
 "key": "mkt_logit",
-"logit": -0.408
+"logit": -0.4063
 },
 {
 "feature": "Adj. points per drive allowed",
 "key": "d_adj_def_ppd",
-"logit": -0.138
+"logit": -0.1335
 },
 {
 "feature": "Adj. explosive plays allowed",
 "key": "d_adj_def_explosive_rate",
-"logit": 0.0794
+"logit": 0.0821
 },
 {
 "feature": "Pregame Elo rating (CFBD)",
 "key": "d_elo",
-"logit": -0.0651
-},
-{
-"feature": "Opponent-adjusted offensive EPA/play",
-"key": "d_adj_off_off_epa",
-"logit": -0.0635
+"logit": -0.0683
 },
 {
 "feature": "Adj. points per drive",
 "key": "d_adj_off_ppd",
-"logit": -0.061
+"logit": -0.066
+},
+{
+"feature": "Opponent-adjusted offensive EPA/play",
+"key": "d_adj_off_off_epa",
+"logit": -0.063
 },
 {
 "feature": "Conference game",
 "key": "conf_game",
-"logit": -0.0568
+"logit": -0.057
 },
 {
 "feature": "Adj. explosive-play rate",
 "key": "d_adj_off_explosive_rate",
-"logit": 0.0248
+"logit": 0.0259
 },
 {
 "feature": "Adj. offensive success rate",
 "key": "d_adj_off_off_sr",
-"logit": 0.021
+"logit": 0.0214
 },
 {
 "feature": "Adj. defensive success rate",
 "key": "d_adj_def_off_sr",
-"logit": 0.0194
+"logit": 0.0168
 },
 {
 "feature": "Home-field advantage",
@@ -529378,110 +529430,110 @@ null
 "logit": 0.0092
 },
 {
+"feature": "Adj. pass defense",
+"key": "d_adj_def_pass_epa",
+"logit": 0.0066
+},
+{
 "feature": "Last 3 games: points per drive",
 "key": "d_l3_ppd",
-"logit": 0.0069
+"logit": 0.0065
 },
 {
 "feature": "Last 3 games: EPA/play allowed",
 "key": "d_l3_def_epa",
-"logit": 0.0065
-},
-{
-"feature": "Adj. pass defense",
-"key": "d_adj_def_pass_epa",
-"logit": 0.0064
+"logit": 0.0061
 },
 {
 "feature": "Adj. rushing EPA/play",
 "key": "d_adj_off_rush_epa",
-"logit": -0.0043
-},
-{
-"feature": "Last 3 games: offensive EPA/play",
-"key": "d_l3_off_epa",
-"logit": 0.004
+"logit": -0.0042
 },
 {
 "feature": "Opponent-adjusted defensive EPA/play",
 "key": "d_adj_def_off_epa",
-"logit": 0.0032
+"logit": 0.0036
 },
 {
-"feature": "Adj. run defense",
-"key": "d_adj_def_rush_epa",
-"logit": 0.003
+"feature": "Last 3 games: offensive EPA/play",
+"key": "d_l3_off_epa",
+"logit": 0.0036
 },
 {
 "feature": "Adj. passing EPA/dropback",
 "key": "d_adj_off_pass_epa",
-"logit": 0.0022
+"logit": 0.0027
+},
+{
+"feature": "Adj. run defense",
+"key": "d_adj_def_rush_epa",
+"logit": 0.0018
 }
 ]
 },
 "latest": {
-"p_home": 0.489,
-"p_away": 0.511,
+"p_home": 0.4884,
+"p_away": 0.5116,
 "pick": "Utah",
-"predicted_at": "2026-11-14T22:28:48+00:00",
+"predicted_at": "2026-11-15T00:52:16+00:00",
 "model_version": "cfb-v2.0.0-crunch",
-"input_hash": "fbb813f2ea0e44d9",
-"intercept_logit": 0.9771,
+"input_hash": "3b17704394bc70c8",
+"intercept_logit": 0.9743,
 "factors": [
 {
 "feature": "Betting market point spread",
 "key": "mkt_spread",
-"logit": -0.4105
+"logit": -0.4089
 },
 {
 "feature": "Betting market win probability (from the spread)",
 "key": "mkt_logit",
-"logit": -0.408
+"logit": -0.4063
 },
 {
 "feature": "Adj. points per drive allowed",
 "key": "d_adj_def_ppd",
-"logit": -0.138
+"logit": -0.1335
 },
 {
 "feature": "Adj. explosive plays allowed",
 "key": "d_adj_def_explosive_rate",
-"logit": 0.0794
+"logit": 0.0821
 },
 {
 "feature": "Pregame Elo rating (CFBD)",
 "key": "d_elo",
-"logit": -0.0651
-},
-{
-"feature": "Opponent-adjusted offensive EPA/play",
-"key": "d_adj_off_off_epa",
-"logit": -0.0635
+"logit": -0.0683
 },
 {
 "feature": "Adj. points per drive",
 "key": "d_adj_off_ppd",
-"logit": -0.061
+"logit": -0.066
+},
+{
+"feature": "Opponent-adjusted offensive EPA/play",
+"key": "d_adj_off_off_epa",
+"logit": -0.063
 },
 {
 "feature": "Conference game",
 "key": "conf_game",
-"logit": -0.0568
+"logit": -0.057
 },
 {
 "feature": "Adj. explosive-play rate",
 "key": "d_adj_off_explosive_rate",
-"logit": 0.0248
+"logit": 0.0259
 },
 {
 "feature": "Adj. offensive success rate",
 "key": "d_adj_off_off_sr",
-"logit": 0.021
+"logit": 0.0214
 },
 {
 "feature": "Adj. defensive success rate",
 "key": "d_adj_def_off_sr",
-"logit": 0.0194
+"logit": 0.0168
 },
 {
 "feature": "Home-field advantage",
@@ -529489,44 +529541,44 @@ null
 "logit": 0.0092
 },
 {
+"feature": "Adj. pass defense",
+"key": "d_adj_def_pass_epa",
+"logit": 0.0066
+},
+{
 "feature": "Last 3 games: points per drive",
 "key": "d_l3_ppd",
-"logit": 0.0069
+"logit": 0.0065
 },
 {
 "feature": "Last 3 games: EPA/play allowed",
 "key": "d_l3_def_epa",
-"logit": 0.0065
-},
-{
-"feature": "Adj. pass defense",
-"key": "d_adj_def_pass_epa",
-"logit": 0.0064
+"logit": 0.0061
 },
 {
 "feature": "Adj. rushing EPA/play",
 "key": "d_adj_off_rush_epa",
-"logit": -0.0043
-},
-{
-"feature": "Last 3 games: offensive EPA/play",
-"key": "d_l3_off_epa",
-"logit": 0.004
+"logit": -0.0042
 },
 {
 "feature": "Opponent-adjusted defensive EPA/play",
 "key": "d_adj_def_off_epa",
-"logit": 0.0032
+"logit": 0.0036
 },
 {
-"feature": "Adj. run defense",
-"key": "d_adj_def_rush_epa",
-"logit": 0.003
+"feature": "Last 3 games: offensive EPA/play",
+"key": "d_l3_off_epa",
+"logit": 0.0036
 },
 {
 "feature": "Adj. passing EPA/dropback",
 "key": "d_adj_off_pass_epa",
-"logit": 0.0022
+"logit": 0.0027
+},
+{
+"feature": "Adj. run defense",
+"key": "d_adj_def_rush_epa",
+"logit": 0.0018
 }
 ]
 },
@@ -529539,82 +529591,82 @@ null
 "value": {
 "moneyline": {
 "pick": "Utah",
-"odds": -112.0,
-"p": 0.511,
-"break_even": 0.5283,
-"edge": -0.0173,
-"ev_per_100": -3.3
+"odds": -122.0,
+"p": 0.5116,
+"break_even": 0.5495,
+"edge": -0.0379,
+"ev_per_100": -6.9
 },
 "spread": {
 "pick": "Arizona",
 "line": 1.5,
-"odds": -118.0,
+"odds": -105.0,
 "odds_assumed": false,
-"p": 0.5176,
-"break_even": 0.5413,
-"edge": -0.0237,
-"ev_per_100": -4.4
+"p": 0.5177,
+"break_even": 0.5122,
+"edge": 0.0055,
+"ev_per_100": 1.1
 },
 "alt": [
 {
 "team": "Arizona",
 "line": -8.5,
-"p": 0.2682,
+"p": 0.2681,
 "fair_odds": 273
 },
 {
 "team": "Arizona",
 "line": -5.5,
-"p": 0.3335,
+"p": 0.3333,
 "fair_odds": 200
 },
 {
 "team": "Arizona",
 "line": -2.0,
-"p": 0.4184,
+"p": 0.4186,
 "fair_odds": 139
 },
 {
 "team": "Arizona",
 "line": -1.5,
-"p": 0.4371,
+"p": 0.4373,
 "fair_odds": 129
 },
 {
 "team": "Arizona",
 "line": 4.5,
-"p": 0.6067,
+"p": 0.6065,
 "fair_odds": -154
 },
 {
 "team": "Arizona",
 "line": 5.0,
-"p": 0.6243,
+"p": 0.6242,
 "fair_odds": -166
 },
 {
 "team": "Arizona",
 "line": 8.5,
-"p": 0.6986,
-"fair_odds": -232
+"p": 0.6981,
+"fair_odds": -231
 },
 {
 "team": "Arizona",
 "line": 11.5,
-"p": 0.7619,
-"fair_odds": -320
+"p": 0.7614,
+"fair_odds": -319
 }
 ],
 "total": {
 "pick": "Under",
 "line": 55.5,
-"proj": 55.9,
+"proj": 55.8,
 "odds": -112.0,
 "odds_assumed": false,
-"p": 0.5078,
+"p": 0.5146,
 "break_even": 0.5283,
-"edge": -0.0205,
-"ev_per_100": -3.9,
+"edge": -0.0138,
+"ev_per_100": -2.6,
 "range80": [
 36,
 77
@@ -529622,39 +529674,39 @@ null
 "alt": [
 {
 "line": 45.5,
-"over": 0.7369,
-"fair_over": -280,
-"fair_under": 280
+"over": 0.7326,
+"fair_over": -274,
+"fair_under": 274
 },
 {
 "line": 48.5,
-"over": 0.6716,
-"fair_over": -205,
-"fair_under": 205
+"over": 0.6667,
+"fair_over": -200,
+"fair_under": 200
 },
 {
 "line": 52.5,
-"over": 0.5688,
-"fair_over": -132,
-"fair_under": 132
+"over": 0.565,
+"fair_over": -130,
+"fair_under": 130
 },
 {
 "line": 58.5,
-"over": 0.4187,
-"fair_over": 139,
-"fair_under": -139
+"over": 0.4137,
+"fair_over": 142,
+"fair_under": -142
 },
 {
 "line": 62.5,
-"over": 0.3237,
-"fair_over": 209,
-"fair_under": -209
+"over": 0.3198,
+"fair_over": 213,
+"fair_under": -213
 },
 {
 "line": 65.5,
-"over": 0.2647,
-"fair_over": 278,
-"fair_under": -278
+"over": 0.2608,
+"fair_over": 283,
+"fair_under": -283
 }
 ]
 }
@@ -529662,7 +529714,7 @@ null
 "ou": {
 "pick": "Under",
 "line": 55.5,
-"proj": 55.9
+"proj": 55.8
 }
 }
 },
@@ -534678,6 +534730,36 @@ null
 "line": 68.5,
 "proj": 66.0
 }
+},
+"final": {
+"week": 11,
+"gameday": "2026-11-14",
+"proj": [
+32,
+34
+],
+"home": "West Virginia",
+"away": "Kansas",
+"home_score": 14,
+"away_score": 37,
+"source": "official box score",
+"pick": "West Virginia",
+"p_pick": 0.5868,
+"winner": "Kansas",
+"correct": false,
+"ats": {
+"team": "West Virginia",
+"line": -1.5,
+"edge": 0.9
+},
+"ou": {
+"pick": "Under",
+"line": 68.5,
+"proj": 66.0
+},
+"graded_at": "2026-11-15T00:52:16+00:00",
+"ats_correct": false,
+"ou_correct": true
 }
 },
 "401856887": {
@@ -535112,6 +535194,20 @@ null
 "ats_home": true,
 "ou_pick": "Over",
 "total_line": 48.5
+},
+{
+"at": "2026-11-15T00:52:16+00:00",
+"type": "early",
+"p_home": 0.5617,
+"model_version": "cfb-v2.0.0",
+"weather_status": "forecast",
+"p_crunch": 0.5691,
+"p_stats": 0.5617,
+"spread_line": 2.5,
+"ats_team": "Oklahoma",
+"ats_home": true,
+"ou_pick": "Over",
+"total_line": 48.5
 }
 ],
 "frozen": {
@@ -535137,118 +535233,118 @@ null
 "p_home": 0.272
 },
 "early": {
-"p_home": 0.5648,
-"p_away": 0.4352,
+"p_home": 0.5617,
+"p_away": 0.4383,
 "pick": "Oklahoma",
-"predicted_at": "2026-11-14T22:28:48+00:00",
+"predicted_at": "2026-11-15T00:52:16+00:00",
 "model_version": "cfb-v2.0.0",
-"input_hash": "fbb813f2ea0e44d9",
+"input_hash": "3b17704394bc70c8",
 "cutoff": "Tuesday of game week; uses games through 2026-11-14",
 "factors": [
 {
 "feature": "Opponent-adjusted offensive EPA/play",
 "key": "d_adj_off_off_epa",
-"logit": -0.4153
+"logit": -0.4146
 },
 {
 "feature": "Pregame Elo rating (CFBD)",
 "key": "d_elo",
-"logit": -0.3501
+"logit": -0.355
 },
 {
 "feature": "Adj. points per drive allowed",
 "key": "d_adj_def_ppd",
-"logit": 0.2999
+"logit": 0.2978
 },
 {
 "feature": "Adj. points per drive",
 "key": "d_adj_off_ppd",
-"logit": -0.2793
+"logit": -0.2951
 },
 {
 "feature": "Opponent-adjusted defensive EPA/play",
 "key": "d_adj_def_off_epa",
-"logit": 0.2071
+"logit": 0.216
 },
 {
 "feature": "Adj. offensive success rate",
 "key": "d_adj_off_off_sr",
-"logit": 0.1435
+"logit": 0.1463
 },
 {
 "feature": "Adj. explosive plays allowed",
 "key": "d_adj_def_explosive_rate",
-"logit": 0.1371
+"logit": 0.1417
 },
 {
 "feature": "Adj. rushing EPA/play",
 "key": "d_adj_off_rush_epa",
-"logit": -0.1238
+"logit": -0.1198
 },
 {
 "feature": "Conference game",
 "key": "conf_game",
-"logit": -0.1144
+"logit": -0.1147
 },
 {
 "feature": "Roster talent, early-season weight",
 "key": "talent_early",
-"logit": -0.0822
-},
-{
-"feature": "Adj. run defense",
-"key": "d_adj_def_rush_epa",
-"logit": 0.0736
+"logit": -0.0819
 },
 {
 "feature": "Adj. pass defense",
 "key": "d_adj_def_pass_epa",
-"logit": -0.0564
+"logit": -0.0675
 },
 {
-"feature": "Returning production (share of last season)",
-"key": "d_ret_ppa",
-"logit": 0.0553
-},
-{
-"feature": "Last 3 games: EPA/play allowed",
-"key": "d_l3_def_epa",
-"logit": -0.0536
+"feature": "Adj. run defense",
+"key": "d_adj_def_rush_epa",
+"logit": 0.0648
 },
 {
 "feature": "Adj. explosive-play rate",
 "key": "d_adj_off_explosive_rate",
-"logit": 0.0531
+"logit": 0.0544
 },
 {
-"feature": "Adj. defensive success rate",
-"key": "d_adj_def_off_sr",
-"logit": -0.0527
+"feature": "Returning production (share of last season)",
+"key": "d_ret_ppa",
+"logit": 0.0538
+},
+{
+"feature": "Last 3 games: EPA/play allowed",
+"key": "d_l3_def_epa",
+"logit": -0.0511
 },
 {
 "feature": "Adj. passing EPA/dropback",
 "key": "d_adj_off_pass_epa",
-"logit": -0.0509
+"logit": -0.0471
+},
+{
+"feature": "Adj. defensive success rate",
+"key": "d_adj_def_off_sr",
+"logit": -0.047
 },
 {
 "feature": "Home-field advantage",
 "key": "home_adv",
-"logit": 0.0272
+"logit": 0.0271
 },
 {
 "feature": "Last 3 games: offensive EPA/play",
 "key": "d_l3_off_epa",
-"logit": 0.0099
+"logit": 0.0092
 },
 {
 "feature": "Roster talent (recruiting composite)",
 "key": "d_talent",
-"logit": -0.0084
+"logit": -0.0082
 },
 {
 "feature": "Last 3 games: points per drive",
 "key": "d_l3_ppd",
-"logit": 0.0024
+"logit": 0.0021
 },
 {
 "feature": "Returning production, early-season weight",
@@ -535256,7 +535352,7 @@ null
 "logit": 0.0006
 }
 ],
-"intercept_logit": 0.8377,
+"intercept_logit": 0.8365,
 "missing_inputs": []
 },
 "updated": null,
@@ -535265,16 +535361,16 @@ null
 "temp_f": 42.56666666666666,
 "wind_mph": 9.466666666666667,
 "gust_mph": 18.8,
-"pop_pct": 93,
+"pop_pct": 89,
 "valid_for": "2026-11-15T18:00Z",
 "forecast_created": null,
-"fetched_at": "2026-11-14T22:28:15+00:00",
+"fetched_at": "2026-11-15T00:51:46+00:00",
 "source": "open-meteo",
 "retractable": false
 },
 "score": {
-"margin": 2.8,
-"total": 50.9,
+"margin": 2.6,
+"total": 50.8,
 "home": 27,
 "away": 24,
 "adjusted": false
@@ -535285,7 +535381,7 @@ null
 "away_moneyline": 124.0,
 "spread_line": 2.5,
 "total_line": 48.5,
-"source": "ESPN (DraftKings) at 2026-11-14T22:28:41+00:00"
+"source": "ESPN (DraftKings) at 2026-11-15T00:52:09+00:00"
 },
 "line": {
 "open_spread_home": -4.0,
@@ -535402,19 +535498,19 @@ null
 "l3_ppd": 2.196969696969697,
 "elo": 1709.0,
 "qb_name": "John Mateer",
-"qb_epa": 0.003884968808386872,
+"qb_epa": 0.0036572148440819964,
 "qb_cmp": 0.6332945588318941,
-"qb_int_rate": 0.022256963527368636,
-"qb_sack_rate": 0.10674035060375414,
+"qb_int_rate": 0.022253840039119618,
+"qb_sack_rate": 0.10686777609747389,
 "qb_db_hist": 272.0,
-"third_rate": 0.4221750921298072,
-"rz_td_rate": 0.4345264280781092,
-"fg_rate": 0.7348382242287435,
+"third_rate": 0.42212880894640337,
+"rz_td_rate": 0.4344834777720098,
+"fg_rate": 0.7347610586364912,
 "to_per_game": 1.3333333333333333,
 "takeaways_per_game": 1.0,
 "pen_per_game": 8.88888888888889,
-"sack_rate_off": 0.06765141903980088,
-"sack_rate_def": 0.10175001274281123,
+"sack_rate_off": 0.06766069656144857,
+"sack_rate_def": 0.10176117721801438,
 "pass_rate": 0.5112070895887157,
 "plays_per_game": 65.77777777777777,
 "fourth_go_rate": 1.1111111111111112,
@@ -535444,19 +535540,19 @@ null
 "l3_ppd": 2.184971890854244,
 "elo": 1880.0,
 "qb_name": "Trinidad Chambliss",
-"qb_epa": 0.1410150186837375,
+"qb_epa": 0.14078842083092658,
 "qb_cmp": 0.618344977890897,
-"qb_int_rate": 0.009453628687128183,
-"qb_sack_rate": 0.060513242225054886,
+"qb_int_rate": 0.009450521054149468,
+"qb_sack_rate": 0.06064002088885726,
 "qb_db_hist": 274.0,
-"third_rate": 0.4803139701961599,
-"rz_td_rate": 0.7124760555359938,
-"fg_rate": 0.7518811136192626,
+"third_rate": 0.48026356590738445,
+"rz_td_rate": 0.7124443096575724,
+"fg_rate": 0.7517846566289473,
 "to_per_game": 1.3333333333333333,
 "takeaways_per_game": 1.0,
 "pen_per_game": 8.11111111111111,
-"sack_rate_off": 0.03452279251017072,
-"sack_rate_def": 0.05835642495372977,
+"sack_rate_off": 0.03453090462885281,
+"sack_rate_def": 0.05836602705339429,
 "pass_rate": 0.5594859404718157,
 "plays_per_game": 71.0,
 "fourth_go_rate": 1.1111111111111112,
@@ -535467,118 +535563,118 @@ null
 },
 "qb_flags": [],
 "stats": {
-"p_home": 0.5648,
-"p_away": 0.4352,
+"p_home": 0.5617,
+"p_away": 0.4383,
 "pick": "Oklahoma",
-"predicted_at": "2026-11-14T22:28:48+00:00",
+"predicted_at": "2026-11-15T00:52:16+00:00",
 "model_version": "cfb-v2.0.0",
-"input_hash": "fbb813f2ea0e44d9",
+"input_hash": "3b17704394bc70c8",
 "cutoff": "Tuesday of game week; uses games through 2026-11-14",
 "factors": [
 {
 "feature": "Opponent-adjusted offensive EPA/play",
 "key": "d_adj_off_off_epa",
-"logit": -0.4153
+"logit": -0.4146
 },
 {
 "feature": "Pregame Elo rating (CFBD)",
 "key": "d_elo",
-"logit": -0.3501
+"logit": -0.355
 },
 {
 "feature": "Adj. points per drive allowed",
 "key": "d_adj_def_ppd",
-"logit": 0.2999
+"logit": 0.2978
 },
 {
 "feature": "Adj. points per drive",
 "key": "d_adj_off_ppd",
-"logit": -0.2793
+"logit": -0.2951
 },
 {
 "feature": "Opponent-adjusted defensive EPA/play",
 "key": "d_adj_def_off_epa",
-"logit": 0.2071
+"logit": 0.216
 },
 {
 "feature": "Adj. offensive success rate",
 "key": "d_adj_off_off_sr",
-"logit": 0.1435
+"logit": 0.1463
 },
 {
 "feature": "Adj. explosive plays allowed",
 "key": "d_adj_def_explosive_rate",
-"logit": 0.1371
+"logit": 0.1417
 },
 {
 "feature": "Adj. rushing EPA/play",
 "key": "d_adj_off_rush_epa",
-"logit": -0.1238
+"logit": -0.1198
 },
 {
 "feature": "Conference game",
 "key": "conf_game",
-"logit": -0.1144
+"logit": -0.1147
 },
 {
 "feature": "Roster talent, early-season weight",
 "key": "talent_early",
-"logit": -0.0822
-},
-{
-"feature": "Adj. run defense",
-"key": "d_adj_def_rush_epa",
-"logit": 0.0736
+"logit": -0.0819
 },
 {
 "feature": "Adj. pass defense",
 "key": "d_adj_def_pass_epa",
-"logit": -0.0564
+"logit": -0.0675
 },
 {
-"feature": "Returning production (share of last season)",
-"key": "d_ret_ppa",
-"logit": 0.0553
-},
-{
-"feature": "Last 3 games: EPA/play allowed",
-"key": "d_l3_def_epa",
-"logit": -0.0536
+"feature": "Adj. run defense",
+"key": "d_adj_def_rush_epa",
+"logit": 0.0648
 },
 {
 "feature": "Adj. explosive-play rate",
 "key": "d_adj_off_explosive_rate",
-"logit": 0.0531
+"logit": 0.0544
 },
 {
-"feature": "Adj. defensive success rate",
-"key": "d_adj_def_off_sr",
-"logit": -0.0527
+"feature": "Returning production (share of last season)",
+"key": "d_ret_ppa",
+"logit": 0.0538
+},
+{
+"feature": "Last 3 games: EPA/play allowed",
+"key": "d_l3_def_epa",
+"logit": -0.0511
 },
 {
 "feature": "Adj. passing EPA/dropback",
 "key": "d_adj_off_pass_epa",
-"logit": -0.0509
+"logit": -0.0471
+},
+{
+"feature": "Adj. defensive success rate",
+"key": "d_adj_def_off_sr",
+"logit": -0.047
 },
 {
 "feature": "Home-field advantage",
 "key": "home_adv",
-"logit": 0.0272
+"logit": 0.0271
 },
 {
 "feature": "Last 3 games: offensive EPA/play",
 "key": "d_l3_off_epa",
-"logit": 0.0099
+"logit": 0.0092
 },
 {
 "feature": "Roster talent (recruiting composite)",
 "key": "d_talent",
-"logit": -0.0084
+"logit": -0.0082
 },
 {
 "feature": "Last 3 games: points per drive",
 "key": "d_l3_ppd",
-"logit": 0.0024
+"logit": 0.0021
 },
 {
 "feature": "Returning production, early-season weight",
@@ -535586,103 +535682,103 @@ null
 "logit": 0.0006
 }
 ],
-"intercept_logit": 0.8377,
+"intercept_logit": 0.8365,
 "missing_inputs": []
 },
 "stats_type": "early",
 "crunch": {
-"p_home": 0.5717,
-"p_away": 0.4283,
+"p_home": 0.5691,
+"p_away": 0.4309,
 "pick": "Oklahoma",
-"predicted_at": "2026-11-14T22:28:48+00:00",
+"predicted_at": "2026-11-15T00:52:16+00:00",
 "model_version": "cfb-v2.0.0-crunch",
-"input_hash": "fbb813f2ea0e44d9",
-"intercept_logit": 0.9771,
+"input_hash": "3b17704394bc70c8",
+"intercept_logit": 0.9743,
 "factors": [
 {
 "feature": "Betting market win probability (from the spread)",
 "key": "mkt_logit",
-"logit": -0.2448
+"logit": -0.2434
 },
 {
 "feature": "Betting market point spread",
 "key": "mkt_spread",
-"logit": -0.234
+"logit": -0.2327
 },
 {
 "feature": "Adj. points per drive",
 "key": "d_adj_off_ppd",
-"logit": -0.1761
+"logit": -0.1904
 },
 {
 "feature": "Opponent-adjusted offensive EPA/play",
 "key": "d_adj_off_off_epa",
-"logit": -0.1701
+"logit": -0.169
 },
 {
 "feature": "Adj. points per drive allowed",
 "key": "d_adj_def_ppd",
-"logit": 0.1519
+"logit": 0.1475
 },
 {
 "feature": "Adj. explosive plays allowed",
 "key": "d_adj_def_explosive_rate",
-"logit": 0.1266
+"logit": 0.1307
 },
 {
 "feature": "Adj. pass defense",
 "key": "d_adj_def_pass_epa",
-"logit": -0.1189
+"logit": -0.1246
 },
 {
 "feature": "Pregame Elo rating (CFBD)",
 "key": "d_elo",
-"logit": -0.0864
+"logit": -0.0905
 },
 {
 "feature": "Adj. offensive success rate",
 "key": "d_adj_off_off_sr",
-"logit": 0.0677
+"logit": 0.069
 },
 {
 "feature": "Opponent-adjusted defensive EPA/play",
 "key": "d_adj_def_off_epa",
-"logit": 0.0598
+"logit": 0.0651
 },
 {
 "feature": "Conference game",
 "key": "conf_game",
-"logit": -0.0568
-},
-{
-"feature": "Last 3 games: EPA/play allowed",
-"key": "d_l3_def_epa",
-"logit": -0.0538
+"logit": -0.057
 },
 {
 "feature": "Adj. explosive-play rate",
 "key": "d_adj_off_explosive_rate",
-"logit": 0.0519
+"logit": 0.0539
+},
+{
+"feature": "Last 3 games: EPA/play allowed",
+"key": "d_l3_def_epa",
+"logit": -0.0516
 },
 {
 "feature": "Adj. defensive success rate",
 "key": "d_adj_def_off_sr",
-"logit": -0.0486
-},
-{
-"feature": "Adj. run defense",
-"key": "d_adj_def_rush_epa",
-"logit": 0.0172
+"logit": -0.0422
 },
 {
 "feature": "Adj. passing EPA/dropback",
 "key": "d_adj_off_pass_epa",
-"logit": 0.0151
+"logit": 0.018
+},
+{
+"feature": "Adj. run defense",
+"key": "d_adj_def_rush_epa",
+"logit": 0.0105
 },
 {
 "feature": "Last 3 games: offensive EPA/play",
 "key": "d_l3_off_epa",
-"logit": 0.0105
+"logit": 0.0097
 },
 {
 "feature": "Home-field advantage",
@@ -535692,7 +535788,7 @@ null
 {
 "feature": "Adj. rushing EPA/play",
 "key": "d_adj_off_rush_epa",
-"logit": -0.009
+"logit": -0.0087
 },
 {
 "feature": "Last 3 games: points per drive",
@@ -535702,98 +535798,98 @@ null
 ]
 },
 "latest": {
-"p_home": 0.5717,
-"p_away": 0.4283,
+"p_home": 0.5691,
+"p_away": 0.4309,
 "pick": "Oklahoma",
-"predicted_at": "2026-11-14T22:28:48+00:00",
+"predicted_at": "2026-11-15T00:52:16+00:00",
 "model_version": "cfb-v2.0.0-crunch",
-"input_hash": "fbb813f2ea0e44d9",
-"intercept_logit": 0.9771,
+"input_hash": "3b17704394bc70c8",
+"intercept_logit": 0.9743,
 "factors": [
 {
 "feature": "Betting market win probability (from the spread)",
 "key": "mkt_logit",
-"logit": -0.2448
+"logit": -0.2434
 },
 {
 "feature": "Betting market point spread",
 "key": "mkt_spread",
-"logit": -0.234
+"logit": -0.2327
 },
 {
 "feature": "Adj. points per drive",
 "key": "d_adj_off_ppd",
-"logit": -0.1761
+"logit": -0.1904
 },
 {
 "feature": "Opponent-adjusted offensive EPA/play",
 "key": "d_adj_off_off_epa",
-"logit": -0.1701
+"logit": -0.169
 },
 {
 "feature": "Adj. points per drive allowed",
 "key": "d_adj_def_ppd",
-"logit": 0.1519
+"logit": 0.1475
 },
 {
 "feature": "Adj. explosive plays allowed",
 "key": "d_adj_def_explosive_rate",
-"logit": 0.1266
+"logit": 0.1307
 },
 {
 "feature": "Adj. pass defense",
 "key": "d_adj_def_pass_epa",
-"logit": -0.1189
+"logit": -0.1246
 },
 {
 "feature": "Pregame Elo rating (CFBD)",
 "key": "d_elo",
-"logit": -0.0864
+"logit": -0.0905
 },
 {
 "feature": "Adj. offensive success rate",
 "key": "d_adj_off_off_sr",
-"logit": 0.0677
+"logit": 0.069
 },
 {
 "feature": "Opponent-adjusted defensive EPA/play",
 "key": "d_adj_def_off_epa",
-"logit": 0.0598
+"logit": 0.0651
 },
 {
 "feature": "Conference game",
 "key": "conf_game",
-"logit": -0.0568
-},
-{
-"feature": "Last 3 games: EPA/play allowed",
-"key": "d_l3_def_epa",
-"logit": -0.0538
+"logit": -0.057
 },
 {
 "feature": "Adj. explosive-play rate",
 "key": "d_adj_off_explosive_rate",
-"logit": 0.0519
+"logit": 0.0539
+},
+{
+"feature": "Last 3 games: EPA/play allowed",
+"key": "d_l3_def_epa",
+"logit": -0.0516
 },
 {
 "feature": "Adj. defensive success rate",
 "key": "d_adj_def_off_sr",
-"logit": -0.0486
-},
-{
-"feature": "Adj. run defense",
-"key": "d_adj_def_rush_epa",
-"logit": 0.0172
+"logit": -0.0422
 },
 {
 "feature": "Adj. passing EPA/dropback",
 "key": "d_adj_off_pass_epa",
-"logit": 0.0151
+"logit": 0.018
+},
+{
+"feature": "Adj. run defense",
+"key": "d_adj_def_rush_epa",
+"logit": 0.0105
 },
 {
 "feature": "Last 3 games: offensive EPA/play",
 "key": "d_l3_off_epa",
-"logit": 0.0105
+"logit": 0.0097
 },
 {
 "feature": "Home-field advantage",
@@ -535803,7 +535899,7 @@ null
 {
 "feature": "Adj. rushing EPA/play",
 "key": "d_adj_off_rush_epa",
-"logit": -0.009
+"logit": -0.0087
 },
 {
 "feature": "Last 3 games: points per drive",
@@ -535816,87 +535912,87 @@ null
 "ats": {
 "team": "Oklahoma",
 "line": -2.5,
-"edge": 0.3
+"edge": 0.1
 },
 "value": {
 "moneyline": {
 "pick": "Oklahoma",
 "odds": -148.0,
-"p": 0.5717,
+"p": 0.5691,
 "break_even": 0.5968,
-"edge": -0.0251,
-"ev_per_100": -4.2
+"edge": -0.0277,
+"ev_per_100": -4.6
 },
 "spread": {
 "pick": "Oklahoma",
 "line": -2.5,
-"odds": -115.0,
+"odds": -118.0,
 "odds_assumed": false,
-"p": 0.5082,
-"break_even": 0.5349,
-"edge": -0.0267,
-"ev_per_100": -5.0
+"p": 0.5033,
+"break_even": 0.5413,
+"edge": -0.038,
+"ev_per_100": -7.0
 },
 "alt": [
 {
 "team": "Oklahoma",
 "line": -12.5,
-"p": 0.2615,
-"fair_odds": 282
+"p": 0.2561,
+"fair_odds": 290
 },
 {
 "team": "Oklahoma",
 "line": -9.5,
-"p": 0.3272,
-"fair_odds": 206
+"p": 0.3236,
+"fair_odds": 209
 },
 {
 "team": "Oklahoma",
 "line": -6.0,
-"p": 0.4095,
-"fair_odds": 144
+"p": 0.4041,
+"fair_odds": 147
 },
 {
 "team": "Oklahoma",
 "line": -5.5,
-"p": 0.4285,
-"fair_odds": 133
+"p": 0.4214,
+"fair_odds": 137
 },
 {
 "team": "Oklahoma",
 "line": 0.5,
-"p": 0.6005,
-"fair_odds": -150
+"p": 0.5925,
+"fair_odds": -145
 },
 {
 "team": "Oklahoma",
 "line": 1.0,
-"p": 0.6159,
-"fair_odds": -160
+"p": 0.6093,
+"fair_odds": -156
 },
 {
 "team": "Oklahoma",
 "line": 4.5,
-"p": 0.6927,
-"fair_odds": -225
+"p": 0.6884,
+"fair_odds": -221
 },
 {
 "team": "Oklahoma",
 "line": 7.5,
-"p": 0.7541,
-"fair_odds": -307
+"p": 0.7489,
+"fair_odds": -298
 }
 ],
 "total": {
 "pick": "Over",
 "line": 48.5,
-"proj": 50.9,
+"proj": 50.8,
 "odds": -112.0,
 "odds_assumed": false,
-"p": 0.543,
+"p": 0.5374,
 "break_even": 0.5283,
-"edge": 0.0147,
-"ev_per_100": 2.8,
+"edge": 0.0091,
+"ev_per_100": 1.7,
 "range80": [
 31,
 72
@@ -535904,39 +536000,39 @@ null
 "alt": [
 {
 "line": 38.5,
-"over": 0.7776,
-"fair_over": -350,
-"fair_under": 350
+"over": 0.7753,
+"fair_over": -345,
+"fair_under": 345
 },
 {
 "line": 41.5,
-"over": 0.7185,
-"fair_over": -255,
-"fair_under": 255
+"over": 0.7156,
+"fair_over": -252,
+"fair_under": 252
 },
 {
 "line": 45.5,
-"over": 0.6169,
-"fair_over": -161,
-"fair_under": 161
+"over": 0.6123,
+"fair_over": -158,
+"fair_under": 158
 },
 {
 "line": 51.5,
-"over": 0.4664,
-"fair_over": 114,
-"fair_under": -114
+"over": 0.4614,
+"fair_over": 117,
+"fair_under": -117
 },
 {
 "line": 55.5,
-"over": 0.3718,
-"fair_over": 169,
-"fair_under": -169
+"over": 0.3655,
+"fair_over": 174,
+"fair_under": -174
 },
 {
 "line": 58.5,
-"over": 0.303,
-"fair_over": 230,
-"fair_under": -230
+"over": 0.2992,
+"fair_over": 234,
+"fair_under": -234
 }
 ]
 }
@@ -535944,7 +536040,7 @@ null
 "ou": {
 "pick": "Over",
 "line": 48.5,
-"proj": 50.9
+"proj": 50.8
 }
 }
 },
@@ -537194,6 +537290,36 @@ null
 "line": 48.5,
 "proj": 48.9
 }
+},
+"final": {
+"week": 11,
+"gameday": "2026-11-14",
+"proj": [
+16,
+33
+],
+"home": "Georgia",
+"away": "Missouri",
+"home_score": 48,
+"away_score": 21,
+"source": "official box score",
+"pick": "Georgia",
+"p_pick": 0.8739,
+"winner": "Georgia",
+"correct": true,
+"ats": {
+"team": "Georgia",
+"line": -16.5,
+"edge": 0.2
+},
+"ou": {
+"pick": "Under",
+"line": 48.5,
+"proj": 48.9
+},
+"graded_at": "2026-11-15T00:52:16+00:00",
+"ats_correct": true,
+"ou_correct": false
 }
 },
 "401856884": {
@@ -538912,6 +539038,20 @@ null
 "ats_home": false,
 "ou_pick": "Under",
 "total_line": 73.5
+},
+{
+"at": "2026-11-15T00:52:16+00:00",
+"type": "early",
+"p_home": 0.4077,
+"model_version": "cfb-v2.0.0",
+"weather_status": "forecast",
+"p_crunch": 0.555,
+"p_stats": 0.4077,
+"spread_line": 3.5,
+"ats_team": "Texas Tech",
+"ats_home": false,
+"ou_pick": "Under",
+"total_line": 73.5
 }
 ],
 "frozen": {
@@ -538937,113 +539077,113 @@ null
 "p_home": 0.213
 },
 "early": {
-"p_home": 0.4087,
-"p_away": 0.5913,
+"p_home": 0.4077,
+"p_away": 0.5923,
 "pick": "Texas Tech",
-"predicted_at": "2026-11-14T22:28:48+00:00",
+"predicted_at": "2026-11-15T00:52:16+00:00",
 "model_version": "cfb-v2.0.0",
-"input_hash": "fbb813f2ea0e44d9",
+"input_hash": "3b17704394bc70c8",
 "cutoff": "Tuesday of game week; uses games through 2026-11-14",
 "factors": [
 {
 "feature": "Pregame Elo rating (CFBD)",
 "key": "d_elo",
-"logit": -0.4504
+"logit": -0.4568
 },
 {
 "feature": "Adj. points per drive allowed",
 "key": "d_adj_def_ppd",
-"logit": -0.3678
+"logit": -0.364
 },
 {
 "feature": "Adj. explosive plays allowed",
 "key": "d_adj_def_explosive_rate",
-"logit": -0.2503
+"logit": -0.2577
 },
 {
 "feature": "Returning production (share of last season)",
 "key": "d_ret_ppa",
-"logit": -0.244
+"logit": -0.2384
 },
 {
 "feature": "Last 3 games: points per drive",
 "key": "d_l3_ppd",
-"logit": 0.2265
+"logit": 0.2236
 },
 {
 "feature": "Opponent-adjusted defensive EPA/play",
 "key": "d_adj_def_off_epa",
-"logit": -0.1674
+"logit": -0.1741
 },
 {
 "feature": "Adj. points per drive",
 "key": "d_adj_off_ppd",
-"logit": 0.1216
+"logit": 0.1283
 },
 {
 "feature": "Conference game",
 "key": "conf_game",
-"logit": -0.1144
+"logit": -0.1147
 },
 {
 "feature": "Roster talent, early-season weight",
 "key": "talent_early",
-"logit": -0.0822
+"logit": -0.0819
 },
 {
 "feature": "Adj. offensive success rate",
 "key": "d_adj_off_off_sr",
-"logit": -0.0703
+"logit": -0.0715
 },
 {
 "feature": "Opponent-adjusted offensive EPA/play",
 "key": "d_adj_off_off_epa",
-"logit": 0.0702
-},
-{
-"feature": "Adj. run defense",
-"key": "d_adj_def_rush_epa",
-"logit": -0.0516
-},
-{
-"feature": "Last 3 games: offensive EPA/play",
-"key": "d_l3_off_epa",
-"logit": 0.0505
+"logit": 0.0704
 },
 {
 "feature": "Adj. pass defense",
 "key": "d_adj_def_pass_epa",
-"logit": 0.0434
+"logit": 0.0519
+},
+{
+"feature": "Last 3 games: offensive EPA/play",
+"key": "d_l3_off_epa",
+"logit": 0.0475
+},
+{
+"feature": "Adj. run defense",
+"key": "d_adj_def_rush_epa",
+"logit": -0.0453
 },
 {
 "feature": "Adj. defensive success rate",
 "key": "d_adj_def_off_sr",
-"logit": 0.038
+"logit": 0.0338
 },
 {
 "feature": "Adj. passing EPA/dropback",
 "key": "d_adj_off_pass_epa",
-"logit": 0.0351
+"logit": 0.0325
 },
 {
 "feature": "Home-field advantage",
 "key": "home_adv",
-"logit": 0.0272
+"logit": 0.0271
 },
 {
 "feature": "Roster talent (recruiting composite)",
 "key": "d_talent",
-"logit": -0.0156
+"logit": -0.0152
 },
 {
 "feature": "Adj. rushing EPA/play",
 "key": "d_adj_off_rush_epa",
-"logit": -0.0077
+"logit": -0.0074
 },
 {
 "feature": "Adj. explosive-play rate",
 "key": "d_adj_off_explosive_rate",
-"logit": 0.001
+"logit": 0.0011
 },
 {
 "feature": "Returning production, early-season weight",
@@ -539053,28 +539193,28 @@ null
 {
 "feature": "Last 3 games: EPA/play allowed",
 "key": "d_l3_def_epa",
-"logit": 0.0004
+"logit": 0.0002
 }
 ],
-"intercept_logit": 0.8377,
+"intercept_logit": 0.8365,
 "missing_inputs": []
 },
 "updated": null,
 "weather": {
 "status": "forecast",
-"temp_f": 48.333333333333336,
-"wind_mph": 9.233333333333333,
+"temp_f": 49.1,
+"wind_mph": 9.333333333333334,
 "gust_mph": 24.8,
-"pop_pct": 11,
+"pop_pct": 14,
 "valid_for": "2026-11-15T02:00Z",
 "forecast_created": null,
-"fetched_at": "2026-11-14T22:28:15+00:00",
+"fetched_at": "2026-11-15T00:51:46+00:00",
 "source": "open-meteo",
 "retractable": false
 },
 "score": {
 "margin": 3.3,
-"total": 67.4,
+"total": 67.2,
 "home": 37,
 "away": 36,
 "adjusted": true
@@ -539085,7 +539225,7 @@ null
 "away_moneyline": 150.0,
 "spread_line": 3.5,
 "total_line": 73.5,
-"source": "ESPN (DraftKings) at 2026-11-14T22:28:41+00:00"
+"source": "ESPN (DraftKings) at 2026-11-15T00:52:09+00:00"
 },
 "line": {
 "open_spread_home": 15.5,
@@ -539189,19 +539329,19 @@ null
 "l3_ppd": 4.195704948646125,
 "elo": 1597.0,
 "qb_name": "Drew Mestemaker",
-"qb_epa": -0.1220867988170602,
+"qb_epa": -0.12277356461711797,
 "qb_cmp": 0.6176454641036884,
-"qb_int_rate": 0.020959459251757726,
-"qb_sack_rate": 0.1295555187436279,
+"qb_int_rate": 0.020950040733345308,
+"qb_sack_rate": 0.12993975561699816,
 "qb_db_hist": 10.0,
-"third_rate": 0.41504562225499486,
-"rz_td_rate": 0.6058421649164956,
-"fg_rate": 0.898108507822838,
+"third_rate": 0.41498812986311046,
+"rz_td_rate": 0.6058193475663802,
+"fg_rate": 0.8980286813480943,
 "to_per_game": 1.3333333333333333,
 "takeaways_per_game": 1.2222222222222223,
 "pen_per_game": 6.444444444444445,
-"sack_rate_off": 0.029066632609839875,
-"sack_rate_def": 0.05992890347044705,
+"sack_rate_off": 0.02907532263671304,
+"sack_rate_def": 0.05993876430932408,
 "pass_rate": 0.5104995348418748,
 "plays_per_game": 71.33333333333333,
 "fourth_go_rate": 1.3333333333333333,
@@ -539231,19 +539371,19 @@ null
 "l3_ppd": 2.4540517961570596,
 "elo": 1824.0,
 "qb_name": "Thomas Castellanos",
-"qb_epa": -0.0663305291385203,
+"qb_epa": -0.06705052554180668,
 "qb_cmp": 0.6112728885054165,
-"qb_int_rate": 0.021973626634907293,
-"qb_sack_rate": 0.10356626965057762,
+"qb_int_rate": 0.021963752381732985,
+"qb_sack_rate": 0.10396909863072387,
 "qb_db_hist": 4.0,
-"third_rate": 0.4093368989340799,
-"rz_td_rate": 0.49528955322199403,
-"fg_rate": 0.8291429905814587,
+"third_rate": 0.4092850748061841,
+"rz_td_rate": 0.49525913008850697,
+"fg_rate": 0.829063164106715,
 "to_per_game": 1.0,
 "takeaways_per_game": 1.5555555555555556,
 "pen_per_game": 6.555555555555555,
-"sack_rate_off": 0.0604720657375508,
-"sack_rate_def": 0.07146727085506979,
+"sack_rate_off": 0.06048201594958986,
+"sack_rate_def": 0.07147511256979582,
 "pass_rate": 0.45194904249172857,
 "plays_per_game": 69.22222222222223,
 "fourth_go_rate": 1.7777777777777777,
@@ -539254,113 +539394,113 @@ null
 },
 "qb_flags": [],
 "stats": {
-"p_home": 0.4087,
-"p_away": 0.5913,
+"p_home": 0.4077,
+"p_away": 0.5923,
 "pick": "Texas Tech",
-"predicted_at": "2026-11-14T22:28:48+00:00",
+"predicted_at": "2026-11-15T00:52:16+00:00",
 "model_version": "cfb-v2.0.0",
-"input_hash": "fbb813f2ea0e44d9",
+"input_hash": "3b17704394bc70c8",
 "cutoff": "Tuesday of game week; uses games through 2026-11-14",
 "factors": [
 {
 "feature": "Pregame Elo rating (CFBD)",
 "key": "d_elo",
-"logit": -0.4504
+"logit": -0.4568
 },
 {
 "feature": "Adj. points per drive allowed",
 "key": "d_adj_def_ppd",
-"logit": -0.3678
+"logit": -0.364
 },
 {
 "feature": "Adj. explosive plays allowed",
 "key": "d_adj_def_explosive_rate",
-"logit": -0.2503
+"logit": -0.2577
 },
 {
 "feature": "Returning production (share of last season)",
 "key": "d_ret_ppa",
-"logit": -0.244
+"logit": -0.2384
 },
 {
 "feature": "Last 3 games: points per drive",
 "key": "d_l3_ppd",
-"logit": 0.2265
+"logit": 0.2236
 },
 {
 "feature": "Opponent-adjusted defensive EPA/play",
 "key": "d_adj_def_off_epa",
-"logit": -0.1674
+"logit": -0.1741
 },
 {
 "feature": "Adj. points per drive",
 "key": "d_adj_off_ppd",
-"logit": 0.1216
+"logit": 0.1283
 },
 {
 "feature": "Conference game",
 "key": "conf_game",
-"logit": -0.1144
+"logit": -0.1147
 },
 {
 "feature": "Roster talent, early-season weight",
 "key": "talent_early",
-"logit": -0.0822
+"logit": -0.0819
 },
 {
 "feature": "Adj. offensive success rate",
 "key": "d_adj_off_off_sr",
-"logit": -0.0703
+"logit": -0.0715
 },
 {
 "feature": "Opponent-adjusted offensive EPA/play",
 "key": "d_adj_off_off_epa",
-"logit": 0.0702
-},
-{
-"feature": "Adj. run defense",
-"key": "d_adj_def_rush_epa",
-"logit": -0.0516
-},
-{
-"feature": "Last 3 games: offensive EPA/play",
-"key": "d_l3_off_epa",
-"logit": 0.0505
+"logit": 0.0704
 },
 {
 "feature": "Adj. pass defense",
 "key": "d_adj_def_pass_epa",
-"logit": 0.0434
+"logit": 0.0519
+},
+{
+"feature": "Last 3 games: offensive EPA/play",
+"key": "d_l3_off_epa",
+"logit": 0.0475
+},
+{
+"feature": "Adj. run defense",
+"key": "d_adj_def_rush_epa",
+"logit": -0.0453
 },
 {
 "feature": "Adj. defensive success rate",
 "key": "d_adj_def_off_sr",
-"logit": 0.038
+"logit": 0.0338
 },
 {
 "feature": "Adj. passing EPA/dropback",
 "key": "d_adj_off_pass_epa",
-"logit": 0.0351
+"logit": 0.0325
 },
 {
 "feature": "Home-field advantage",
 "key": "home_adv",
-"logit": 0.0272
+"logit": 0.0271
 },
 {
 "feature": "Roster talent (recruiting composite)",
 "key": "d_talent",
-"logit": -0.0156
+"logit": -0.0152
 },
 {
 "feature": "Adj. rushing EPA/play",
 "key": "d_adj_off_rush_epa",
-"logit": -0.0077
+"logit": -0.0074
 },
 {
 "feature": "Adj. explosive-play rate",
 "key": "d_adj_off_explosive_rate",
-"logit": 0.001
+"logit": 0.0011
 },
 {
 "feature": "Returning production, early-season weight",
@@ -539370,86 +539510,86 @@ null
 {
 "feature": "Last 3 games: EPA/play allowed",
 "key": "d_l3_def_epa",
-"logit": 0.0004
+"logit": 0.0002
 }
 ],
-"intercept_logit": 0.8377,
+"intercept_logit": 0.8365,
 "missing_inputs": []
 },
 "stats_type": "early",
 "crunch": {
-"p_home": 0.5569,
-"p_away": 0.4431,
+"p_home": 0.555,
+"p_away": 0.445,
 "pick": "Oklahoma State",
-"predicted_at": "2026-11-14T22:28:48+00:00",
+"predicted_at": "2026-11-15T00:52:16+00:00",
 "model_version": "cfb-v2.0.0-crunch",
-"input_hash": "fbb813f2ea0e44d9",
-"intercept_logit": 0.9771,
+"input_hash": "3b17704394bc70c8",
+"intercept_logit": 0.9743,
 "factors": [
 {
 "feature": "Adj. explosive plays allowed",
 "key": "d_adj_def_explosive_rate",
-"logit": -0.231
+"logit": -0.2378
 },
 {
 "feature": "Betting market win probability (from the spread)",
 "key": "mkt_logit",
-"logit": -0.2038
+"logit": -0.2025
 },
 {
 "feature": "Betting market point spread",
 "key": "mkt_spread",
-"logit": -0.1899
+"logit": -0.1887
 },
 {
 "feature": "Adj. points per drive allowed",
 "key": "d_adj_def_ppd",
-"logit": -0.1863
+"logit": -0.1803
 },
 {
 "feature": "Pregame Elo rating (CFBD)",
 "key": "d_elo",
-"logit": -0.1111
+"logit": -0.1164
 },
 {
 "feature": "Adj. pass defense",
 "key": "d_adj_def_pass_epa",
-"logit": 0.0916
+"logit": 0.0958
 },
 {
 "feature": "Adj. points per drive",
 "key": "d_adj_off_ppd",
-"logit": 0.0767
+"logit": 0.0828
 },
 {
 "feature": "Conference game",
 "key": "conf_game",
-"logit": -0.0568
-},
-{
-"feature": "Last 3 games: offensive EPA/play",
-"key": "d_l3_off_epa",
-"logit": 0.0534
+"logit": -0.057
 },
 {
 "feature": "Opponent-adjusted defensive EPA/play",
 "key": "d_adj_def_off_epa",
-"logit": -0.0483
+"logit": -0.0525
+},
+{
+"feature": "Last 3 games: offensive EPA/play",
+"key": "d_l3_off_epa",
+"logit": 0.0502
 },
 {
 "feature": "Last 3 games: points per drive",
 "key": "d_l3_ppd",
-"logit": 0.0389
-},
-{
-"feature": "Adj. defensive success rate",
-"key": "d_adj_def_off_sr",
-"logit": 0.035
+"logit": 0.0372
 },
 {
 "feature": "Adj. offensive success rate",
 "key": "d_adj_off_off_sr",
-"logit": -0.0331
+"logit": -0.0337
+},
+{
+"feature": "Adj. defensive success rate",
+"key": "d_adj_def_off_sr",
+"logit": 0.0304
 },
 {
 "feature": "Opponent-adjusted offensive EPA/play",
@@ -539457,14 +539597,9 @@ null
 "logit": 0.0287
 },
 {
-"feature": "Adj. run defense",
-"key": "d_adj_def_rush_epa",
-"logit": -0.012
-},
-{
 "feature": "Adj. passing EPA/dropback",
 "key": "d_adj_off_pass_epa",
-"logit": -0.0104
+"logit": -0.0124
 },
 {
 "feature": "Home-field advantage",
@@ -539472,95 +539607,100 @@ null
 "logit": 0.0092
 },
 {
+"feature": "Adj. run defense",
+"key": "d_adj_def_rush_epa",
+"logit": -0.0073
+},
+{
 "feature": "Adj. explosive-play rate",
 "key": "d_adj_off_explosive_rate",
-"logit": 0.001
+"logit": 0.0011
 },
 {
 "feature": "Adj. rushing EPA/play",
 "key": "d_adj_off_rush_epa",
-"logit": -0.0006
+"logit": -0.0005
 },
 {
 "feature": "Last 3 games: EPA/play allowed",
 "key": "d_l3_def_epa",
-"logit": 0.0004
+"logit": 0.0002
 }
 ]
 },
 "latest": {
-"p_home": 0.5569,
-"p_away": 0.4431,
+"p_home": 0.555,
+"p_away": 0.445,
 "pick": "Oklahoma State",
-"predicted_at": "2026-11-14T22:28:48+00:00",
+"predicted_at": "2026-11-15T00:52:16+00:00",
 "model_version": "cfb-v2.0.0-crunch",
-"input_hash": "fbb813f2ea0e44d9",
-"intercept_logit": 0.9771,
+"input_hash": "3b17704394bc70c8",
+"intercept_logit": 0.9743,
 "factors": [
 {
 "feature": "Adj. explosive plays allowed",
 "key": "d_adj_def_explosive_rate",
-"logit": -0.231
+"logit": -0.2378
 },
 {
 "feature": "Betting market win probability (from the spread)",
 "key": "mkt_logit",
-"logit": -0.2038
+"logit": -0.2025
 },
 {
 "feature": "Betting market point spread",
 "key": "mkt_spread",
-"logit": -0.1899
+"logit": -0.1887
 },
 {
 "feature": "Adj. points per drive allowed",
 "key": "d_adj_def_ppd",
-"logit": -0.1863
+"logit": -0.1803
 },
 {
 "feature": "Pregame Elo rating (CFBD)",
 "key": "d_elo",
-"logit": -0.1111
+"logit": -0.1164
 },
 {
 "feature": "Adj. pass defense",
 "key": "d_adj_def_pass_epa",
-"logit": 0.0916
+"logit": 0.0958
 },
 {
 "feature": "Adj. points per drive",
 "key": "d_adj_off_ppd",
-"logit": 0.0767
+"logit": 0.0828
 },
 {
 "feature": "Conference game",
 "key": "conf_game",
-"logit": -0.0568
-},
-{
-"feature": "Last 3 games: offensive EPA/play",
-"key": "d_l3_off_epa",
-"logit": 0.0534
+"logit": -0.057
 },
 {
 "feature": "Opponent-adjusted defensive EPA/play",
 "key": "d_adj_def_off_epa",
-"logit": -0.0483
+"logit": -0.0525
+},
+{
+"feature": "Last 3 games: offensive EPA/play",
+"key": "d_l3_off_epa",
+"logit": 0.0502
 },
 {
 "feature": "Last 3 games: points per drive",
 "key": "d_l3_ppd",
-"logit": 0.0389
-},
-{
-"feature": "Adj. defensive success rate",
-"key": "d_adj_def_off_sr",
-"logit": 0.035
+"logit": 0.0372
 },
 {
 "feature": "Adj. offensive success rate",
 "key": "d_adj_off_off_sr",
-"logit": -0.0331
+"logit": -0.0337
+},
+{
+"feature": "Adj. defensive success rate",
+"key": "d_adj_def_off_sr",
+"logit": 0.0304
 },
 {
 "feature": "Opponent-adjusted offensive EPA/play",
@@ -539568,14 +539708,9 @@ null
 "logit": 0.0287
 },
 {
-"feature": "Adj. run defense",
-"key": "d_adj_def_rush_epa",
-"logit": -0.012
-},
-{
 "feature": "Adj. passing EPA/dropback",
 "key": "d_adj_off_pass_epa",
-"logit": -0.0104
+"logit": -0.0124
 },
 {
 "feature": "Home-field advantage",
@@ -539583,19 +539718,24 @@ null
 "logit": 0.0092
 },
 {
+"feature": "Adj. run defense",
+"key": "d_adj_def_rush_epa",
+"logit": -0.0073
+},
+{
 "feature": "Adj. explosive-play rate",
 "key": "d_adj_off_explosive_rate",
-"logit": 0.001
+"logit": 0.0011
 },
 {
 "feature": "Adj. rushing EPA/play",
 "key": "d_adj_off_rush_epa",
-"logit": -0.0006
+"logit": -0.0005
 },
 {
 "feature": "Last 3 games: EPA/play allowed",
 "key": "d_l3_def_epa",
-"logit": 0.0004
+"logit": 0.0002
 }
 ]
 },
@@ -539609,38 +539749,38 @@ null
 "moneyline": {
 "pick": "Oklahoma State",
 "odds": -180.0,
-"p": 0.5569,
+"p": 0.555,
 "break_even": 0.6429,
-"edge": -0.086,
-"ev_per_100": -13.4
+"edge": -0.0879,
+"ev_per_100": -13.7
 },
 "spread": {
 "pick": "Texas Tech",
 "line": 3.5,
-"odds": -112.0,
+"odds": -108.0,
 "odds_assumed": false,
-"p": 0.5027,
-"break_even": 0.5283,
-"edge": -0.0256,
-"ev_per_100": -4.8
+"p": 0.5025,
+"break_even": 0.5192,
+"edge": -0.0167,
+"ev_per_100": -3.2
 },
 "alt": [
 {
 "team": "Texas Tech",
 "line": -6.5,
-"p": 0.2545,
-"fair_odds": 293
+"p": 0.2549,
+"fair_odds": 292
 },
 {
 "team": "Texas Tech",
 "line": -3.5,
-"p": 0.3155,
+"p": 0.3159,
 "fair_odds": 217
 },
 {
 "team": "Texas Tech",
 "line": 0.0,
-"p": 0.3994,
+"p": 0.3995,
 "fair_odds": 150
 },
 {
@@ -539671,59 +539811,59 @@ null
 "team": "Texas Tech",
 "line": 13.5,
 "p": 0.7478,
-"fair_odds": -297
+"fair_odds": -296
 }
 ],
 "total": {
 "pick": "Under",
 "line": 73.5,
-"proj": 67.4,
+"proj": 67.2,
 "odds": -105.0,
 "odds_assumed": false,
-"p": 0.663,
+"p": 0.6698,
 "break_even": 0.5122,
-"edge": 0.1508,
-"ev_per_100": 29.4,
+"edge": 0.1576,
+"ev_per_100": 30.8,
 "range80": [
 47,
-89
+88
 ],
 "alt": [
 {
 "line": 63.5,
-"over": 0.5794,
-"fair_over": -138,
-"fair_under": 138
+"over": 0.5728,
+"fair_over": -134,
+"fair_under": 134
 },
 {
 "line": 66.5,
-"over": 0.5016,
-"fair_over": -101,
-"fair_under": 101
+"over": 0.4959,
+"fair_over": 102,
+"fair_under": -102
 },
 {
 "line": 70.5,
-"over": 0.4034,
-"fair_over": 148,
-"fair_under": -148
+"over": 0.3962,
+"fair_over": 152,
+"fair_under": -152
 },
 {
 "line": 76.5,
-"over": 0.2713,
-"fair_over": 269,
-"fair_under": -269
+"over": 0.2662,
+"fair_over": 276,
+"fair_under": -276
 },
 {
 "line": 80.5,
-"over": 0.2009,
-"fair_over": 398,
-"fair_under": -398
+"over": 0.1956,
+"fair_over": 411,
+"fair_under": -411
 },
 {
 "line": 83.5,
-"over": 0.1556,
-"fair_over": 543,
-"fair_under": -543
+"over": 0.1525,
+"fair_over": 556,
+"fair_under": -556
 }
 ]
 }
@@ -539731,7 +539871,7 @@ null
 "ou": {
 "pick": "Under",
 "line": 73.5,
-"proj": 67.4
+"proj": 67.2
 }
 }
 },
@@ -540985,7 +541125,7 @@ null
 "away": "Kansas State",
 "home_score": 20,
 "away_score": 10,
-"source": "ESPN final",
+"source": "official box score",
 "pick": "TCU",
 "p_pick": 0.8406,
 "winner": "TCU",
@@ -543489,6 +543629,36 @@ null
 "line": 51.5,
 "proj": 51.3
 }
+},
+"final": {
+"week": 11,
+"gameday": "2026-11-14",
+"proj": [
+27,
+24
+],
+"home": "Mississippi State",
+"away": "Auburn",
+"home_score": 9,
+"away_score": 41,
+"source": "ESPN final",
+"pick": "Auburn",
+"p_pick": 0.6143,
+"winner": "Auburn",
+"correct": true,
+"ats": {
+"team": "Auburn",
+"line": -2.5,
+"edge": 0.4
+},
+"ou": {
+"pick": "Under",
+"line": 51.5,
+"proj": 51.3
+},
+"graded_at": "2026-11-15T00:52:16+00:00",
+"ats_correct": true,
+"ou_correct": true
 }
 },
 "401858301": {
@@ -554565,7 +554735,7 @@ null
 "away": "Alabama",
 "home_score": 6,
 "away_score": 21,
-"source": "ESPN final",
+"source": "official box score",
 "pick": "Alabama",
 "p_pick": 0.8009,
 "winner": "Alabama",
@@ -555829,7 +555999,7 @@ null
 "away": "East Carolina",
 "home_score": 16,
 "away_score": 17,
-"source": "ESPN final",
+"source": "official box score",
 "pick": "East Carolina",
 "p_pick": 0.7314,
 "winner": "East Carolina",
@@ -557067,7 +557237,7 @@ null
 "away": "UAB",
 "home_score": 10,
 "away_score": 36,
-"source": "ESPN final",
+"source": "official box score",
 "pick": "Temple",
 "p_pick": 0.5845,
 "winner": "UAB",
@@ -558305,7 +558475,7 @@ null
 "away": "Arkansas State",
 "home_score": 28,
 "away_score": 21,
-"source": "ESPN final",
+"source": "official box score",
 "pick": "Coastal Carolina",
 "p_pick": 0.559,
 "winner": "Coastal Carolina",
@@ -559604,6 +559774,36 @@ null
 "line": 48.5,
 "proj": 49.9
 }
+},
+"final": {
+"week": 11,
+"gameday": "2026-11-14",
+"proj": [
+23,
+27
+],
+"home": "Rice",
+"away": "Tulane",
+"home_score": 17,
+"away_score": 20,
+"source": "ESPN final",
+"pick": "Rice",
+"p_pick": 0.5653,
+"winner": "Tulane",
+"correct": false,
+"ats": {
+"team": "Rice",
+"line": -3.0,
+"edge": 0.9
+},
+"ou": {
+"pick": "Over",
+"line": 48.5,
+"proj": 49.9
+},
+"graded_at": "2026-11-15T00:52:16+00:00",
+"ats_correct": false,
+"ou_correct": false
 }
 },
 "401870769": {
@@ -560870,7 +561070,7 @@ null
 "away": "Kennesaw State",
 "home_score": 7,
 "away_score": 26,
-"source": "ESPN final",
+"source": "official box score",
 "pick": "Kennesaw State",
 "p_pick": 0.7524,
 "winner": "Kennesaw State",
@@ -562126,6 +562326,36 @@ null
 "line": 49.5,
 "proj": 50.7
 }
+},
+"final": {
+"week": 11,
+"gameday": "2026-11-14",
+"proj": [
+25,
+26
+],
+"home": "Missouri State",
+"away": "New Mexico State",
+"home_score": 27,
+"away_score": 21,
+"source": "official box score",
+"pick": "Missouri State",
+"p_pick": 0.5222,
+"winner": "Missouri State",
+"correct": true,
+"ats": {
+"team": "New Mexico State",
+"line": 1.5,
+"edge": 0.6
+},
+"ou": {
+"pick": "Over",
+"line": 49.5,
+"proj": 50.7
+},
+"graded_at": "2026-11-15T00:52:16+00:00",
+"ats_correct": false,
+"ou_correct": false
 }
 },
 "401871060": {
@@ -563374,6 +563604,36 @@ null
 "line": 54.5,
 "proj": 55.3
 }
+},
+"final": {
+"week": 11,
+"gameday": "2026-11-14",
+"proj": [
+25,
+30
+],
+"home": "Delaware",
+"away": "Florida International",
+"home_score": 24,
+"away_score": 16,
+"source": "official box score",
+"pick": "Delaware",
+"p_pick": 0.6627,
+"winner": "Delaware",
+"correct": true,
+"ats": {
+"team": "Delaware",
+"line": -3.5,
+"edge": 1.4
+},
+"ou": {
+"pick": "Over",
+"line": 54.5,
+"proj": 55.3
+},
+"graded_at": "2026-11-15T00:52:16+00:00",
+"ats_correct": true,
+"ou_correct": false
 }
 },
 "401858295": {
@@ -564604,6 +564864,36 @@ null
 "line": 46.5,
 "proj": 49.0
 }
+},
+"final": {
+"week": 11,
+"gameday": "2026-11-14",
+"proj": [
+18,
+31
+],
+"home": "Virginia",
+"away": "California",
+"home_score": 36,
+"away_score": 7,
+"source": "official box score",
+"pick": "Virginia",
+"p_pick": 0.8178,
+"winner": "Virginia",
+"correct": true,
+"ats": {
+"team": "Virginia",
+"line": -11.5,
+"edge": 0.7
+},
+"ou": {
+"pick": "Over",
+"line": 46.5,
+"proj": 49.0
+},
+"graded_at": "2026-11-15T00:52:16+00:00",
+"ats_correct": true,
+"ou_correct": false
 }
 },
 "401858294": {
@@ -565836,6 +566126,36 @@ null
 "line": 51.5,
 "proj": 49.5
 }
+},
+"final": {
+"week": 11,
+"gameday": "2026-11-14",
+"proj": [
+8,
+41
+],
+"home": "Notre Dame",
+"away": "Boston College",
+"home_score": 41,
+"away_score": 7,
+"source": "official box score",
+"pick": "Notre Dame",
+"p_pick": 0.9828,
+"winner": "Notre Dame",
+"correct": true,
+"ats": {
+"team": "Notre Dame",
+"line": -29.5,
+"edge": 3.9
+},
+"ou": {
+"pick": "Under",
+"line": 51.5,
+"proj": 49.5
+},
+"graded_at": "2026-11-15T00:52:16+00:00",
+"ats_correct": true,
+"ou_correct": true
 }
 },
 "401870752": {
@@ -567066,6 +567386,36 @@ null
 "line": 54.5,
 "proj": 54.9
 }
+},
+"final": {
+"week": 11,
+"gameday": "2026-11-14",
+"proj": [
+31,
+24
+],
+"home": "Western Kentucky",
+"away": "Jacksonville State",
+"home_score": 34,
+"away_score": 24,
+"source": "official box score",
+"pick": "Jacksonville State",
+"p_pick": 0.7053,
+"winner": "Western Kentucky",
+"correct": false,
+"ats": {
+"team": "Western Kentucky",
+"line": 7.5,
+"edge": 0.7
+},
+"ou": {
+"pick": "Under",
+"line": 54.5,
+"proj": 54.9
+},
+"graded_at": "2026-11-15T00:52:16+00:00",
+"ats_correct": true,
+"ou_correct": false
 }
 },
 "401862826": {
@@ -569532,6 +569882,36 @@ null
 "line": 55.5,
 "proj": 57.6
 }
+},
+"final": {
+"week": 11,
+"gameday": "2026-11-14",
+"proj": [
+32,
+26
+],
+"home": "Georgia State",
+"away": "Georgia Southern",
+"home_score": 17,
+"away_score": 34,
+"source": "official box score",
+"pick": "Georgia Southern",
+"p_pick": 0.6735,
+"winner": "Georgia Southern",
+"correct": true,
+"ats": {
+"team": "Georgia Southern",
+"line": -6.0,
+"edge": 0.1
+},
+"ou": {
+"pick": "Over",
+"line": 55.5,
+"proj": 57.6
+},
+"graded_at": "2026-11-15T00:52:16+00:00",
+"ats_correct": true,
+"ou_correct": false
 }
 },
 "401858523": {
@@ -570764,6 +571144,36 @@ null
 "line": 39.5,
 "proj": 41.2
 }
+},
+"final": {
+"week": 11,
+"gameday": "2026-11-14",
+"proj": [
+15,
+26
+],
+"home": "Oregon",
+"away": "Michigan",
+"home_score": 31,
+"away_score": 7,
+"source": "official box score",
+"pick": "Oregon",
+"p_pick": 0.7862,
+"winner": "Oregon",
+"correct": true,
+"ats": {
+"team": "Oregon",
+"line": -10.0,
+"edge": 0.2
+},
+"ou": {
+"pick": "Over",
+"line": 39.5,
+"proj": 41.2
+},
+"graded_at": "2026-11-15T00:52:16+00:00",
+"ats_correct": true,
+"ou_correct": false
 }
 },
 "401858518": {
@@ -572010,6 +572420,36 @@ null
 "line": 51.5,
 "proj": 52.2
 }
+},
+"final": {
+"week": 11,
+"gameday": "2026-11-14",
+"proj": [
+21,
+31
+],
+"home": "Indiana",
+"away": "USC",
+"home_score": 27,
+"away_score": 13,
+"source": "official box score",
+"pick": "Indiana",
+"p_pick": 0.7454,
+"winner": "Indiana",
+"correct": true,
+"ats": {
+"team": "Indiana",
+"line": -9.5,
+"edge": 0.6
+},
+"ou": {
+"pick": "Under",
+"line": 51.5,
+"proj": 52.2
+},
+"graded_at": "2026-11-15T00:52:16+00:00",
+"ats_correct": true,
+"ou_correct": true
 }
 },
 "401864536": {
@@ -573266,6 +573706,36 @@ null
 "line": 47.5,
 "proj": 48.6
 }
+},
+"final": {
+"week": 11,
+"gameday": "2026-11-14",
+"proj": [
+28,
+21
+],
+"home": "Northern Illinois",
+"away": "Nevada",
+"home_score": 7,
+"away_score": 28,
+"source": "official box score",
+"pick": "Nevada",
+"p_pick": 0.6721,
+"winner": "Nevada",
+"correct": true,
+"ats": {
+"team": "Nevada",
+"line": -6.0,
+"edge": 1.3
+},
+"ou": {
+"pick": "Over",
+"line": 47.5,
+"proj": 48.6
+},
+"graded_at": "2026-11-15T00:52:16+00:00",
+"ats_correct": true,
+"ou_correct": false
 }
 },
 "401871061": {
@@ -574488,6 +574958,36 @@ null
 "line": 53.5,
 "proj": 54.0
 }
+},
+"final": {
+"week": 11,
+"gameday": "2026-11-14",
+"proj": [
+16,
+38
+],
+"home": "Liberty",
+"away": "Middle Tennessee",
+"home_score": 28,
+"away_score": 23,
+"source": "official box score",
+"pick": "Liberty",
+"p_pick": 0.9329,
+"winner": "Liberty",
+"correct": true,
+"ats": {
+"team": "Liberty",
+"line": -21.0,
+"edge": 1.6
+},
+"ou": {
+"pick": "Under",
+"line": 53.5,
+"proj": 54.0
+},
+"graded_at": "2026-11-15T00:52:16+00:00",
+"ats_correct": false,
+"ou_correct": true
 }
 },
 "401860916": {
@@ -575744,6 +576244,36 @@ null
 "line": 60.5,
 "proj": 59.1
 }
+},
+"final": {
+"week": 11,
+"gameday": "2026-11-14",
+"proj": [
+24,
+35
+],
+"home": "Texas State",
+"away": "Fresno State",
+"home_score": 37,
+"away_score": 35,
+"source": "ESPN final",
+"pick": "Texas State",
+"p_pick": 0.7571,
+"winner": "Texas State",
+"correct": true,
+"ats": {
+"team": "Texas State",
+"line": -10.0,
+"edge": 1.1
+},
+"ou": {
+"pick": "Under",
+"line": 60.5,
+"proj": 59.1
+},
+"graded_at": "2026-11-15T00:52:16+00:00",
+"ats_correct": false,
+"ou_correct": false
 }
 },
 "401858521": {
@@ -588683,6 +589213,20 @@ null
 "ats_home": true,
 "ou_pick": "Under",
 "total_line": 75.5
+},
+{
+"at": "2026-11-15T00:52:16+00:00",
+"type": "early",
+"p_home": 0.4583,
+"model_version": "cfb-v2.0.0",
+"weather_status": "roofed",
+"p_crunch": 0.465,
+"p_stats": 0.4583,
+"spread_line": -2.5,
+"ats_team": "UTSA",
+"ats_home": true,
+"ou_pick": "Under",
+"total_line": 75.5
 }
 ],
 "frozen": {
@@ -588708,108 +589252,108 @@ null
 "p_home": 0.2169
 },
 "early": {
-"p_home": 0.4586,
-"p_away": 0.5414,
+"p_home": 0.4583,
+"p_away": 0.5417,
 "pick": "North Texas",
-"predicted_at": "2026-11-14T22:28:48+00:00",
+"predicted_at": "2026-11-15T00:52:16+00:00",
 "model_version": "cfb-v2.0.0",
-"input_hash": "fbb813f2ea0e44d9",
+"input_hash": "3b17704394bc70c8",
 "cutoff": "Tuesday of game week; uses games through 2026-11-14",
 "factors": [
 {
 "feature": "Pregame Elo rating (CFBD)",
 "key": "d_elo",
-"logit": -0.4433
+"logit": -0.4495
 },
 {
 "feature": "Opponent-adjusted offensive EPA/play",
 "key": "d_adj_off_off_epa",
-"logit": -0.3547
+"logit": -0.354
 },
 {
 "feature": "Returning production (share of last season)",
 "key": "d_ret_ppa",
-"logit": 0.2879
+"logit": 0.2807
 },
 {
 "feature": "Adj. points per drive",
 "key": "d_adj_off_ppd",
-"logit": -0.2622
+"logit": -0.2771
 },
 {
 "feature": "Last 3 games: points per drive",
 "key": "d_l3_ppd",
-"logit": -0.1717
+"logit": -0.17
 },
 {
 "feature": "Adj. passing EPA/dropback",
 "key": "d_adj_off_pass_epa",
-"logit": -0.1363
+"logit": -0.1264
 },
 {
 "feature": "Conference game",
 "key": "conf_game",
-"logit": -0.1144
+"logit": -0.1147
 },
 {
 "feature": "Adj. explosive plays allowed",
 "key": "d_adj_def_explosive_rate",
-"logit": 0.1096
+"logit": 0.1133
 },
 {
 "feature": "Adj. explosive-play rate",
 "key": "d_adj_off_explosive_rate",
-"logit": 0.0955
+"logit": 0.0977
 },
 {
 "feature": "Roster talent, early-season weight",
 "key": "talent_early",
-"logit": -0.0822
+"logit": -0.0819
 },
 {
 "feature": "Adj. offensive success rate",
 "key": "d_adj_off_off_sr",
-"logit": 0.0697
-},
-{
-"feature": "Adj. run defense",
-"key": "d_adj_def_rush_epa",
-"logit": -0.038
+"logit": 0.0711
 },
 {
 "feature": "Adj. points per drive allowed",
 "key": "d_adj_def_ppd",
-"logit": 0.0373
+"logit": 0.0375
 },
 {
 "feature": "Last 3 games: offensive EPA/play",
 "key": "d_l3_off_epa",
-"logit": -0.0367
+"logit": -0.0348
+},
+{
+"feature": "Adj. run defense",
+"key": "d_adj_def_rush_epa",
+"logit": -0.0333
 },
 {
 "feature": "Home-field advantage",
 "key": "home_adv",
-"logit": 0.0272
+"logit": 0.0271
 },
 {
 "feature": "Opponent-adjusted defensive EPA/play",
 "key": "d_adj_def_off_epa",
-"logit": -0.0218
+"logit": -0.0225
 },
 {
 "feature": "Adj. pass defense",
 "key": "d_adj_def_pass_epa",
-"logit": 0.0171
+"logit": 0.0204
 },
 {
 "feature": "Last 3 games: EPA/play allowed",
 "key": "d_l3_def_epa",
-"logit": 0.0127
+"logit": 0.0118
 },
 {
 "feature": "Adj. defensive success rate",
 "key": "d_adj_def_off_sr",
-"logit": -0.004
+"logit": -0.0036
 },
 {
 "feature": "Roster talent (recruiting composite)",
@@ -588819,7 +589363,7 @@ null
 {
 "feature": "Adj. rushing EPA/play",
 "key": "d_adj_off_rush_epa",
-"logit": 0.0018
+"logit": 0.0019
 },
 {
 "feature": "Returning production, early-season weight",
@@ -588827,7 +589371,7 @@ null
 "logit": 0.0006
 }
 ],
-"intercept_logit": 0.8377,
+"intercept_logit": 0.8365,
 "missing_inputs": []
 },
 "updated": null,
@@ -588837,18 +589381,18 @@ null
 },
 "score": {
 "margin": -1.2,
-"total": 73.8,
+"total": 73.7,
 "home": 36,
-"away": 38,
+"away": 37,
 "adjusted": false
 },
 "market": {
 "p_home_devig": 0.4379,
-"home_moneyline": 110.0,
-"away_moneyline": -130.0,
+"home_moneyline": 114.0,
+"away_moneyline": -135.0,
 "spread_line": -2.5,
 "total_line": 75.5,
-"source": "ESPN (DraftKings) at 2026-11-14T22:28:41+00:00"
+"source": "ESPN (DraftKings) at 2026-11-15T00:52:09+00:00"
 },
 "line": {
 "open_spread_home": 1.5,
@@ -588860,8 +589404,8 @@ null
 -112.0
 ],
 "cur_ml": [
-110.0,
--130.0
+114.0,
+-135.0
 ],
 "total_open": 75.5,
 "total": 75.5,
@@ -588947,6 +589491,14 @@ null
 "ml_away": -130.0,
 "total": 75.5,
 "provider": "DraftKings"
+},
+{
+"t": "2026-11-15T00:52:09+00:00",
+"spread_home": 2.5,
+"ml_home": 114.0,
+"ml_away": -135.0,
+"total": 75.5,
+"provider": "DraftKings"
 }
 ],
 "note": "Movement is open-to-current from the sportsbook ESPN shows. It shows where the line went, not who bet; betting-split (\"sharp money\") data is not available from a free source."
@@ -588973,19 +589525,19 @@ null
 "l3_ppd": 2.618803418803419,
 "elo": 1457.0,
 "qb_name": "Owen McCown",
-"qb_epa": -0.007364869318372592,
+"qb_epa": -0.007549713115489593,
 "qb_cmp": 0.6453703015908389,
-"qb_int_rate": 0.020134015947678063,
-"qb_sack_rate": 0.08041866964114208,
+"qb_int_rate": 0.02013148094272234,
+"qb_sack_rate": 0.08052208743314651,
 "qb_db_hist": 363.0,
-"third_rate": 0.4087226292673641,
-"rz_td_rate": 0.5603021424925155,
-"fg_rate": 0.7935477802859293,
+"third_rate": 0.4086742146215667,
+"rz_td_rate": 0.5602703966140943,
+"fg_rate": 0.793451323295614,
 "to_per_game": 0.6666666666666666,
 "takeaways_per_game": 0.8888888888888888,
 "pen_per_game": 8.88888888888889,
-"sack_rate_off": 0.05448783312071436,
-"sack_rate_def": 0.03839602878799207,
+"sack_rate_off": 0.054497270141301554,
+"sack_rate_def": 0.038405744186767676,
 "pass_rate": 0.49203994218084723,
 "plays_per_game": 67.55555555555556,
 "fourth_go_rate": 1.6666666666666667,
@@ -589015,19 +589567,19 @@ null
 "l3_ppd": 3.9507575757575757,
 "elo": 1680.0,
 "qb_name": "Tayven Jackson",
-"qb_epa": -0.03551560896128631,
+"qb_epa": -0.03620769852723601,
 "qb_cmp": 0.62075403756626,
-"qb_int_rate": 0.021121935680065925,
-"qb_sack_rate": 0.11505594912148547,
+"qb_int_rate": 0.02111244414988287,
+"qb_sack_rate": 0.11544316457526946,
 "qb_db_hist": 9.0,
-"third_rate": 0.49375599749028104,
-"rz_td_rate": 0.7249813314348427,
-"fg_rate": 0.7845715968201001,
+"third_rate": 0.4937034330177009,
+"rz_td_rate": 0.7249565804109888,
+"fg_rate": 0.7844709460475972,
 "to_per_game": 0.7777777777777778,
 "takeaways_per_game": 1.0,
 "pen_per_game": 8.666666666666666,
-"sack_rate_off": 0.029066632609839875,
-"sack_rate_def": 0.06671826590199782,
+"sack_rate_off": 0.02907532263671304,
+"sack_rate_def": 0.06672872152163252,
 "pass_rate": 0.5128967322064337,
 "plays_per_game": 70.44444444444444,
 "fourth_go_rate": 2.0,
@@ -589038,108 +589590,108 @@ null
 },
 "qb_flags": [],
 "stats": {
-"p_home": 0.4586,
-"p_away": 0.5414,
+"p_home": 0.4583,
+"p_away": 0.5417,
 "pick": "North Texas",
-"predicted_at": "2026-11-14T22:28:48+00:00",
+"predicted_at": "2026-11-15T00:52:16+00:00",
 "model_version": "cfb-v2.0.0",
-"input_hash": "fbb813f2ea0e44d9",
+"input_hash": "3b17704394bc70c8",
 "cutoff": "Tuesday of game week; uses games through 2026-11-14",
 "factors": [
 {
 "feature": "Pregame Elo rating (CFBD)",
 "key": "d_elo",
-"logit": -0.4433
+"logit": -0.4495
 },
 {
 "feature": "Opponent-adjusted offensive EPA/play",
 "key": "d_adj_off_off_epa",
-"logit": -0.3547
+"logit": -0.354
 },
 {
 "feature": "Returning production (share of last season)",
 "key": "d_ret_ppa",
-"logit": 0.2879
+"logit": 0.2807
 },
 {
 "feature": "Adj. points per drive",
 "key": "d_adj_off_ppd",
-"logit": -0.2622
+"logit": -0.2771
 },
 {
 "feature": "Last 3 games: points per drive",
 "key": "d_l3_ppd",
-"logit": -0.1717
+"logit": -0.17
 },
 {
 "feature": "Adj. passing EPA/dropback",
 "key": "d_adj_off_pass_epa",
-"logit": -0.1363
+"logit": -0.1264
 },
 {
 "feature": "Conference game",
 "key": "conf_game",
-"logit": -0.1144
+"logit": -0.1147
 },
 {
 "feature": "Adj. explosive plays allowed",
 "key": "d_adj_def_explosive_rate",
-"logit": 0.1096
+"logit": 0.1133
 },
 {
 "feature": "Adj. explosive-play rate",
 "key": "d_adj_off_explosive_rate",
-"logit": 0.0955
+"logit": 0.0977
 },
 {
 "feature": "Roster talent, early-season weight",
 "key": "talent_early",
-"logit": -0.0822
+"logit": -0.0819
 },
 {
 "feature": "Adj. offensive success rate",
 "key": "d_adj_off_off_sr",
-"logit": 0.0697
-},
-{
-"feature": "Adj. run defense",
-"key": "d_adj_def_rush_epa",
-"logit": -0.038
+"logit": 0.0711
 },
 {
 "feature": "Adj. points per drive allowed",
 "key": "d_adj_def_ppd",
-"logit": 0.0373
+"logit": 0.0375
 },
 {
 "feature": "Last 3 games: offensive EPA/play",
 "key": "d_l3_off_epa",
-"logit": -0.0367
+"logit": -0.0348
+},
+{
+"feature": "Adj. run defense",
+"key": "d_adj_def_rush_epa",
+"logit": -0.0333
 },
 {
 "feature": "Home-field advantage",
 "key": "home_adv",
-"logit": 0.0272
+"logit": 0.0271
 },
 {
 "feature": "Opponent-adjusted defensive EPA/play",
 "key": "d_adj_def_off_epa",
-"logit": -0.0218
+"logit": -0.0225
 },
 {
 "feature": "Adj. pass defense",
 "key": "d_adj_def_pass_epa",
-"logit": 0.0171
+"logit": 0.0204
 },
 {
 "feature": "Last 3 games: EPA/play allowed",
 "key": "d_l3_def_epa",
-"logit": 0.0127
+"logit": 0.0118
 },
 {
 "feature": "Adj. defensive success rate",
 "key": "d_adj_def_off_sr",
-"logit": -0.004
+"logit": -0.0036
 },
 {
 "feature": "Roster talent (recruiting composite)",
@@ -589149,7 +589701,7 @@ null
 {
 "feature": "Adj. rushing EPA/play",
 "key": "d_adj_off_rush_epa",
-"logit": 0.0018
+"logit": 0.0019
 },
 {
 "feature": "Returning production, early-season weight",
@@ -589157,93 +589709,93 @@ null
 "logit": 0.0006
 }
 ],
-"intercept_logit": 0.8377,
+"intercept_logit": 0.8365,
 "missing_inputs": []
 },
 "stats_type": "early",
 "crunch": {
-"p_home": 0.4637,
-"p_away": 0.5363,
+"p_home": 0.465,
+"p_away": 0.535,
 "pick": "North Texas",
-"predicted_at": "2026-11-14T22:28:48+00:00",
+"predicted_at": "2026-11-15T00:52:16+00:00",
 "model_version": "cfb-v2.0.0-crunch",
-"input_hash": "fbb813f2ea0e44d9",
-"intercept_logit": 0.9771,
+"input_hash": "3b17704394bc70c8",
+"intercept_logit": 0.9743,
 "factors": [
 {
 "feature": "Betting market point spread",
 "key": "mkt_spread",
-"logit": -0.4546
+"logit": -0.4529
 },
 {
 "feature": "Betting market win probability (from the spread)",
 "key": "mkt_logit",
-"logit": -0.4489
+"logit": -0.4471
 },
 {
 "feature": "Adj. points per drive",
 "key": "d_adj_off_ppd",
-"logit": -0.1654
+"logit": -0.1788
 },
 {
 "feature": "Opponent-adjusted offensive EPA/play",
 "key": "d_adj_off_off_epa",
-"logit": -0.1453
+"logit": -0.1443
 },
 {
 "feature": "Pregame Elo rating (CFBD)",
 "key": "d_elo",
-"logit": -0.1093
+"logit": -0.1146
 },
 {
 "feature": "Adj. explosive plays allowed",
 "key": "d_adj_def_explosive_rate",
-"logit": 0.1012
+"logit": 0.1045
 },
 {
 "feature": "Adj. explosive-play rate",
 "key": "d_adj_off_explosive_rate",
-"logit": 0.0934
+"logit": 0.0969
 },
 {
 "feature": "Conference game",
 "key": "conf_game",
-"logit": -0.0568
+"logit": -0.057
 },
 {
 "feature": "Adj. passing EPA/dropback",
 "key": "d_adj_off_pass_epa",
-"logit": 0.0404
-},
-{
-"feature": "Last 3 games: offensive EPA/play",
-"key": "d_l3_off_epa",
-"logit": -0.0388
+"logit": 0.0481
 },
 {
 "feature": "Adj. pass defense",
 "key": "d_adj_def_pass_epa",
-"logit": 0.0361
+"logit": 0.0377
+},
+{
+"feature": "Last 3 games: offensive EPA/play",
+"key": "d_l3_off_epa",
+"logit": -0.0368
 },
 {
 "feature": "Adj. offensive success rate",
 "key": "d_adj_off_off_sr",
-"logit": 0.0329
+"logit": 0.0336
 },
 {
 "feature": "Last 3 games: points per drive",
 "key": "d_l3_ppd",
-"logit": -0.0295
+"logit": -0.0283
 },
 {
 "feature": "Adj. points per drive allowed",
 "key": "d_adj_def_ppd",
-"logit": 0.0189
+"logit": 0.0186
 },
 {
 "feature": "Last 3 games: EPA/play allowed",
 "key": "d_l3_def_epa",
-"logit": 0.0127
+"logit": 0.012
 },
 {
 "feature": "Home-field advantage",
@@ -589251,19 +589803,19 @@ null
 "logit": 0.0092
 },
 {
-"feature": "Adj. run defense",
-"key": "d_adj_def_rush_epa",
-"logit": -0.0089
-},
-{
 "feature": "Opponent-adjusted defensive EPA/play",
 "key": "d_adj_def_off_epa",
-"logit": -0.0063
+"logit": -0.0068
+},
+{
+"feature": "Adj. run defense",
+"key": "d_adj_def_rush_epa",
+"logit": -0.0054
 },
 {
 "feature": "Adj. defensive success rate",
 "key": "d_adj_def_off_sr",
-"logit": -0.0037
+"logit": -0.0032
 },
 {
 "feature": "Adj. rushing EPA/play",
@@ -589273,88 +589825,88 @@ null
 ]
 },
 "latest": {
-"p_home": 0.4637,
-"p_away": 0.5363,
+"p_home": 0.465,
+"p_away": 0.535,
 "pick": "North Texas",
-"predicted_at": "2026-11-14T22:28:48+00:00",
+"predicted_at": "2026-11-15T00:52:16+00:00",
 "model_version": "cfb-v2.0.0-crunch",
-"input_hash": "fbb813f2ea0e44d9",
-"intercept_logit": 0.9771,
+"input_hash": "3b17704394bc70c8",
+"intercept_logit": 0.9743,
 "factors": [
 {
 "feature": "Betting market point spread",
 "key": "mkt_spread",
-"logit": -0.4546
+"logit": -0.4529
 },
 {
 "feature": "Betting market win probability (from the spread)",
 "key": "mkt_logit",
-"logit": -0.4489
+"logit": -0.4471
 },
 {
 "feature": "Adj. points per drive",
 "key": "d_adj_off_ppd",
-"logit": -0.1654
+"logit": -0.1788
 },
 {
 "feature": "Opponent-adjusted offensive EPA/play",
 "key": "d_adj_off_off_epa",
-"logit": -0.1453
+"logit": -0.1443
 },
 {
 "feature": "Pregame Elo rating (CFBD)",
 "key": "d_elo",
-"logit": -0.1093
+"logit": -0.1146
 },
 {
 "feature": "Adj. explosive plays allowed",
 "key": "d_adj_def_explosive_rate",
-"logit": 0.1012
+"logit": 0.1045
 },
 {
 "feature": "Adj. explosive-play rate",
 "key": "d_adj_off_explosive_rate",
-"logit": 0.0934
+"logit": 0.0969
 },
 {
 "feature": "Conference game",
 "key": "conf_game",
-"logit": -0.0568
+"logit": -0.057
 },
 {
 "feature": "Adj. passing EPA/dropback",
 "key": "d_adj_off_pass_epa",
-"logit": 0.0404
-},
-{
-"feature": "Last 3 games: offensive EPA/play",
-"key": "d_l3_off_epa",
-"logit": -0.0388
+"logit": 0.0481
 },
 {
 "feature": "Adj. pass defense",
 "key": "d_adj_def_pass_epa",
-"logit": 0.0361
+"logit": 0.0377
+},
+{
+"feature": "Last 3 games: offensive EPA/play",
+"key": "d_l3_off_epa",
+"logit": -0.0368
 },
 {
 "feature": "Adj. offensive success rate",
 "key": "d_adj_off_off_sr",
-"logit": 0.0329
+"logit": 0.0336
 },
 {
 "feature": "Last 3 games: points per drive",
 "key": "d_l3_ppd",
-"logit": -0.0295
+"logit": -0.0283
 },
 {
 "feature": "Adj. points per drive allowed",
 "key": "d_adj_def_ppd",
-"logit": 0.0189
+"logit": 0.0186
 },
 {
 "feature": "Last 3 games: EPA/play allowed",
 "key": "d_l3_def_epa",
-"logit": 0.0127
+"logit": 0.012
 },
 {
 "feature": "Home-field advantage",
@@ -589362,19 +589914,19 @@ null
 "logit": 0.0092
 },
 {
-"feature": "Adj. run defense",
-"key": "d_adj_def_rush_epa",
-"logit": -0.0089
-},
-{
 "feature": "Opponent-adjusted defensive EPA/play",
 "key": "d_adj_def_off_epa",
-"logit": -0.0063
+"logit": -0.0068
+},
+{
+"feature": "Adj. run defense",
+"key": "d_adj_def_rush_epa",
+"logit": -0.0054
 },
 {
 "feature": "Adj. defensive success rate",
 "key": "d_adj_def_off_sr",
-"logit": -0.0037
+"logit": -0.0032
 },
 {
 "feature": "Adj. rushing EPA/play",
@@ -589392,45 +589944,45 @@ null
 "value": {
 "moneyline": {
 "pick": "North Texas",
-"odds": -130.0,
-"p": 0.5363,
-"break_even": 0.5652,
-"edge": -0.0289,
-"ev_per_100": -5.1
+"odds": -135.0,
+"p": 0.535,
+"break_even": 0.5745,
+"edge": -0.0395,
+"ev_per_100": -6.9
 },
 "spread": {
 "pick": "UTSA",
 "line": 2.5,
-"odds": -112.0,
+"odds": -102.0,
 "odds_assumed": false,
 "p": 0.5371,
-"break_even": 0.5283,
-"edge": 0.0088,
-"ev_per_100": 1.7
+"break_even": 0.505,
+"edge": 0.0321,
+"ev_per_100": 6.4
 },
 "alt": [
 {
 "team": "UTSA",
 "line": -7.5,
-"p": 0.283,
+"p": 0.2829,
 "fair_odds": 253
 },
 {
 "team": "UTSA",
 "line": -4.5,
-"p": 0.3511,
+"p": 0.3508,
 "fair_odds": 185
 },
 {
 "team": "UTSA",
 "line": -1.0,
-"p": 0.44,
+"p": 0.4402,
 "fair_odds": 127
 },
 {
 "team": "UTSA",
 "line": -0.5,
-"p": 0.4547,
+"p": 0.4548,
 "fair_odds": 120
 },
 {
@@ -589442,32 +589994,32 @@ null
 {
 "team": "UTSA",
 "line": 6.0,
-"p": 0.6403,
+"p": 0.6402,
 "fair_odds": -178
 },
 {
 "team": "UTSA",
 "line": 9.5,
-"p": 0.7158,
-"fair_odds": -252
+"p": 0.7152,
+"fair_odds": -251
 },
 {
 "team": "UTSA",
 "line": 12.5,
-"p": 0.776,
-"fair_odds": -346
+"p": 0.7753,
+"fair_odds": -345
 }
 ],
 "total": {
 "pick": "Under",
 "line": 75.5,
-"proj": 73.8,
+"proj": 73.7,
 "odds": -105.0,
 "odds_assumed": false,
-"p": 0.5598,
+"p": 0.5634,
 "break_even": 0.5122,
-"edge": 0.0476,
-"ev_per_100": 9.3,
+"edge": 0.0513,
+"ev_per_100": 10.0,
 "range80": [
 54,
 95
@@ -589475,39 +590027,39 @@ null
 "alt": [
 {
 "line": 65.5,
-"over": 0.6923,
-"fair_over": -225,
-"fair_under": 225
+"over": 0.6884,
+"fair_over": -221,
+"fair_under": 221
 },
 {
 "line": 68.5,
-"over": 0.6138,
-"fair_over": -159,
-"fair_under": 159
+"over": 0.6088,
+"fair_over": -156,
+"fair_under": 156
 },
 {
 "line": 72.5,
-"over": 0.5145,
-"fair_over": -106,
-"fair_under": 106
+"over": 0.5095,
+"fair_over": -104,
+"fair_under": 104
 },
 {
 "line": 78.5,
-"over": 0.3679,
-"fair_over": 172,
-"fair_under": -172
+"over": 0.3652,
+"fair_over": 174,
+"fair_under": -174
 },
 {
 "line": 82.5,
-"over": 0.2795,
-"fair_over": 258,
-"fair_under": -258
+"over": 0.2763,
+"fair_over": 262,
+"fair_under": -262
 },
 {
 "line": 85.5,
-"over": 0.2267,
-"fair_over": 341,
-"fair_under": -341
+"over": 0.2235,
+"fair_over": 347,
+"fair_under": -347
 }
 ]
 }
@@ -589515,7 +590067,7 @@ null
 "ou": {
 "pick": "Under",
 "line": 75.5,
-"proj": 73.8
+"proj": 73.7
 }
 }
 },
@@ -589951,6 +590503,20 @@ null
 "ats_home": true,
 "ou_pick": "Over",
 "total_line": 43.5
+},
+{
+"at": "2026-11-15T00:52:16+00:00",
+"type": "early",
+"p_home": 0.5727,
+"model_version": "cfb-v2.0.0",
+"weather_status": "forecast",
+"p_crunch": 0.4877,
+"p_stats": 0.5727,
+"spread_line": -3.0,
+"ats_team": "San Diego State",
+"ats_home": true,
+"ou_pick": "Under",
+"total_line": 43.5
 }
 ],
 "frozen": {
@@ -589976,118 +590542,118 @@ null
 "p_home": 0.2978
 },
 "early": {
-"p_home": 0.5757,
-"p_away": 0.4243,
+"p_home": 0.5727,
+"p_away": 0.4273,
 "pick": "San Diego State",
-"predicted_at": "2026-11-14T22:28:48+00:00",
+"predicted_at": "2026-11-15T00:52:16+00:00",
 "model_version": "cfb-v2.0.0",
-"input_hash": "fbb813f2ea0e44d9",
+"input_hash": "3b17704394bc70c8",
 "cutoff": "Tuesday of game week; uses games through 2026-11-14",
 "factors": [
 {
 "feature": "Adj. points per drive allowed",
 "key": "d_adj_def_ppd",
-"logit": -0.3356
+"logit": -0.3321
 },
 {
 "feature": "Pregame Elo rating (CFBD)",
 "key": "d_elo",
-"logit": -0.3107
+"logit": -0.3151
 },
 {
 "feature": "Returning production (share of last season)",
 "key": "d_ret_ppa",
-"logit": 0.1483
+"logit": 0.1445
 },
 {
 "feature": "Last 3 games: EPA/play allowed",
 "key": "d_l3_def_epa",
-"logit": 0.1418
+"logit": 0.1346
 },
 {
 "feature": "Conference game",
 "key": "conf_game",
-"logit": -0.1144
+"logit": -0.1147
 },
 {
 "feature": "Opponent-adjusted defensive EPA/play",
 "key": "d_adj_def_off_epa",
-"logit": -0.1033
+"logit": -0.1074
 },
 {
 "feature": "Last 3 games: points per drive",
 "key": "d_l3_ppd",
-"logit": 0.0872
-},
-{
-"feature": "Roster talent, early-season weight",
-"key": "talent_early",
-"logit": -0.0822
+"logit": 0.0859
 },
 {
 "feature": "Adj. explosive plays allowed",
 "key": "d_adj_def_explosive_rate",
-"logit": -0.0817
+"logit": -0.0839
+},
+{
+"feature": "Roster talent, early-season weight",
+"key": "talent_early",
+"logit": -0.0819
 },
 {
 "feature": "Adj. run defense",
 "key": "d_adj_def_rush_epa",
-"logit": -0.074
+"logit": -0.065
 },
 {
 "feature": "Adj. defensive success rate",
 "key": "d_adj_def_off_sr",
-"logit": 0.0586
+"logit": 0.0521
 },
 {
 "feature": "Adj. points per drive",
 "key": "d_adj_off_ppd",
-"logit": 0.0495
+"logit": 0.0521
 },
 {
 "feature": "Last 3 games: offensive EPA/play",
 "key": "d_l3_off_epa",
-"logit": 0.0344
+"logit": 0.0323
 },
 {
 "feature": "Adj. passing EPA/dropback",
 "key": "d_adj_off_pass_epa",
-"logit": -0.0301
+"logit": -0.0279
 },
 {
 "feature": "Home-field advantage",
 "key": "home_adv",
-"logit": 0.0272
+"logit": 0.0271
 },
 {
 "feature": "Adj. explosive-play rate",
 "key": "d_adj_off_explosive_rate",
-"logit": 0.0264
+"logit": 0.027
 },
 {
 "feature": "Adj. rushing EPA/play",
 "key": "d_adj_off_rush_epa",
-"logit": 0.0216
+"logit": 0.021
 },
 {
 "feature": "Adj. offensive success rate",
 "key": "d_adj_off_off_sr",
-"logit": -0.019
+"logit": -0.0193
 },
 {
 "feature": "Adj. pass defense",
 "key": "d_adj_def_pass_epa",
-"logit": 0.0162
+"logit": 0.0193
 },
 {
 "feature": "Opponent-adjusted offensive EPA/play",
 "key": "d_adj_off_off_epa",
-"logit": 0.0034
+"logit": 0.0037
 },
 {
 "feature": "Roster talent (recruiting composite)",
 "key": "d_talent",
-"logit": 0.0034
+"logit": 0.0033
 },
 {
 "feature": "Returning production, early-season weight",
@@ -590095,25 +590661,25 @@ null
 "logit": 0.0006
 }
 ],
-"intercept_logit": 0.8377,
+"intercept_logit": 0.8365,
 "missing_inputs": []
 },
 "updated": null,
 "weather": {
 "status": "forecast",
-"temp_f": 63.199999999999996,
-"wind_mph": 3.1666666666666665,
-"gust_mph": 9.2,
-"pop_pct": 3,
+"temp_f": 62.800000000000004,
+"wind_mph": 4.533333333333333,
+"gust_mph": 11.0,
+"pop_pct": 2,
 "valid_for": "2026-11-15T02:00Z",
 "forecast_created": null,
-"fetched_at": "2026-11-14T22:28:15+00:00",
+"fetched_at": "2026-11-15T00:51:46+00:00",
 "source": "open-meteo",
 "retractable": false
 },
 "score": {
 "margin": -1.4,
-"total": 44.4,
+"total": 44.3,
 "home": 24,
 "away": 25,
 "adjusted": true
@@ -590124,7 +590690,7 @@ null
 "away_moneyline": -148.0,
 "spread_line": -3.0,
 "total_line": 43.5,
-"source": "ESPN (DraftKings) at 2026-11-14T22:28:41+00:00"
+"source": "ESPN (DraftKings) at 2026-11-15T00:52:09+00:00"
 },
 "line": {
 "open_spread_home": 2.5,
@@ -590225,19 +590791,19 @@ null
 "l3_ppd": 2.941595441595442,
 "elo": 1261.0,
 "qb_name": "Stone Saunders",
-"qb_epa": -0.016108550181675122,
+"qb_epa": -0.016834400214256515,
 "qb_cmp": 0.6144855092615701,
-"qb_int_rate": 0.0221522740059228,
-"qb_sack_rate": 0.08814810924123272,
+"qb_int_rate": 0.0221423194742674,
+"qb_sack_rate": 0.08855421325373788,
 "qb_db_hist": 3.0,
-"third_rate": 0.3651845689188524,
-"rz_td_rate": 0.5857704216967208,
-"fg_rate": 0.8592927012791572,
+"third_rate": 0.3651320044462724,
+"rz_td_rate": 0.5857372328238258,
+"fg_rate": 0.8591824647187969,
 "to_per_game": 1.0,
 "takeaways_per_game": 0.7777777777777778,
 "pen_per_game": 6.555555555555555,
-"sack_rate_off": 0.04412289409874343,
-"sack_rate_def": 0.057785442937347276,
+"sack_rate_off": 0.04413405857394658,
+"sack_rate_def": 0.057794087347281475,
 "pass_rate": 0.44716727910580256,
 "plays_per_game": 60.77777777777778,
 "fourth_go_rate": 1.6666666666666667,
@@ -590267,19 +590833,19 @@ null
 "l3_ppd": 2.2757575757575754,
 "elo": 1410.0,
 "qb_name": "McCae Hillstead",
-"qb_epa": -0.026970628581409292,
+"qb_epa": -0.02726822709476766,
 "qb_cmp": 0.6019882971965826,
-"qb_int_rate": 0.035749099009095016,
-"qb_sack_rate": 0.10280739145557208,
+"qb_int_rate": 0.035745017651116304,
+"qb_sack_rate": 0.10297389410069921,
 "qb_db_hist": 180.0,
-"third_rate": 0.3870747561975127,
-"rz_td_rate": 0.49371940429599204,
-"fg_rate": 0.6688165108029668,
+"third_rate": 0.3870240042929527,
+"rz_td_rate": 0.4936788401180093,
+"fg_rate": 0.6687062742426064,
 "to_per_game": 1.2222222222222223,
 "takeaways_per_game": 0.6666666666666666,
 "pen_per_game": 8.777777777777779,
-"sack_rate_off": 0.08137425831063046,
-"sack_rate_def": 0.05106187183451355,
+"sack_rate_off": 0.08138417855215133,
+"sack_rate_def": 0.051070273671720005,
 "pass_rate": 0.5002791141512398,
 "plays_per_game": 62.333333333333336,
 "fourth_go_rate": 1.4444444444444444,
@@ -590290,118 +590856,118 @@ null
 },
 "qb_flags": [],
 "stats": {
-"p_home": 0.5757,
-"p_away": 0.4243,
+"p_home": 0.5727,
+"p_away": 0.4273,
 "pick": "San Diego State",
-"predicted_at": "2026-11-14T22:28:48+00:00",
+"predicted_at": "2026-11-15T00:52:16+00:00",
 "model_version": "cfb-v2.0.0",
-"input_hash": "fbb813f2ea0e44d9",
+"input_hash": "3b17704394bc70c8",
 "cutoff": "Tuesday of game week; uses games through 2026-11-14",
 "factors": [
 {
 "feature": "Adj. points per drive allowed",
 "key": "d_adj_def_ppd",
-"logit": -0.3356
+"logit": -0.3321
 },
 {
 "feature": "Pregame Elo rating (CFBD)",
 "key": "d_elo",
-"logit": -0.3107
+"logit": -0.3151
 },
 {
 "feature": "Returning production (share of last season)",
 "key": "d_ret_ppa",
-"logit": 0.1483
+"logit": 0.1445
 },
 {
 "feature": "Last 3 games: EPA/play allowed",
 "key": "d_l3_def_epa",
-"logit": 0.1418
+"logit": 0.1346
 },
 {
 "feature": "Conference game",
 "key": "conf_game",
-"logit": -0.1144
+"logit": -0.1147
 },
 {
 "feature": "Opponent-adjusted defensive EPA/play",
 "key": "d_adj_def_off_epa",
-"logit": -0.1033
+"logit": -0.1074
 },
 {
 "feature": "Last 3 games: points per drive",
 "key": "d_l3_ppd",
-"logit": 0.0872
-},
-{
-"feature": "Roster talent, early-season weight",
-"key": "talent_early",
-"logit": -0.0822
+"logit": 0.0859
 },
 {
 "feature": "Adj. explosive plays allowed",
 "key": "d_adj_def_explosive_rate",
-"logit": -0.0817
+"logit": -0.0839
+},
+{
+"feature": "Roster talent, early-season weight",
+"key": "talent_early",
+"logit": -0.0819
 },
 {
 "feature": "Adj. run defense",
 "key": "d_adj_def_rush_epa",
-"logit": -0.074
+"logit": -0.065
 },
 {
 "feature": "Adj. defensive success rate",
 "key": "d_adj_def_off_sr",
-"logit": 0.0586
+"logit": 0.0521
 },
 {
 "feature": "Adj. points per drive",
 "key": "d_adj_off_ppd",
-"logit": 0.0495
+"logit": 0.0521
 },
 {
 "feature": "Last 3 games: offensive EPA/play",
 "key": "d_l3_off_epa",
-"logit": 0.0344
+"logit": 0.0323
 },
 {
 "feature": "Adj. passing EPA/dropback",
 "key": "d_adj_off_pass_epa",
-"logit": -0.0301
+"logit": -0.0279
 },
 {
 "feature": "Home-field advantage",
 "key": "home_adv",
-"logit": 0.0272
+"logit": 0.0271
 },
 {
 "feature": "Adj. explosive-play rate",
 "key": "d_adj_off_explosive_rate",
-"logit": 0.0264
+"logit": 0.027
 },
 {
 "feature": "Adj. rushing EPA/play",
 "key": "d_adj_off_rush_epa",
-"logit": 0.0216
+"logit": 0.021
 },
 {
 "feature": "Adj. offensive success rate",
 "key": "d_adj_off_off_sr",
-"logit": -0.019
+"logit": -0.0193
 },
 {
 "feature": "Adj. pass defense",
 "key": "d_adj_def_pass_epa",
-"logit": 0.0162
+"logit": 0.0193
 },
 {
 "feature": "Opponent-adjusted offensive EPA/play",
 "key": "d_adj_off_off_epa",
-"logit": 0.0034
+"logit": 0.0037
 },
 {
 "feature": "Roster talent (recruiting composite)",
 "key": "d_talent",
-"logit": 0.0034
+"logit": 0.0033
 },
 {
 "feature": "Returning production, early-season weight",
@@ -590409,93 +590975,98 @@ null
 "logit": 0.0006
 }
 ],
-"intercept_logit": 0.8377,
+"intercept_logit": 0.8365,
 "missing_inputs": []
 },
 "stats_type": "early",
 "crunch": {
-"p_home": 0.489,
-"p_away": 0.511,
+"p_home": 0.4877,
+"p_away": 0.5123,
 "pick": "Utah State",
-"predicted_at": "2026-11-14T22:28:48+00:00",
+"predicted_at": "2026-11-15T00:52:16+00:00",
 "model_version": "cfb-v2.0.0-crunch",
-"input_hash": "fbb813f2ea0e44d9",
-"intercept_logit": 0.9771,
+"input_hash": "3b17704394bc70c8",
+"intercept_logit": 0.9743,
 "factors": [
 {
 "feature": "Betting market point spread",
 "key": "mkt_spread",
-"logit": -0.4767
+"logit": -0.4749
 },
 {
 "feature": "Betting market win probability (from the spread)",
 "key": "mkt_logit",
-"logit": -0.4693
+"logit": -0.4676
 },
 {
 "feature": "Adj. points per drive allowed",
 "key": "d_adj_def_ppd",
-"logit": -0.17
+"logit": -0.1645
 },
 {
 "feature": "Last 3 games: EPA/play allowed",
 "key": "d_l3_def_epa",
-"logit": 0.1424
+"logit": 0.1361
 },
 {
 "feature": "Pregame Elo rating (CFBD)",
 "key": "d_elo",
-"logit": -0.0766
+"logit": -0.0803
 },
 {
 "feature": "Adj. explosive plays allowed",
 "key": "d_adj_def_explosive_rate",
-"logit": -0.0754
+"logit": -0.0774
 },
 {
 "feature": "Conference game",
 "key": "conf_game",
-"logit": -0.0568
+"logit": -0.057
 },
 {
 "feature": "Adj. defensive success rate",
 "key": "d_adj_def_off_sr",
-"logit": 0.0539
-},
-{
-"feature": "Last 3 games: offensive EPA/play",
-"key": "d_l3_off_epa",
-"logit": 0.0364
+"logit": 0.0468
 },
 {
 "feature": "Adj. pass defense",
 "key": "d_adj_def_pass_epa",
+"logit": 0.0356
+},
+{
+"feature": "Last 3 games: offensive EPA/play",
+"key": "d_l3_off_epa",
 "logit": 0.0341
 },
 {
 "feature": "Adj. points per drive",
 "key": "d_adj_off_ppd",
-"logit": 0.0312
+"logit": 0.0336
 },
 {
 "feature": "Opponent-adjusted defensive EPA/play",
 "key": "d_adj_def_off_epa",
-"logit": -0.0298
+"logit": -0.0324
 },
 {
 "feature": "Adj. explosive-play rate",
 "key": "d_adj_off_explosive_rate",
-"logit": 0.0258
-},
-{
-"feature": "Adj. run defense",
-"key": "d_adj_def_rush_epa",
-"logit": -0.0173
+"logit": 0.0268
 },
 {
 "feature": "Last 3 games: points per drive",
 "key": "d_l3_ppd",
-"logit": 0.015
+"logit": 0.0143
+},
+{
+"feature": "Adj. passing EPA/dropback",
+"key": "d_adj_off_pass_epa",
+"logit": 0.0106
+},
+{
+"feature": "Adj. run defense",
+"key": "d_adj_def_rush_epa",
+"logit": -0.0105
 },
 {
 "feature": "Home-field advantage",
@@ -590505,108 +591076,108 @@ null
 {
 "feature": "Adj. offensive success rate",
 "key": "d_adj_off_off_sr",
-"logit": -0.009
-},
-{
-"feature": "Adj. passing EPA/dropback",
-"key": "d_adj_off_pass_epa",
-"logit": 0.0089
-},
-{
-"feature": "Adj. rushing EPA/play",
-"key": "d_adj_off_rush_epa",
-"logit": 0.0016
+"logit": -0.0091
 },
 {
 "feature": "Opponent-adjusted offensive EPA/play",
 "key": "d_adj_off_off_epa",
-"logit": 0.0014
+"logit": 0.0015
+},
+{
+"feature": "Adj. rushing EPA/play",
+"key": "d_adj_off_rush_epa",
+"logit": 0.0015
 }
 ]
 },
 "latest": {
-"p_home": 0.489,
-"p_away": 0.511,
+"p_home": 0.4877,
+"p_away": 0.5123,
 "pick": "Utah State",
-"predicted_at": "2026-11-14T22:28:48+00:00",
+"predicted_at": "2026-11-15T00:52:16+00:00",
 "model_version": "cfb-v2.0.0-crunch",
-"input_hash": "fbb813f2ea0e44d9",
-"intercept_logit": 0.9771,
+"input_hash": "3b17704394bc70c8",
+"intercept_logit": 0.9743,
 "factors": [
 {
 "feature": "Betting market point spread",
 "key": "mkt_spread",
-"logit": -0.4767
+"logit": -0.4749
 },
 {
 "feature": "Betting market win probability (from the spread)",
 "key": "mkt_logit",
-"logit": -0.4693
+"logit": -0.4676
 },
 {
 "feature": "Adj. points per drive allowed",
 "key": "d_adj_def_ppd",
-"logit": -0.17
+"logit": -0.1645
 },
 {
 "feature": "Last 3 games: EPA/play allowed",
 "key": "d_l3_def_epa",
-"logit": 0.1424
+"logit": 0.1361
 },
 {
 "feature": "Pregame Elo rating (CFBD)",
 "key": "d_elo",
-"logit": -0.0766
+"logit": -0.0803
 },
 {
 "feature": "Adj. explosive plays allowed",
 "key": "d_adj_def_explosive_rate",
-"logit": -0.0754
+"logit": -0.0774
 },
 {
 "feature": "Conference game",
 "key": "conf_game",
-"logit": -0.0568
+"logit": -0.057
 },
 {
 "feature": "Adj. defensive success rate",
 "key": "d_adj_def_off_sr",
-"logit": 0.0539
-},
-{
-"feature": "Last 3 games: offensive EPA/play",
-"key": "d_l3_off_epa",
-"logit": 0.0364
+"logit": 0.0468
 },
 {
 "feature": "Adj. pass defense",
 "key": "d_adj_def_pass_epa",
+"logit": 0.0356
+},
+{
+"feature": "Last 3 games: offensive EPA/play",
+"key": "d_l3_off_epa",
 "logit": 0.0341
 },
 {
 "feature": "Adj. points per drive",
 "key": "d_adj_off_ppd",
-"logit": 0.0312
+"logit": 0.0336
 },
 {
 "feature": "Opponent-adjusted defensive EPA/play",
 "key": "d_adj_def_off_epa",
-"logit": -0.0298
+"logit": -0.0324
 },
 {
 "feature": "Adj. explosive-play rate",
 "key": "d_adj_off_explosive_rate",
-"logit": 0.0258
-},
-{
-"feature": "Adj. run defense",
-"key": "d_adj_def_rush_epa",
-"logit": -0.0173
+"logit": 0.0268
 },
 {
 "feature": "Last 3 games: points per drive",
 "key": "d_l3_ppd",
-"logit": 0.015
+"logit": 0.0143
+},
+{
+"feature": "Adj. passing EPA/dropback",
+"key": "d_adj_off_pass_epa",
+"logit": 0.0106
+},
+{
+"feature": "Adj. run defense",
+"key": "d_adj_def_rush_epa",
+"logit": -0.0105
 },
 {
 "feature": "Home-field advantage",
@@ -590616,22 +591187,17 @@ null
 {
 "feature": "Adj. offensive success rate",
 "key": "d_adj_off_off_sr",
-"logit": -0.009
-},
-{
-"feature": "Adj. passing EPA/dropback",
-"key": "d_adj_off_pass_epa",
-"logit": 0.0089
-},
-{
-"feature": "Adj. rushing EPA/play",
-"key": "d_adj_off_rush_epa",
-"logit": 0.0016
+"logit": -0.0091
 },
 {
 "feature": "Opponent-adjusted offensive EPA/play",
 "key": "d_adj_off_off_epa",
-"logit": 0.0014
+"logit": 0.0015
+},
+{
+"feature": "Adj. rushing EPA/play",
+"key": "d_adj_off_rush_epa",
+"logit": 0.0015
 }
 ]
 },
@@ -590645,44 +591211,44 @@ null
 "moneyline": {
 "pick": "Utah State",
 "odds": -148.0,
-"p": 0.511,
+"p": 0.5123,
 "break_even": 0.5968,
-"edge": -0.0858,
-"ev_per_100": -14.4
+"edge": -0.0845,
+"ev_per_100": -14.2
 },
 "spread": {
 "pick": "San Diego State",
 "line": 3.0,
-"odds": -115.0,
+"odds": -110.0,
 "odds_assumed": false,
 "p": 0.5494,
-"break_even": 0.5349,
-"edge": 0.0145,
-"ev_per_100": 2.7
+"break_even": 0.5238,
+"edge": 0.0256,
+"ev_per_100": 4.9
 },
 "alt": [
 {
 "team": "San Diego State",
 "line": -7.0,
-"p": 0.2846,
+"p": 0.2845,
 "fair_odds": 251
 },
 {
 "team": "San Diego State",
 "line": -4.0,
-"p": 0.3545,
+"p": 0.3544,
 "fair_odds": 182
 },
 {
 "team": "San Diego State",
 "line": -0.5,
-"p": 0.4507,
+"p": 0.4509,
 "fair_odds": 122
 },
 {
 "team": "San Diego State",
 "line": 0.0,
-"p": 0.461,
+"p": 0.4611,
 "fair_odds": 117
 },
 {
@@ -590694,32 +591260,32 @@ null
 {
 "team": "San Diego State",
 "line": 6.5,
-"p": 0.6443,
+"p": 0.6442,
 "fair_odds": -181
 },
 {
 "team": "San Diego State",
 "line": 10.0,
-"p": 0.7264,
-"fair_odds": -266
+"p": 0.726,
+"fair_odds": -265
 },
 {
 "team": "San Diego State",
 "line": 13.0,
-"p": 0.788,
-"fair_odds": -372
+"p": 0.7876,
+"fair_odds": -371
 }
 ],
 "total": {
-"pick": "Over",
+"pick": "Under",
 "line": 43.5,
-"proj": 44.4,
-"odds": -115.0,
+"proj": 44.3,
+"odds": -110.0,
 "odds_assumed": false,
-"p": 0.5016,
-"break_even": 0.5349,
-"edge": -0.0333,
-"ev_per_100": -6.2,
+"p": 0.5025,
+"break_even": 0.5238,
+"edge": -0.0213,
+"ev_per_100": -4.1,
 "range80": [
 24,
 66
@@ -590727,47 +591293,47 @@ null
 "alt": [
 {
 "line": 33.5,
-"over": 0.7478,
-"fair_over": -297,
-"fair_under": 297
+"over": 0.7431,
+"fair_over": -289,
+"fair_under": 289
 },
 {
 "line": 36.5,
-"over": 0.6857,
-"fair_over": -218,
-"fair_under": 218
+"over": 0.6818,
+"fair_over": -214,
+"fair_under": 214
 },
 {
 "line": 40.5,
-"over": 0.5794,
-"fair_over": -138,
-"fair_under": 138
+"over": 0.5755,
+"fair_over": -136,
+"fair_under": 136
 },
 {
 "line": 46.5,
-"over": 0.4296,
-"fair_over": 133,
-"fair_under": -133
+"over": 0.4245,
+"fair_over": 136,
+"fair_under": -136
 },
 {
 "line": 50.5,
-"over": 0.337,
-"fair_over": 197,
-"fair_under": -197
+"over": 0.3318,
+"fair_over": 201,
+"fair_under": -201
 },
 {
 "line": 53.5,
-"over": 0.2713,
-"fair_over": 269,
-"fair_under": -269
+"over": 0.267,
+"fair_over": 275,
+"fair_under": -275
 }
 ]
 }
 },
 "ou": {
-"pick": "Over",
+"pick": "Under",
 "line": 43.5,
-"proj": 44.4
+"proj": 44.3
 }
 }
 },
@@ -591203,6 +591769,20 @@ null
 "ats_home": false,
 "ou_pick": "Over",
 "total_line": 40.5
+},
+{
+"at": "2026-11-15T00:52:16+00:00",
+"type": "early",
+"p_home": 0.1856,
+"model_version": "cfb-v2.0.0",
+"weather_status": "forecast",
+"p_crunch": 0.2663,
+"p_stats": 0.1856,
+"spread_line": -7.0,
+"ats_team": "Wyoming",
+"ats_home": false,
+"ou_pick": "Over",
+"total_line": 40.5
 }
 ],
 "frozen": {
@@ -591228,113 +591808,113 @@ null
 "p_home": 0.1068
 },
 "early": {
-"p_home": 0.1841,
-"p_away": 0.8159,
+"p_home": 0.1856,
+"p_away": 0.8144,
 "pick": "Wyoming",
-"predicted_at": "2026-11-14T22:28:48+00:00",
+"predicted_at": "2026-11-15T00:52:16+00:00",
 "model_version": "cfb-v2.0.0",
-"input_hash": "fbb813f2ea0e44d9",
+"input_hash": "3b17704394bc70c8",
 "cutoff": "Tuesday of game week; uses games through 2026-11-14",
 "factors": [
 {
 "feature": "Pregame Elo rating (CFBD)",
 "key": "d_elo",
-"logit": -0.7048
+"logit": -0.7148
 },
 {
 "feature": "Adj. points per drive allowed",
 "key": "d_adj_def_ppd",
-"logit": -0.5092
+"logit": -0.5041
 },
 {
 "feature": "Last 3 games: points per drive",
 "key": "d_l3_ppd",
-"logit": -0.2933
+"logit": -0.2903
 },
 {
 "feature": "Opponent-adjusted offensive EPA/play",
 "key": "d_adj_off_off_epa",
-"logit": -0.2423
-},
-{
-"feature": "Conference game",
-"key": "conf_game",
-"logit": -0.1144
+"logit": -0.2417
 },
 {
 "feature": "Opponent-adjusted defensive EPA/play",
 "key": "d_adj_def_off_epa",
-"logit": -0.1128
+"logit": -0.1173
+},
+{
+"feature": "Conference game",
+"key": "conf_game",
+"logit": -0.1147
 },
 {
 "feature": "Returning production (share of last season)",
 "key": "d_ret_ppa",
-"logit": -0.1117
+"logit": -0.1093
 },
 {
 "feature": "Adj. offensive success rate",
 "key": "d_adj_off_off_sr",
-"logit": 0.0946
-},
-{
-"feature": "Last 3 games: offensive EPA/play",
-"key": "d_l3_off_epa",
-"logit": -0.0849
-},
-{
-"feature": "Roster talent, early-season weight",
-"key": "talent_early",
-"logit": -0.0822
+"logit": 0.0965
 },
 {
 "feature": "Adj. explosive plays allowed",
 "key": "d_adj_def_explosive_rate",
-"logit": -0.0798
+"logit": -0.082
 },
 {
-"feature": "Adj. passing EPA/dropback",
-"key": "d_adj_off_pass_epa",
-"logit": -0.0672
+"feature": "Roster talent, early-season weight",
+"key": "talent_early",
+"logit": -0.0819
+},
+{
+"feature": "Last 3 games: offensive EPA/play",
+"key": "d_l3_off_epa",
+"logit": -0.0803
 },
 {
 "feature": "Adj. points per drive",
 "key": "d_adj_off_ppd",
-"logit": -0.0604
+"logit": -0.0639
 },
 {
-"feature": "Last 3 games: EPA/play allowed",
-"key": "d_l3_def_epa",
-"logit": -0.0596
+"feature": "Adj. passing EPA/dropback",
+"key": "d_adj_off_pass_epa",
+"logit": -0.0623
 },
 {
 "feature": "Adj. pass defense",
 "key": "d_adj_def_pass_epa",
-"logit": 0.0491
+"logit": 0.0587
+},
+{
+"feature": "Last 3 games: EPA/play allowed",
+"key": "d_l3_def_epa",
+"logit": -0.0568
 },
 {
 "feature": "Adj. defensive success rate",
 "key": "d_adj_def_off_sr",
-"logit": 0.0417
+"logit": 0.037
 },
 {
 "feature": "Adj. rushing EPA/play",
 "key": "d_adj_off_rush_epa",
-"logit": -0.0318
+"logit": -0.0307
 },
 {
 "feature": "Home-field advantage",
 "key": "home_adv",
-"logit": 0.0272
+"logit": 0.0271
 },
 {
 "feature": "Adj. explosive-play rate",
 "key": "d_adj_off_explosive_rate",
-"logit": 0.0074
+"logit": 0.0077
 },
 {
 "feature": "Adj. run defense",
 "key": "d_adj_def_rush_epa",
-"logit": 0.0051
+"logit": 0.0046
 },
 {
 "feature": "Roster talent (recruiting composite)",
@@ -591347,25 +591927,25 @@ null
 "logit": 0.0006
 }
 ],
-"intercept_logit": 0.8377,
+"intercept_logit": 0.8365,
 "missing_inputs": []
 },
 "updated": null,
 "weather": {
 "status": "forecast",
-"temp_f": 52.56666666666666,
-"wind_mph": 5.3,
-"gust_mph": 10.3,
-"pop_pct": 1,
+"temp_f": 52.4,
+"wind_mph": 4.266666666666667,
+"gust_mph": 8.7,
+"pop_pct": 0,
 "valid_for": "2026-11-15T03:00Z",
 "forecast_created": null,
-"fetched_at": "2026-11-14T22:28:15+00:00",
+"fetched_at": "2026-11-15T00:51:46+00:00",
 "source": "open-meteo",
 "retractable": false
 },
 "score": {
-"margin": -8.1,
-"total": 42.7,
+"margin": -8.0,
+"total": 42.5,
 "home": 17,
 "away": 25,
 "adjusted": false
@@ -591376,7 +591956,7 @@ null
 "away_moneyline": -285.0,
 "spread_line": -7.0,
 "total_line": 40.5,
-"source": "ESPN (DraftKings) at 2026-11-14T22:28:41+00:00"
+"source": "ESPN (DraftKings) at 2026-11-15T00:52:09+00:00"
 },
 "line": {
 "open_spread_home": 10.0,
@@ -591495,19 +592075,19 @@ null
 "l3_ppd": 0.9273504273504273,
 "elo": 1014.0,
 "qb_name": "Raymond Moore III",
-"qb_epa": -0.17542946373778853,
+"qb_epa": -0.1760907937674738,
 "qb_cmp": 0.6112728885054165,
-"qb_int_rate": 0.020183182983174106,
-"qb_sack_rate": 0.17660901804941945,
+"qb_int_rate": 0.020174113298776965,
+"qb_sack_rate": 0.17697902392747972,
 "qb_db_hist": 15.0,
-"third_rate": 0.3001886105740098,
-"rz_td_rate": 0.5257966184885238,
-"fg_rate": 0.5653216704288939,
+"third_rate": 0.30013489505458496,
+"rz_td_rate": 0.5257479414749444,
+"fg_rate": 0.565176984943421,
 "to_per_game": 1.1111111111111112,
 "takeaways_per_game": 0.8888888888888888,
 "pen_per_game": 7.777777777777778,
-"sack_rate_off": 0.15146568225045534,
-"sack_rate_def": 0.04281662420766221,
+"sack_rate_off": 0.15147727915251494,
+"sack_rate_def": 0.04282745815563895,
 "pass_rate": 0.4613572306077398,
 "plays_per_game": 55.666666666666664,
 "fourth_go_rate": 2.3333333333333335,
@@ -591537,19 +592117,19 @@ null
 "l3_ppd": 3.198148148148148,
 "elo": 1383.0,
 "qb_name": "Tyler Hughes",
-"qb_epa": -0.22041580018838022,
+"qb_epa": -0.22105809913807453,
 "qb_cmp": 0.6176454641036884,
-"qb_int_rate": 0.01960237196207557,
-"qb_sack_rate": 0.18591523335734983,
+"qb_int_rate": 0.019593563275790576,
+"qb_sack_rate": 0.1862745915842429,
 "qb_db_hist": 19.0,
-"third_rate": 0.36100671718911476,
-"rz_td_rate": 0.5168238816229502,
-"fg_rate": 0.8592927012791572,
+"third_rate": 0.3609478449798251,
+"rz_td_rate": 0.516792135744529,
+"fg_rate": 0.8591824647187969,
 "to_per_game": 1.3333333333333333,
 "takeaways_per_game": 0.5555555555555556,
 "pen_per_game": 5.888888888888889,
-"sack_rate_off": 0.07880414865798942,
-"sack_rate_def": 0.08236662731441864,
+"sack_rate_off": 0.07881711527289072,
+"sack_rate_def": 0.08237666853449464,
 "pass_rate": 0.39600458107397307,
 "plays_per_game": 57.888888888888886,
 "fourth_go_rate": 1.7777777777777777,
@@ -591560,113 +592140,113 @@ null
 },
 "qb_flags": [],
 "stats": {
-"p_home": 0.1841,
-"p_away": 0.8159,
+"p_home": 0.1856,
+"p_away": 0.8144,
 "pick": "Wyoming",
-"predicted_at": "2026-11-14T22:28:48+00:00",
+"predicted_at": "2026-11-15T00:52:16+00:00",
 "model_version": "cfb-v2.0.0",
-"input_hash": "fbb813f2ea0e44d9",
+"input_hash": "3b17704394bc70c8",
 "cutoff": "Tuesday of game week; uses games through 2026-11-14",
 "factors": [
 {
 "feature": "Pregame Elo rating (CFBD)",
 "key": "d_elo",
-"logit": -0.7048
+"logit": -0.7148
 },
 {
 "feature": "Adj. points per drive allowed",
 "key": "d_adj_def_ppd",
-"logit": -0.5092
+"logit": -0.5041
 },
 {
 "feature": "Last 3 games: points per drive",
 "key": "d_l3_ppd",
-"logit": -0.2933
+"logit": -0.2903
 },
 {
 "feature": "Opponent-adjusted offensive EPA/play",
 "key": "d_adj_off_off_epa",
-"logit": -0.2423
-},
-{
-"feature": "Conference game",
-"key": "conf_game",
-"logit": -0.1144
+"logit": -0.2417
 },
 {
 "feature": "Opponent-adjusted defensive EPA/play",
 "key": "d_adj_def_off_epa",
-"logit": -0.1128
+"logit": -0.1173
+},
+{
+"feature": "Conference game",
+"key": "conf_game",
+"logit": -0.1147
 },
 {
 "feature": "Returning production (share of last season)",
 "key": "d_ret_ppa",
-"logit": -0.1117
+"logit": -0.1093
 },
 {
 "feature": "Adj. offensive success rate",
 "key": "d_adj_off_off_sr",
-"logit": 0.0946
-},
-{
-"feature": "Last 3 games: offensive EPA/play",
-"key": "d_l3_off_epa",
-"logit": -0.0849
-},
-{
-"feature": "Roster talent, early-season weight",
-"key": "talent_early",
-"logit": -0.0822
+"logit": 0.0965
 },
 {
 "feature": "Adj. explosive plays allowed",
 "key": "d_adj_def_explosive_rate",
-"logit": -0.0798
+"logit": -0.082
 },
 {
-"feature": "Adj. passing EPA/dropback",
-"key": "d_adj_off_pass_epa",
-"logit": -0.0672
+"feature": "Roster talent, early-season weight",
+"key": "talent_early",
+"logit": -0.0819
+},
+{
+"feature": "Last 3 games: offensive EPA/play",
+"key": "d_l3_off_epa",
+"logit": -0.0803
 },
 {
 "feature": "Adj. points per drive",
 "key": "d_adj_off_ppd",
-"logit": -0.0604
+"logit": -0.0639
 },
 {
-"feature": "Last 3 games: EPA/play allowed",
-"key": "d_l3_def_epa",
-"logit": -0.0596
+"feature": "Adj. passing EPA/dropback",
+"key": "d_adj_off_pass_epa",
+"logit": -0.0623
 },
 {
 "feature": "Adj. pass defense",
 "key": "d_adj_def_pass_epa",
-"logit": 0.0491
+"logit": 0.0587
+},
+{
+"feature": "Last 3 games: EPA/play allowed",
+"key": "d_l3_def_epa",
+"logit": -0.0568
 },
 {
 "feature": "Adj. defensive success rate",
 "key": "d_adj_def_off_sr",
-"logit": 0.0417
+"logit": 0.037
 },
 {
 "feature": "Adj. rushing EPA/play",
 "key": "d_adj_off_rush_epa",
-"logit": -0.0318
+"logit": -0.0307
 },
 {
 "feature": "Home-field advantage",
 "key": "home_adv",
-"logit": 0.0272
+"logit": 0.0271
 },
 {
 "feature": "Adj. explosive-play rate",
 "key": "d_adj_off_explosive_rate",
-"logit": 0.0074
+"logit": 0.0077
 },
 {
 "feature": "Adj. run defense",
 "key": "d_adj_def_rush_epa",
-"logit": 0.0051
+"logit": 0.0046
 },
 {
 "feature": "Roster talent (recruiting composite)",
@@ -591679,98 +592259,98 @@ null
 "logit": 0.0006
 }
 ],
-"intercept_logit": 0.8377,
+"intercept_logit": 0.8365,
 "missing_inputs": []
 },
 "stats_type": "early",
 "crunch": {
-"p_home": 0.2648,
-"p_away": 0.7352,
+"p_home": 0.2663,
+"p_away": 0.7337,
 "pick": "Wyoming",
-"predicted_at": "2026-11-14T22:28:48+00:00",
+"predicted_at": "2026-11-15T00:52:16+00:00",
 "model_version": "cfb-v2.0.0-crunch",
-"input_hash": "fbb813f2ea0e44d9",
-"intercept_logit": 0.9771,
+"input_hash": "3b17704394bc70c8",
+"intercept_logit": 0.9743,
 "factors": [
 {
 "feature": "Betting market point spread",
 "key": "mkt_spread",
-"logit": -0.6532
+"logit": -0.6511
 },
 {
 "feature": "Betting market win probability (from the spread)",
 "key": "mkt_logit",
-"logit": -0.6347
+"logit": -0.6327
 },
 {
 "feature": "Adj. points per drive allowed",
 "key": "d_adj_def_ppd",
-"logit": -0.2579
+"logit": -0.2497
 },
 {
 "feature": "Pregame Elo rating (CFBD)",
 "key": "d_elo",
-"logit": -0.1738
+"logit": -0.1822
 },
 {
 "feature": "Adj. pass defense",
 "key": "d_adj_def_pass_epa",
-"logit": 0.1036
+"logit": 0.1084
 },
 {
 "feature": "Opponent-adjusted offensive EPA/play",
 "key": "d_adj_off_off_epa",
-"logit": -0.0992
+"logit": -0.0985
 },
 {
 "feature": "Last 3 games: offensive EPA/play",
 "key": "d_l3_off_epa",
-"logit": -0.0898
+"logit": -0.0848
 },
 {
 "feature": "Adj. explosive plays allowed",
 "key": "d_adj_def_explosive_rate",
-"logit": -0.0737
+"logit": -0.0757
 },
 {
 "feature": "Last 3 games: EPA/play allowed",
 "key": "d_l3_def_epa",
-"logit": -0.0599
+"logit": -0.0575
 },
 {
 "feature": "Conference game",
 "key": "conf_game",
-"logit": -0.0568
+"logit": -0.057
 },
 {
 "feature": "Last 3 games: points per drive",
 "key": "d_l3_ppd",
-"logit": -0.0503
+"logit": -0.0483
 },
 {
 "feature": "Adj. offensive success rate",
 "key": "d_adj_off_off_sr",
-"logit": 0.0446
-},
-{
-"feature": "Adj. defensive success rate",
-"key": "d_adj_def_off_sr",
-"logit": 0.0384
+"logit": 0.0455
 },
 {
 "feature": "Adj. points per drive",
 "key": "d_adj_off_ppd",
-"logit": -0.0381
+"logit": -0.0412
 },
 {
 "feature": "Opponent-adjusted defensive EPA/play",
 "key": "d_adj_def_off_epa",
-"logit": -0.0326
+"logit": -0.0354
+},
+{
+"feature": "Adj. defensive success rate",
+"key": "d_adj_def_off_sr",
+"logit": 0.0333
 },
 {
 "feature": "Adj. passing EPA/dropback",
 "key": "d_adj_off_pass_epa",
-"logit": 0.0199
+"logit": 0.0237
 },
 {
 "feature": "Home-field advantage",
@@ -591780,108 +592360,108 @@ null
 {
 "feature": "Adj. explosive-play rate",
 "key": "d_adj_off_explosive_rate",
-"logit": 0.0072
+"logit": 0.0076
 },
 {
 "feature": "Adj. rushing EPA/play",
 "key": "d_adj_off_rush_epa",
-"logit": -0.0023
+"logit": -0.0022
 },
 {
 "feature": "Adj. run defense",
 "key": "d_adj_def_rush_epa",
-"logit": 0.0012
+"logit": 0.0007
 }
 ]
 },
 "latest": {
-"p_home": 0.2648,
-"p_away": 0.7352,
+"p_home": 0.2663,
+"p_away": 0.7337,
 "pick": "Wyoming",
-"predicted_at": "2026-11-14T22:28:48+00:00",
+"predicted_at": "2026-11-15T00:52:16+00:00",
 "model_version": "cfb-v2.0.0-crunch",
-"input_hash": "fbb813f2ea0e44d9",
-"intercept_logit": 0.9771,
+"input_hash": "3b17704394bc70c8",
+"intercept_logit": 0.9743,
 "factors": [
 {
 "feature": "Betting market point spread",
 "key": "mkt_spread",
-"logit": -0.6532
+"logit": -0.6511
 },
 {
 "feature": "Betting market win probability (from the spread)",
 "key": "mkt_logit",
-"logit": -0.6347
+"logit": -0.6327
 },
 {
 "feature": "Adj. points per drive allowed",
 "key": "d_adj_def_ppd",
-"logit": -0.2579
+"logit": -0.2497
 },
 {
 "feature": "Pregame Elo rating (CFBD)",
 "key": "d_elo",
-"logit": -0.1738
+"logit": -0.1822
 },
 {
 "feature": "Adj. pass defense",
 "key": "d_adj_def_pass_epa",
-"logit": 0.1036
+"logit": 0.1084
 },
 {
 "feature": "Opponent-adjusted offensive EPA/play",
 "key": "d_adj_off_off_epa",
-"logit": -0.0992
+"logit": -0.0985
 },
 {
 "feature": "Last 3 games: offensive EPA/play",
 "key": "d_l3_off_epa",
-"logit": -0.0898
+"logit": -0.0848
 },
 {
 "feature": "Adj. explosive plays allowed",
 "key": "d_adj_def_explosive_rate",
-"logit": -0.0737
+"logit": -0.0757
 },
 {
 "feature": "Last 3 games: EPA/play allowed",
 "key": "d_l3_def_epa",
-"logit": -0.0599
+"logit": -0.0575
 },
 {
 "feature": "Conference game",
 "key": "conf_game",
-"logit": -0.0568
+"logit": -0.057
 },
 {
 "feature": "Last 3 games: points per drive",
 "key": "d_l3_ppd",
-"logit": -0.0503
+"logit": -0.0483
 },
 {
 "feature": "Adj. offensive success rate",
 "key": "d_adj_off_off_sr",
-"logit": 0.0446
-},
-{
-"feature": "Adj. defensive success rate",
-"key": "d_adj_def_off_sr",
-"logit": 0.0384
+"logit": 0.0455
 },
 {
 "feature": "Adj. points per drive",
 "key": "d_adj_off_ppd",
-"logit": -0.0381
+"logit": -0.0412
 },
 {
 "feature": "Opponent-adjusted defensive EPA/play",
 "key": "d_adj_def_off_epa",
-"logit": -0.0326
+"logit": -0.0354
+},
+{
+"feature": "Adj. defensive success rate",
+"key": "d_adj_def_off_sr",
+"logit": 0.0333
 },
 {
 "feature": "Adj. passing EPA/dropback",
 "key": "d_adj_off_pass_epa",
-"logit": 0.0199
+"logit": 0.0237
 },
 {
 "feature": "Home-field advantage",
@@ -591891,17 +592471,17 @@ null
 {
 "feature": "Adj. explosive-play rate",
 "key": "d_adj_off_explosive_rate",
-"logit": 0.0072
+"logit": 0.0076
 },
 {
 "feature": "Adj. rushing EPA/play",
 "key": "d_adj_off_rush_epa",
-"logit": -0.0023
+"logit": -0.0022
 },
 {
 "feature": "Adj. run defense",
 "key": "d_adj_def_rush_epa",
-"logit": 0.0012
+"logit": 0.0007
 }
 ]
 },
@@ -591909,127 +592489,127 @@ null
 "ats": {
 "team": "Wyoming",
 "line": -7.0,
-"edge": 1.1
+"edge": 1.0
 },
 "value": {
 "moneyline": {
 "pick": "Wyoming",
 "odds": -285.0,
-"p": 0.7352,
+"p": 0.7337,
 "break_even": 0.7403,
-"edge": -0.0051,
-"ev_per_100": -0.7
+"edge": -0.0066,
+"ev_per_100": -0.9
 },
 "spread": {
 "pick": "Wyoming",
 "line": -7.0,
 "odds": -105.0,
 "odds_assumed": false,
-"p": 0.5291,
+"p": 0.5259,
 "break_even": 0.5122,
-"edge": 0.0169,
-"ev_per_100": 3.3
+"edge": 0.0137,
+"ev_per_100": 2.7
 },
 "alt": [
 {
 "team": "Wyoming",
 "line": -17.0,
-"p": 0.2669,
-"fair_odds": 275
+"p": 0.2649,
+"fair_odds": 278
 },
 {
 "team": "Wyoming",
 "line": -14.0,
-"p": 0.3315,
+"p": 0.3309,
 "fair_odds": 202
 },
 {
 "team": "Wyoming",
 "line": -10.5,
-"p": 0.4289,
-"fair_odds": 133
+"p": 0.4257,
+"fair_odds": 135
 },
 {
 "team": "Wyoming",
 "line": -10.0,
-"p": 0.4422,
-"fair_odds": 126
+"p": 0.4383,
+"fair_odds": 128
 },
 {
 "team": "Wyoming",
 "line": -4.0,
-"p": 0.6145,
-"fair_odds": -159
+"p": 0.6122,
+"fair_odds": -158
 },
 {
 "team": "Wyoming",
 "line": -3.5,
-"p": 0.6228,
-"fair_odds": -165
+"p": 0.6213,
+"fair_odds": -164
 },
 {
 "team": "Wyoming",
 "line": 0.0,
-"p": 0.7074,
-"fair_odds": -242
+"p": 0.7044,
+"fair_odds": -238
 },
 {
 "team": "Wyoming",
 "line": 3.0,
-"p": 0.7753,
-"fair_odds": -345
+"p": 0.7738,
+"fair_odds": -342
 }
 ],
 "total": {
 "pick": "Over",
 "line": 40.5,
-"proj": 42.7,
-"odds": -110.0,
+"proj": 42.5,
+"odds": -112.0,
 "odds_assumed": false,
-"p": 0.5383,
-"break_even": 0.5238,
-"edge": 0.0145,
-"ev_per_100": 2.8,
+"p": 0.5285,
+"break_even": 0.5283,
+"edge": 0.0002,
+"ev_per_100": 0.0,
 "range80": [
-23,
+22,
 64
 ],
 "alt": [
 {
 "line": 30.5,
-"over": 0.7748,
-"fair_over": -344,
-"fair_under": 344
+"over": 0.7687,
+"fair_over": -332,
+"fair_under": 332
 },
 {
 "line": 33.5,
-"over": 0.7154,
-"fair_over": -251,
-"fair_under": 251
+"over": 0.7109,
+"fair_over": -246,
+"fair_under": 246
 },
 {
 "line": 37.5,
-"over": 0.6102,
-"fair_over": -157,
-"fair_under": 157
+"over": 0.6042,
+"fair_over": -153,
+"fair_under": 153
 },
 {
 "line": 43.5,
-"over": 0.4629,
-"fair_over": 116,
-"fair_under": -116
+"over": 0.4556,
+"fair_over": 120,
+"fair_under": -120
 },
 {
 "line": 47.5,
-"over": 0.3675,
-"fair_over": 172,
-"fair_under": -172
+"over": 0.3582,
+"fair_over": 179,
+"fair_under": -179
 },
 {
 "line": 50.5,
-"over": 0.2995,
-"fair_over": 234,
-"fair_under": -234
+"over": 0.2934,
+"fair_over": 241,
+"fair_under": -241
 }
 ]
 }
@@ -592037,7 +592617,7 @@ null
 "ou": {
 "pick": "Over",
 "line": 40.5,
-"proj": 42.7
+"proj": 42.5
 }
 }
 },
@@ -592473,6 +593053,20 @@ null
 "ats_home": true,
 "ou_pick": "Under",
 "total_line": 64.5
+},
+{
+"at": "2026-11-15T00:52:16+00:00",
+"type": "early",
+"p_home": 0.8112,
+"model_version": "cfb-v2.0.0",
+"weather_status": "forecast",
+"p_crunch": 0.7785,
+"p_stats": 0.8112,
+"spread_line": 8.5,
+"ats_team": "Washington State",
+"ats_home": true,
+"ou_pick": "Under",
+"total_line": 64.5
 }
 ],
 "frozen": {
@@ -592498,118 +593092,118 @@ null
 "p_home": 0.8162
 },
 "early": {
-"p_home": 0.8077,
-"p_away": 0.1923,
+"p_home": 0.8112,
+"p_away": 0.1888,
 "pick": "Washington State",
-"predicted_at": "2026-11-14T22:28:48+00:00",
+"predicted_at": "2026-11-15T00:52:16+00:00",
 "model_version": "cfb-v2.0.0",
-"input_hash": "fbb813f2ea0e44d9",
+"input_hash": "3b17704394bc70c8",
 "cutoff": "Tuesday of game week; uses games through 2026-11-14",
 "factors": [
 {
 "feature": "Adj. points per drive allowed",
 "key": "d_adj_def_ppd",
-"logit": 0.6534
-},
-{
-"feature": "Opponent-adjusted offensive EPA/play",
-"key": "d_adj_off_off_epa",
-"logit": -0.5825
+"logit": 0.6481
 },
 {
 "feature": "Adj. explosive plays allowed",
 "key": "d_adj_def_explosive_rate",
-"logit": 0.5725
+"logit": 0.5904
+},
+{
+"feature": "Opponent-adjusted offensive EPA/play",
+"key": "d_adj_off_off_epa",
+"logit": -0.5816
 },
 {
 "feature": "Pregame Elo rating (CFBD)",
 "key": "d_elo",
-"logit": 0.4203
-},
-{
-"feature": "Returning production (share of last season)",
-"key": "d_ret_ppa",
-"logit": 0.2305
+"logit": 0.4263
 },
 {
 "feature": "Opponent-adjusted defensive EPA/play",
 "key": "d_adj_def_off_epa",
-"logit": 0.2303
+"logit": 0.2401
+},
+{
+"feature": "Returning production (share of last season)",
+"key": "d_ret_ppa",
+"logit": 0.2247
 },
 {
 "feature": "Adj. points per drive",
 "key": "d_adj_off_ppd",
-"logit": -0.1959
+"logit": -0.2071
 },
 {
 "feature": "Last 3 games: EPA/play allowed",
 "key": "d_l3_def_epa",
-"logit": -0.1369
-},
-{
-"feature": "Conference game",
-"key": "conf_game",
-"logit": -0.1144
-},
-{
-"feature": "Adj. rushing EPA/play",
-"key": "d_adj_off_rush_epa",
-"logit": -0.1134
-},
-{
-"feature": "Adj. passing EPA/dropback",
-"key": "d_adj_off_pass_epa",
-"logit": -0.1126
-},
-{
-"feature": "Last 3 games: points per drive",
-"key": "d_l3_ppd",
-"logit": -0.1083
+"logit": -0.1303
 },
 {
 "feature": "Adj. pass defense",
 "key": "d_adj_def_pass_epa",
-"logit": -0.0971
+"logit": -0.1162
+},
+{
+"feature": "Conference game",
+"key": "conf_game",
+"logit": -0.1147
+},
+{
+"feature": "Adj. rushing EPA/play",
+"key": "d_adj_off_rush_epa",
+"logit": -0.1098
+},
+{
+"feature": "Last 3 games: points per drive",
+"key": "d_l3_ppd",
+"logit": -0.1074
+},
+{
+"feature": "Adj. passing EPA/dropback",
+"key": "d_adj_off_pass_epa",
+"logit": -0.1044
 },
 {
 "feature": "Last 3 games: offensive EPA/play",
 "key": "d_l3_off_epa",
-"logit": -0.0964
-},
-{
-"feature": "Adj. defensive success rate",
-"key": "d_adj_def_off_sr",
-"logit": -0.0923
+"logit": -0.0912
 },
 {
 "feature": "Adj. explosive-play rate",
 "key": "d_adj_off_explosive_rate",
-"logit": 0.084
+"logit": 0.0859
+},
+{
+"feature": "Adj. defensive success rate",
+"key": "d_adj_def_off_sr",
+"logit": -0.0822
 },
 {
 "feature": "Roster talent, early-season weight",
 "key": "talent_early",
-"logit": -0.0822
+"logit": -0.0819
 },
 {
 "feature": "Adj. run defense",
 "key": "d_adj_def_rush_epa",
-"logit": 0.0625
+"logit": 0.055
 },
 {
 "feature": "Adj. offensive success rate",
 "key": "d_adj_off_off_sr",
-"logit": 0.0537
+"logit": 0.0548
 },
 {
 "feature": "Home-field advantage",
 "key": "home_adv",
-"logit": 0.0272
+"logit": 0.0271
 },
 {
 "feature": "Roster talent (recruiting composite)",
 "key": "d_talent",
-"logit": -0.0055
+"logit": -0.0054
 },
 {
 "feature": "Returning production, early-season weight",
@@ -592617,36 +593211,36 @@ null
 "logit": 0.0006
 }
 ],
-"intercept_logit": 0.8377,
+"intercept_logit": 0.8365,
 "missing_inputs": []
 },
 "updated": null,
 "weather": {
 "status": "forecast",
-"temp_f": 42.76666666666667,
-"wind_mph": 7.3999999999999995,
-"gust_mph": 15.0,
-"pop_pct": 2,
+"temp_f": 43.1,
+"wind_mph": 7.333333333333333,
+"gust_mph": 13.6,
+"pop_pct": 1,
 "valid_for": "2026-11-15T03:00Z",
 "forecast_created": null,
-"fetched_at": "2026-11-14T22:28:15+00:00",
+"fetched_at": "2026-11-15T00:51:46+00:00",
 "source": "open-meteo",
 "retractable": false
 },
 "score": {
 "margin": 9.4,
-"total": 63.5,
+"total": 63.2,
 "home": 36,
 "away": 27,
 "adjusted": false
 },
 "market": {
 "p_home_devig": 0.7024,
-"home_moneyline": -325.0,
-"away_moneyline": 260.0,
+"home_moneyline": -310.0,
+"away_moneyline": 250.0,
 "spread_line": 8.5,
 "total_line": 64.5,
-"source": "ESPN (DraftKings) at 2026-11-14T22:28:41+00:00"
+"source": "ESPN (DraftKings) at 2026-11-15T00:52:09+00:00"
 },
 "line": {
 "open_spread_home": -6.5,
@@ -592658,8 +593252,8 @@ null
 170.0
 ],
 "cur_ml": [
--325.0,
-260.0
+-310.0,
+250.0
 ],
 "total_open": 62.5,
 "total": 64.5,
@@ -592747,6 +593341,14 @@ null
 "ml_away": 260.0,
 "total": 64.5,
 "provider": "DraftKings"
+},
+{
+"t": "2026-11-15T00:52:09+00:00",
+"spread_home": -8.5,
+"ml_home": -310.0,
+"ml_away": 250.0,
+"total": 64.5,
+"provider": "DraftKings"
 }
 ],
 "note": "Movement is open-to-current from the sportsbook ESPN shows. It shows where the line went, not who bet; betting-split (\"sharp money\") data is not available from a free source."
@@ -592773,19 +593375,19 @@ null
 "l3_ppd": 2.080952380952381,
 "elo": 1403.0,
 "qb_name": "Owen Eshelman",
-"qb_epa": -0.12131325811571021,
+"qb_epa": -0.12200002391576799,
 "qb_cmp": 0.6112728885054165,
-"qb_int_rate": 0.020959459251757726,
-"qb_sack_rate": 0.14494013412824328,
+"qb_int_rate": 0.020950040733345308,
+"qb_sack_rate": 0.14532437100161355,
 "qb_db_hist": 10.0,
-"third_rate": 0.35609105031999566,
-"rz_td_rate": 0.5521734869016386,
-"fg_rate": 0.6541368142114045,
+"third_rate": 0.3560426356741983,
+"rz_td_rate": 0.5521305365955392,
+"fg_rate": 0.6540361634389015,
 "to_per_game": 1.1111111111111112,
 "takeaways_per_game": 0.4444444444444444,
 "pen_per_game": 8.0,
-"sack_rate_off": 0.07993879834827143,
-"sack_rate_def": 0.033688849416297593,
+"sack_rate_off": 0.0799472868023563,
+"sack_rate_def": 0.03369892134346863,
 "pass_rate": 0.5690397549164974,
 "plays_per_game": 65.22222222222223,
 "fourth_go_rate": 2.0,
@@ -592815,19 +593417,19 @@ null
 "l3_ppd": 2.924074074074074,
 "elo": 1144.0,
 "qb_name": "Hauss Hejny",
-"qb_epa": -0.07765566382138181,
+"qb_epa": -0.07837566022466819,
 "qb_cmp": 0.6112728885054165,
-"qb_int_rate": 0.021973626634907293,
-"qb_sack_rate": 0.10356626965057762,
+"qb_int_rate": 0.021963752381732985,
+"qb_sack_rate": 0.10396909863072387,
 "qb_db_hist": 4.0,
-"third_rate": 0.44083893099092897,
-"rz_td_rate": 0.6818411481305042,
-"fg_rate": 0.7889390519187359,
+"third_rate": 0.4407898708165209,
+"rz_td_rate": 0.6818125145931045,
+"fg_rate": 0.7887736970781953,
 "to_per_game": 0.6666666666666666,
 "takeaways_per_game": 1.4444444444444444,
 "pen_per_game": 6.111111111111111,
-"sack_rate_off": 0.023726983576656088,
-"sack_rate_def": 0.04632118775490859,
+"sack_rate_off": 0.02373565073503748,
+"sack_rate_def": 0.04633290846731047,
 "pass_rate": 0.5460563300872623,
 "plays_per_game": 67.22222222222223,
 "fourth_go_rate": 2.888888888888889,
@@ -592838,118 +593440,118 @@ null
 },
 "qb_flags": [],
 "stats": {
-"p_home": 0.8077,
-"p_away": 0.1923,
+"p_home": 0.8112,
+"p_away": 0.1888,
 "pick": "Washington State",
-"predicted_at": "2026-11-14T22:28:48+00:00",
+"predicted_at": "2026-11-15T00:52:16+00:00",
 "model_version": "cfb-v2.0.0",
-"input_hash": "fbb813f2ea0e44d9",
+"input_hash": "3b17704394bc70c8",
 "cutoff": "Tuesday of game week; uses games through 2026-11-14",
 "factors": [
 {
 "feature": "Adj. points per drive allowed",
 "key": "d_adj_def_ppd",
-"logit": 0.6534
-},
-{
-"feature": "Opponent-adjusted offensive EPA/play",
-"key": "d_adj_off_off_epa",
-"logit": -0.5825
+"logit": 0.6481
 },
 {
 "feature": "Adj. explosive plays allowed",
 "key": "d_adj_def_explosive_rate",
-"logit": 0.5725
+"logit": 0.5904
+},
+{
+"feature": "Opponent-adjusted offensive EPA/play",
+"key": "d_adj_off_off_epa",
+"logit": -0.5816
 },
 {
 "feature": "Pregame Elo rating (CFBD)",
 "key": "d_elo",
-"logit": 0.4203
-},
-{
-"feature": "Returning production (share of last season)",
-"key": "d_ret_ppa",
-"logit": 0.2305
+"logit": 0.4263
 },
 {
 "feature": "Opponent-adjusted defensive EPA/play",
 "key": "d_adj_def_off_epa",
-"logit": 0.2303
+"logit": 0.2401
+},
+{
+"feature": "Returning production (share of last season)",
+"key": "d_ret_ppa",
+"logit": 0.2247
 },
 {
 "feature": "Adj. points per drive",
 "key": "d_adj_off_ppd",
-"logit": -0.1959
+"logit": -0.2071
 },
 {
 "feature": "Last 3 games: EPA/play allowed",
 "key": "d_l3_def_epa",
-"logit": -0.1369
-},
-{
-"feature": "Conference game",
-"key": "conf_game",
-"logit": -0.1144
-},
-{
-"feature": "Adj. rushing EPA/play",
-"key": "d_adj_off_rush_epa",
-"logit": -0.1134
-},
-{
-"feature": "Adj. passing EPA/dropback",
-"key": "d_adj_off_pass_epa",
-"logit": -0.1126
-},
-{
-"feature": "Last 3 games: points per drive",
-"key": "d_l3_ppd",
-"logit": -0.1083
+"logit": -0.1303
 },
 {
 "feature": "Adj. pass defense",
 "key": "d_adj_def_pass_epa",
-"logit": -0.0971
+"logit": -0.1162
+},
+{
+"feature": "Conference game",
+"key": "conf_game",
+"logit": -0.1147
+},
+{
+"feature": "Adj. rushing EPA/play",
+"key": "d_adj_off_rush_epa",
+"logit": -0.1098
+},
+{
+"feature": "Last 3 games: points per drive",
+"key": "d_l3_ppd",
+"logit": -0.1074
+},
+{
+"feature": "Adj. passing EPA/dropback",
+"key": "d_adj_off_pass_epa",
+"logit": -0.1044
 },
 {
 "feature": "Last 3 games: offensive EPA/play",
 "key": "d_l3_off_epa",
-"logit": -0.0964
-},
-{
-"feature": "Adj. defensive success rate",
-"key": "d_adj_def_off_sr",
-"logit": -0.0923
+"logit": -0.0912
 },
 {
 "feature": "Adj. explosive-play rate",
 "key": "d_adj_off_explosive_rate",
-"logit": 0.084
+"logit": 0.0859
+},
+{
+"feature": "Adj. defensive success rate",
+"key": "d_adj_def_off_sr",
+"logit": -0.0822
 },
 {
 "feature": "Roster talent, early-season weight",
 "key": "talent_early",
-"logit": -0.0822
+"logit": -0.0819
 },
 {
 "feature": "Adj. run defense",
 "key": "d_adj_def_rush_epa",
-"logit": 0.0625
+"logit": 0.055
 },
 {
 "feature": "Adj. offensive success rate",
 "key": "d_adj_off_off_sr",
-"logit": 0.0537
+"logit": 0.0548
 },
 {
 "feature": "Home-field advantage",
 "key": "home_adv",
-"logit": 0.0272
+"logit": 0.0271
 },
 {
 "feature": "Roster talent (recruiting composite)",
 "key": "d_talent",
-"logit": -0.0055
+"logit": -0.0054
 },
 {
 "feature": "Returning production, early-season weight",
@@ -592957,103 +593559,98 @@ null
 "logit": 0.0006
 }
 ],
-"intercept_logit": 0.8377,
+"intercept_logit": 0.8365,
 "missing_inputs": []
 },
 "stats_type": "early",
 "crunch": {
-"p_home": 0.774,
-"p_away": 0.226,
+"p_home": 0.7785,
+"p_away": 0.2215,
 "pick": "Washington State",
-"predicted_at": "2026-11-14T22:28:48+00:00",
+"predicted_at": "2026-11-15T00:52:16+00:00",
 "model_version": "cfb-v2.0.0-crunch",
-"input_hash": "fbb813f2ea0e44d9",
-"intercept_logit": 0.9771,
+"input_hash": "3b17704394bc70c8",
+"intercept_logit": 0.9743,
 "factors": [
 {
 "feature": "Adj. explosive plays allowed",
 "key": "d_adj_def_explosive_rate",
-"logit": 0.5285
+"logit": 0.5449
 },
 {
 "feature": "Adj. points per drive allowed",
 "key": "d_adj_def_ppd",
-"logit": 0.3309
+"logit": 0.321
 },
 {
 "feature": "Opponent-adjusted offensive EPA/play",
 "key": "d_adj_off_off_epa",
-"logit": -0.2386
+"logit": -0.237
 },
 {
 "feature": "Adj. pass defense",
 "key": "d_adj_def_pass_epa",
-"logit": -0.2048
-},
-{
-"feature": "Last 3 games: EPA/play allowed",
-"key": "d_l3_def_epa",
-"logit": -0.1375
+"logit": -0.2144
 },
 {
 "feature": "Adj. points per drive",
 "key": "d_adj_off_ppd",
-"logit": -0.1236
+"logit": -0.1336
+},
+{
+"feature": "Last 3 games: EPA/play allowed",
+"key": "d_l3_def_epa",
+"logit": -0.1318
 },
 {
 "feature": "Pregame Elo rating (CFBD)",
 "key": "d_elo",
-"logit": 0.1037
+"logit": 0.1087
 },
 {
 "feature": "Last 3 games: offensive EPA/play",
 "key": "d_l3_off_epa",
-"logit": -0.102
-},
-{
-"feature": "Adj. defensive success rate",
-"key": "d_adj_def_off_sr",
-"logit": -0.085
+"logit": -0.0963
 },
 {
 "feature": "Adj. explosive-play rate",
 "key": "d_adj_off_explosive_rate",
-"logit": 0.0821
+"logit": 0.0852
+},
+{
+"feature": "Adj. defensive success rate",
+"key": "d_adj_def_off_sr",
+"logit": -0.0739
 },
 {
 "feature": "Opponent-adjusted defensive EPA/play",
 "key": "d_adj_def_off_epa",
-"logit": 0.0665
+"logit": 0.0724
 },
 {
 "feature": "Conference game",
 "key": "conf_game",
-"logit": -0.0568
+"logit": -0.057
 },
 {
 "feature": "Adj. passing EPA/dropback",
 "key": "d_adj_off_pass_epa",
-"logit": 0.0334
+"logit": 0.0398
 },
 {
 "feature": "Betting market point spread",
 "key": "mkt_spread",
-"logit": 0.0307
+"logit": 0.0316
 },
 {
 "feature": "Adj. offensive success rate",
 "key": "d_adj_off_off_sr",
-"logit": 0.0253
+"logit": 0.0259
 },
 {
 "feature": "Last 3 games: points per drive",
 "key": "d_l3_ppd",
-"logit": -0.0186
-},
-{
-"feature": "Adj. run defense",
-"key": "d_adj_def_rush_epa",
-"logit": 0.0146
+"logit": -0.0179
 },
 {
 "feature": "Home-field advantage",
@@ -593061,110 +593658,110 @@ null
 "logit": 0.0092
 },
 {
+"feature": "Adj. run defense",
+"key": "d_adj_def_rush_epa",
+"logit": 0.0089
+},
+{
 "feature": "Adj. rushing EPA/play",
 "key": "d_adj_off_rush_epa",
-"logit": -0.0083
+"logit": -0.008
 },
 {
 "feature": "Betting market win probability (from the spread)",
 "key": "mkt_logit",
-"logit": 0.0042
+"logit": 0.0052
 }
 ]
 },
 "latest": {
-"p_home": 0.774,
-"p_away": 0.226,
+"p_home": 0.7785,
+"p_away": 0.2215,
 "pick": "Washington State",
-"predicted_at": "2026-11-14T22:28:48+00:00",
+"predicted_at": "2026-11-15T00:52:16+00:00",
 "model_version": "cfb-v2.0.0-crunch",
-"input_hash": "fbb813f2ea0e44d9",
-"intercept_logit": 0.9771,
+"input_hash": "3b17704394bc70c8",
+"intercept_logit": 0.9743,
 "factors": [
 {
 "feature": "Adj. explosive plays allowed",
 "key": "d_adj_def_explosive_rate",
-"logit": 0.5285
+"logit": 0.5449
 },
 {
 "feature": "Adj. points per drive allowed",
 "key": "d_adj_def_ppd",
-"logit": 0.3309
+"logit": 0.321
 },
 {
 "feature": "Opponent-adjusted offensive EPA/play",
 "key": "d_adj_off_off_epa",
-"logit": -0.2386
+"logit": -0.237
 },
 {
 "feature": "Adj. pass defense",
 "key": "d_adj_def_pass_epa",
-"logit": -0.2048
-},
-{
-"feature": "Last 3 games: EPA/play allowed",
-"key": "d_l3_def_epa",
-"logit": -0.1375
+"logit": -0.2144
 },
 {
 "feature": "Adj. points per drive",
 "key": "d_adj_off_ppd",
-"logit": -0.1236
+"logit": -0.1336
+},
+{
+"feature": "Last 3 games: EPA/play allowed",
+"key": "d_l3_def_epa",
+"logit": -0.1318
 },
 {
 "feature": "Pregame Elo rating (CFBD)",
 "key": "d_elo",
-"logit": 0.1037
+"logit": 0.1087
 },
 {
 "feature": "Last 3 games: offensive EPA/play",
 "key": "d_l3_off_epa",
-"logit": -0.102
-},
-{
-"feature": "Adj. defensive success rate",
-"key": "d_adj_def_off_sr",
-"logit": -0.085
+"logit": -0.0963
 },
 {
 "feature": "Adj. explosive-play rate",
 "key": "d_adj_off_explosive_rate",
-"logit": 0.0821
+"logit": 0.0852
+},
+{
+"feature": "Adj. defensive success rate",
+"key": "d_adj_def_off_sr",
+"logit": -0.0739
 },
 {
 "feature": "Opponent-adjusted defensive EPA/play",
 "key": "d_adj_def_off_epa",
-"logit": 0.0665
+"logit": 0.0724
 },
 {
 "feature": "Conference game",
 "key": "conf_game",
-"logit": -0.0568
+"logit": -0.057
 },
 {
 "feature": "Adj. passing EPA/dropback",
 "key": "d_adj_off_pass_epa",
-"logit": 0.0334
+"logit": 0.0398
 },
 {
 "feature": "Betting market point spread",
 "key": "mkt_spread",
-"logit": 0.0307
+"logit": 0.0316
 },
 {
 "feature": "Adj. offensive success rate",
 "key": "d_adj_off_off_sr",
-"logit": 0.0253
+"logit": 0.0259
 },
 {
 "feature": "Last 3 games: points per drive",
 "key": "d_l3_ppd",
-"logit": -0.0186
-},
-{
-"feature": "Adj. run defense",
-"key": "d_adj_def_rush_epa",
-"logit": 0.0146
+"logit": -0.0179
 },
 {
 "feature": "Home-field advantage",
@@ -593172,14 +593769,19 @@ null
 "logit": 0.0092
 },
 {
+"feature": "Adj. run defense",
+"key": "d_adj_def_rush_epa",
+"logit": 0.0089
+},
+{
 "feature": "Adj. rushing EPA/play",
 "key": "d_adj_off_rush_epa",
-"logit": -0.0083
+"logit": -0.008
 },
 {
 "feature": "Betting market win probability (from the spread)",
 "key": "mkt_logit",
-"logit": 0.0042
+"logit": 0.0052
 }
 ]
 },
@@ -593192,11 +593794,11 @@ null
 "value": {
 "moneyline": {
 "pick": "Washington State",
-"odds": -325.0,
-"p": 0.774,
-"break_even": 0.7647,
-"edge": 0.0093,
-"ev_per_100": 1.2
+"odds": -310.0,
+"p": 0.7785,
+"break_even": 0.7561,
+"edge": 0.0224,
+"ev_per_100": 3.0
 },
 "spread": {
 "pick": "Washington State",
@@ -593205,38 +593807,38 @@ null
 "odds_assumed": false,
 "p": 0.5301,
 "break_even": 0.5192,
-"edge": 0.0109,
+"edge": 0.0108,
 "ev_per_100": 2.1
 },
 "alt": [
 {
 "team": "Washington State",
 "line": -18.5,
-"p": 0.2729,
-"fair_odds": 266
+"p": 0.2728,
+"fair_odds": 267
 },
 {
 "team": "Washington State",
 "line": -15.5,
-"p": 0.3425,
+"p": 0.3423,
 "fair_odds": 192
 },
 {
 "team": "Washington State",
 "line": -12.0,
-"p": 0.4263,
-"fair_odds": 135
+"p": 0.4265,
+"fair_odds": 134
 },
 {
 "team": "Washington State",
 "line": -11.5,
-"p": 0.4429,
+"p": 0.4432,
 "fair_odds": 126
 },
 {
 "team": "Washington State",
 "line": -5.5,
-"p": 0.6126,
+"p": 0.6127,
 "fair_odds": -158
 },
 {
@@ -593248,66 +593850,66 @@ null
 {
 "team": "Washington State",
 "line": -1.5,
-"p": 0.7064,
-"fair_odds": -241
+"p": 0.7059,
+"fair_odds": -240
 },
 {
 "team": "Washington State",
 "line": 1.5,
-"p": 0.769,
-"fair_odds": -333
+"p": 0.7683,
+"fair_odds": -332
 }
 ],
 "total": {
 "pick": "Under",
 "line": 64.5,
-"proj": 63.5,
+"proj": 63.2,
 "odds": -105.0,
 "odds_assumed": false,
-"p": 0.5418,
+"p": 0.551,
 "break_even": 0.5122,
-"edge": 0.0296,
-"ev_per_100": 5.8,
+"edge": 0.0388,
+"ev_per_100": 7.6,
 "range80": [
 43,
-85
+84
 ],
 "alt": [
 {
 "line": 54.5,
-"over": 0.7123,
-"fair_over": -248,
-"fair_under": 248
+"over": 0.7028,
+"fair_over": -236,
+"fair_under": 236
 },
 {
 "line": 57.5,
-"over": 0.6302,
-"fair_over": -170,
-"fair_under": 170
+"over": 0.6209,
+"fair_over": -164,
+"fair_under": 164
 },
 {
 "line": 61.5,
-"over": 0.5313,
-"fair_over": -113,
-"fair_under": 113
+"over": 0.5219,
+"fair_over": -109,
+"fair_under": 109
 },
 {
 "line": 67.5,
-"over": 0.3843,
-"fair_over": 160,
-"fair_under": -160
+"over": 0.3764,
+"fair_over": 166,
+"fair_under": -166
 },
 {
 "line": 71.5,
-"over": 0.2952,
-"fair_over": 239,
-"fair_under": -239
+"over": 0.2872,
+"fair_over": 248,
+"fair_under": -248
 },
 {
 "line": 74.5,
-"over": 0.2385,
-"fair_over": 319,
-"fair_under": -319
+"over": 0.2321,
+"fair_over": 331,
+"fair_under": -331
 }
 ]
 }
@@ -593315,7 +593917,7 @@ null
 "ou": {
 "pick": "Under",
 "line": 64.5,
-"proj": 63.5
+"proj": 63.2
 }
 }
 },
@@ -593754,6 +594356,20 @@ null
 "ats_home": true,
 "ou_pick": "Over",
 "total_line": 39.5
+},
+{
+"at": "2026-11-15T00:52:16+00:00",
+"type": "early",
+"p_home": 0.3717,
+"model_version": "cfb-v2.0.0",
+"weather_status": "forecast",
+"p_crunch": 0.3382,
+"p_stats": 0.3717,
+"spread_line": -7.0,
+"ats_team": "Hawai'i",
+"ats_home": true,
+"ou_pick": "Over",
+"total_line": 39.5
 }
 ],
 "frozen": {
@@ -593779,113 +594395,113 @@ null
 "p_home": 0.2111
 },
 "early": {
-"p_home": 0.3768,
-"p_away": 0.6232,
+"p_home": 0.3717,
+"p_away": 0.6283,
 "pick": "North Dakota State",
-"predicted_at": "2026-11-14T22:28:48+00:00",
+"predicted_at": "2026-11-15T00:52:16+00:00",
 "model_version": "cfb-v2.0.0",
-"input_hash": "fbb813f2ea0e44d9",
+"input_hash": "3b17704394bc70c8",
 "cutoff": "Tuesday of game week; uses games through 2026-11-14",
 "factors": [
 {
 "feature": "Adj. points per drive allowed",
 "key": "d_adj_def_ppd",
-"logit": -0.676
+"logit": -0.6695
 },
 {
 "feature": "Pregame Elo rating (CFBD)",
 "key": "d_elo",
-"logit": -0.454
+"logit": -0.4604
 },
 {
 "feature": "Opponent-adjusted defensive EPA/play",
 "key": "d_adj_def_off_epa",
-"logit": -0.2422
+"logit": -0.2519
 },
 {
 "feature": "Adj. explosive plays allowed",
 "key": "d_adj_def_explosive_rate",
-"logit": -0.2376
+"logit": -0.2447
 },
 {
 "feature": "Last 3 games: EPA/play allowed",
 "key": "d_l3_def_epa",
-"logit": 0.1686
+"logit": 0.16
 },
 {
 "feature": "Opponent-adjusted offensive EPA/play",
 "key": "d_adj_off_off_epa",
-"logit": 0.1171
+"logit": 0.1173
 },
 {
 "feature": "Conference game",
 "key": "conf_game",
-"logit": -0.1144
-},
-{
-"feature": "Adj. defensive success rate",
-"key": "d_adj_def_off_sr",
-"logit": 0.0912
+"logit": -0.1147
 },
 {
 "feature": "Roster talent, early-season weight",
 "key": "talent_early",
-"logit": -0.0822
+"logit": -0.0819
 },
 {
-"feature": "Adj. offensive success rate",
-"key": "d_adj_off_off_sr",
-"logit": -0.0718
-},
-{
-"feature": "Adj. run defense",
-"key": "d_adj_def_rush_epa",
-"logit": -0.0699
+"feature": "Adj. defensive success rate",
+"key": "d_adj_def_off_sr",
+"logit": 0.0811
 },
 {
 "feature": "Adj. pass defense",
 "key": "d_adj_def_pass_epa",
-"logit": 0.0674
+"logit": 0.0805
 },
 {
-"feature": "Last 3 games: points per drive",
-"key": "d_l3_ppd",
-"logit": 0.0406
+"feature": "Adj. offensive success rate",
+"key": "d_adj_off_off_sr",
+"logit": -0.073
+},
+{
+"feature": "Adj. run defense",
+"key": "d_adj_def_rush_epa",
+"logit": -0.0613
 },
 {
 "feature": "Adj. explosive-play rate",
 "key": "d_adj_off_explosive_rate",
-"logit": 0.04
+"logit": 0.041
 },
 {
-"feature": "Last 3 games: offensive EPA/play",
-"key": "d_l3_off_epa",
-"logit": 0.0303
-},
-{
-"feature": "Adj. passing EPA/dropback",
-"key": "d_adj_off_pass_epa",
-"logit": 0.0287
-},
-{
-"feature": "Home-field advantage",
-"key": "home_adv",
-"logit": 0.0272
+"feature": "Last 3 games: points per drive",
+"key": "d_l3_ppd",
+"logit": 0.0399
 },
 {
 "feature": "Adj. points per drive",
 "key": "d_adj_off_ppd",
-"logit": -0.0271
+"logit": -0.0288
+},
+{
+"feature": "Last 3 games: offensive EPA/play",
+"key": "d_l3_off_epa",
+"logit": 0.0284
+},
+{
+"feature": "Home-field advantage",
+"key": "home_adv",
+"logit": 0.0271
+},
+{
+"feature": "Adj. passing EPA/dropback",
+"key": "d_adj_off_pass_epa",
+"logit": 0.0266
 },
 {
 "feature": "Adj. rushing EPA/play",
 "key": "d_adj_off_rush_epa",
-"logit": 0.0201
+"logit": 0.0196
 },
 {
 "feature": "Returning production (share of last season)",
 "key": "d_ret_ppa",
-"logit": 0.0021
+"logit": 0.0022
 },
 {
 "feature": "Returning production, early-season weight",
@@ -593898,7 +594514,7 @@ null
 "logit": 0.0005
 }
 ],
-"intercept_logit": 0.8377,
+"intercept_logit": 0.8365,
 "missing_inputs": [
 "Returning production (share of last season)",
 "Returning production, early-season weight"
@@ -593907,19 +594523,19 @@ null
 "updated": null,
 "weather": {
 "status": "forecast",
-"temp_f": 74.33333333333333,
-"wind_mph": 12.933333333333332,
-"gust_mph": 33.6,
+"temp_f": 74.7,
+"wind_mph": 13.299999999999999,
+"gust_mph": 35.6,
 "pop_pct": 25,
 "valid_for": "2026-11-15T04:00Z",
 "forecast_created": null,
-"fetched_at": "2026-11-14T22:28:15+00:00",
+"fetched_at": "2026-11-15T00:51:46+00:00",
 "source": "open-meteo",
 "retractable": false
 },
 "score": {
-"margin": -6.3,
-"total": 44.9,
+"margin": -6.4,
+"total": 44.8,
 "home": 19,
 "away": 26,
 "adjusted": false
@@ -593930,7 +594546,7 @@ null
 "away_moneyline": -270.0,
 "spread_line": -7.0,
 "total_line": 39.5,
-"source": "ESPN (DraftKings) at 2026-11-14T22:28:41+00:00"
+"source": "ESPN (DraftKings) at 2026-11-15T00:52:09+00:00"
 },
 "line": {
 "open_spread_home": 9.5,
@@ -594041,19 +594657,19 @@ null
 "l3_ppd": 2.258974358974359,
 "elo": 1399.0,
 "qb_name": "Micah Alejado",
-"qb_epa": 0.11242351303102907,
+"qb_epa": 0.11223436143355553,
 "qb_cmp": 0.6736722659411833,
-"qb_int_rate": 0.016365952760018017,
-"qb_sack_rate": 0.1055979182980331,
+"qb_int_rate": 0.01636335867655697,
+"qb_sack_rate": 0.10570374625044442,
 "qb_db_hist": 352.0,
-"third_rate": 0.41540146127219113,
-"rz_td_rate": 0.45160649031860245,
-"fg_rate": 0.7325056433408578,
+"third_rate": 0.415356589161452,
+"rz_td_rate": 0.4515747444401812,
+"fg_rate": 0.7324166061190283,
 "to_per_game": 0.7777777777777778,
 "takeaways_per_game": 0.6666666666666666,
 "pen_per_game": 8.222222222222221,
-"sack_rate_off": 0.05426519253607226,
-"sack_rate_def": 0.04900788027667592,
+"sack_rate_off": 0.054272336831484254,
+"sack_rate_def": 0.04901939608151833,
 "pass_rate": 0.6433064799373844,
 "plays_per_game": 71.22222222222223,
 "fourth_go_rate": 1.5555555555555556,
@@ -594083,19 +594699,19 @@ null
 "l3_ppd": 1.9521367521367523,
 "elo": 1628.0,
 "qb_name": "Nathan Hayes",
-"qb_epa": -0.1193986113712239,
+"qb_epa": -0.12008537717128169,
 "qb_cmp": 0.6144855092615701,
-"qb_int_rate": 0.020959459251757726,
-"qb_sack_rate": 0.13724782643593558,
+"qb_int_rate": 0.020950040733345308,
+"qb_sack_rate": 0.13763206330930586,
 "qb_db_hist": 10.0,
-"third_rate": 0.4255194496482147,
-"rz_td_rate": 0.5603021424925155,
-"fg_rate": 0.7845715968201001,
+"third_rate": 0.4254690453594393,
+"rz_td_rate": 0.5602703966140943,
+"fg_rate": 0.7844709460475972,
 "to_per_game": 1.0,
 "takeaways_per_game": 1.5555555555555556,
 "pen_per_game": 6.444444444444445,
-"sack_rate_off": 0.047192773599762,
-"sack_rate_def": 0.07468751402660191,
+"sack_rate_off": 0.04720386289331395,
+"sack_rate_def": 0.0746998032810233,
 "pass_rate": 0.42302843143599866,
 "plays_per_game": 65.0,
 "fourth_go_rate": 2.111111111111111,
@@ -594106,113 +594722,113 @@ null
 },
 "qb_flags": [],
 "stats": {
-"p_home": 0.3768,
-"p_away": 0.6232,
+"p_home": 0.3717,
+"p_away": 0.6283,
 "pick": "North Dakota State",
-"predicted_at": "2026-11-14T22:28:48+00:00",
+"predicted_at": "2026-11-15T00:52:16+00:00",
 "model_version": "cfb-v2.0.0",
-"input_hash": "fbb813f2ea0e44d9",
+"input_hash": "3b17704394bc70c8",
 "cutoff": "Tuesday of game week; uses games through 2026-11-14",
 "factors": [
 {
 "feature": "Adj. points per drive allowed",
 "key": "d_adj_def_ppd",
-"logit": -0.676
+"logit": -0.6695
 },
 {
 "feature": "Pregame Elo rating (CFBD)",
 "key": "d_elo",
-"logit": -0.454
+"logit": -0.4604
 },
 {
 "feature": "Opponent-adjusted defensive EPA/play",
 "key": "d_adj_def_off_epa",
-"logit": -0.2422
+"logit": -0.2519
 },
 {
 "feature": "Adj. explosive plays allowed",
 "key": "d_adj_def_explosive_rate",
-"logit": -0.2376
+"logit": -0.2447
 },
 {
 "feature": "Last 3 games: EPA/play allowed",
 "key": "d_l3_def_epa",
-"logit": 0.1686
+"logit": 0.16
 },
 {
 "feature": "Opponent-adjusted offensive EPA/play",
 "key": "d_adj_off_off_epa",
-"logit": 0.1171
+"logit": 0.1173
 },
 {
 "feature": "Conference game",
 "key": "conf_game",
-"logit": -0.1144
-},
-{
-"feature": "Adj. defensive success rate",
-"key": "d_adj_def_off_sr",
-"logit": 0.0912
+"logit": -0.1147
 },
 {
 "feature": "Roster talent, early-season weight",
 "key": "talent_early",
-"logit": -0.0822
+"logit": -0.0819
 },
 {
-"feature": "Adj. offensive success rate",
-"key": "d_adj_off_off_sr",
-"logit": -0.0718
-},
-{
-"feature": "Adj. run defense",
-"key": "d_adj_def_rush_epa",
-"logit": -0.0699
+"feature": "Adj. defensive success rate",
+"key": "d_adj_def_off_sr",
+"logit": 0.0811
 },
 {
 "feature": "Adj. pass defense",
 "key": "d_adj_def_pass_epa",
-"logit": 0.0674
+"logit": 0.0805
 },
 {
-"feature": "Last 3 games: points per drive",
-"key": "d_l3_ppd",
-"logit": 0.0406
+"feature": "Adj. offensive success rate",
+"key": "d_adj_off_off_sr",
+"logit": -0.073
+},
+{
+"feature": "Adj. run defense",
+"key": "d_adj_def_rush_epa",
+"logit": -0.0613
 },
 {
 "feature": "Adj. explosive-play rate",
 "key": "d_adj_off_explosive_rate",
-"logit": 0.04
+"logit": 0.041
 },
 {
-"feature": "Last 3 games: offensive EPA/play",
-"key": "d_l3_off_epa",
-"logit": 0.0303
-},
-{
-"feature": "Adj. passing EPA/dropback",
-"key": "d_adj_off_pass_epa",
-"logit": 0.0287
-},
-{
-"feature": "Home-field advantage",
-"key": "home_adv",
-"logit": 0.0272
+"feature": "Last 3 games: points per drive",
+"key": "d_l3_ppd",
+"logit": 0.0399
 },
 {
 "feature": "Adj. points per drive",
 "key": "d_adj_off_ppd",
-"logit": -0.0271
+"logit": -0.0288
+},
+{
+"feature": "Last 3 games: offensive EPA/play",
+"key": "d_l3_off_epa",
+"logit": 0.0284
+},
+{
+"feature": "Home-field advantage",
+"key": "home_adv",
+"logit": 0.0271
+},
+{
+"feature": "Adj. passing EPA/dropback",
+"key": "d_adj_off_pass_epa",
+"logit": 0.0266
 },
 {
 "feature": "Adj. rushing EPA/play",
 "key": "d_adj_off_rush_epa",
-"logit": 0.0201
+"logit": 0.0196
 },
 {
 "feature": "Returning production (share of last season)",
 "key": "d_ret_ppa",
-"logit": 0.0021
+"logit": 0.0022
 },
 {
 "feature": "Returning production, early-season weight",
@@ -594225,7 +594841,7 @@ null
 "logit": 0.0005
 }
 ],
-"intercept_logit": 0.8377,
+"intercept_logit": 0.8365,
 "missing_inputs": [
 "Returning production (share of last season)",
 "Returning production, early-season weight"
@@ -594233,93 +594849,98 @@ null
 },
 "stats_type": "early",
 "crunch": {
-"p_home": 0.3419,
-"p_away": 0.6581,
+"p_home": 0.3382,
+"p_away": 0.6618,
 "pick": "North Dakota State",
-"predicted_at": "2026-11-14T22:28:48+00:00",
+"predicted_at": "2026-11-15T00:52:16+00:00",
 "model_version": "cfb-v2.0.0-crunch",
-"input_hash": "fbb813f2ea0e44d9",
-"intercept_logit": 0.9771,
+"input_hash": "3b17704394bc70c8",
+"intercept_logit": 0.9743,
 "factors": [
 {
 "feature": "Betting market point spread",
 "key": "mkt_spread",
-"logit": -0.6532
+"logit": -0.6511
 },
 {
 "feature": "Betting market win probability (from the spread)",
 "key": "mkt_logit",
-"logit": -0.6347
+"logit": -0.6327
 },
 {
 "feature": "Adj. points per drive allowed",
 "key": "d_adj_def_ppd",
-"logit": -0.3424
+"logit": -0.3316
 },
 {
 "feature": "Adj. explosive plays allowed",
 "key": "d_adj_def_explosive_rate",
-"logit": -0.2194
+"logit": -0.2258
 },
 {
 "feature": "Last 3 games: EPA/play allowed",
 "key": "d_l3_def_epa",
-"logit": 0.1693
+"logit": 0.1618
 },
 {
 "feature": "Adj. pass defense",
 "key": "d_adj_def_pass_epa",
-"logit": 0.1421
+"logit": 0.1487
 },
 {
 "feature": "Pregame Elo rating (CFBD)",
 "key": "d_elo",
-"logit": -0.112
-},
-{
-"feature": "Adj. defensive success rate",
-"key": "d_adj_def_off_sr",
-"logit": 0.084
+"logit": -0.1173
 },
 {
 "feature": "Opponent-adjusted defensive EPA/play",
 "key": "d_adj_def_off_epa",
-"logit": -0.0699
+"logit": -0.076
+},
+{
+"feature": "Adj. defensive success rate",
+"key": "d_adj_def_off_sr",
+"logit": 0.0729
 },
 {
 "feature": "Conference game",
 "key": "conf_game",
-"logit": -0.0568
+"logit": -0.057
 },
 {
 "feature": "Opponent-adjusted offensive EPA/play",
 "key": "d_adj_off_off_epa",
-"logit": 0.048
+"logit": 0.0478
 },
 {
 "feature": "Adj. explosive-play rate",
 "key": "d_adj_off_explosive_rate",
-"logit": 0.0391
+"logit": 0.0406
 },
 {
 "feature": "Adj. offensive success rate",
 "key": "d_adj_off_off_sr",
-"logit": -0.0339
+"logit": -0.0345
 },
 {
 "feature": "Last 3 games: offensive EPA/play",
 "key": "d_l3_off_epa",
-"logit": 0.032
+"logit": 0.03
 },
 {
 "feature": "Adj. points per drive",
 "key": "d_adj_off_ppd",
-"logit": -0.0171
+"logit": -0.0186
+},
+{
+"feature": "Adj. passing EPA/dropback",
+"key": "d_adj_off_pass_epa",
+"logit": -0.0101
 },
 {
 "feature": "Adj. run defense",
 "key": "d_adj_def_rush_epa",
-"logit": -0.0163
+"logit": -0.0099
 },
 {
 "feature": "Home-field advantage",
@@ -594327,110 +594948,110 @@ null
 "logit": 0.0092
 },
 {
-"feature": "Adj. passing EPA/dropback",
-"key": "d_adj_off_pass_epa",
-"logit": -0.0085
-},
-{
 "feature": "Last 3 games: points per drive",
 "key": "d_l3_ppd",
-"logit": 0.007
+"logit": 0.0066
 },
 {
 "feature": "Adj. rushing EPA/play",
 "key": "d_adj_off_rush_epa",
-"logit": 0.0015
+"logit": 0.0014
 }
 ]
 },
 "latest": {
-"p_home": 0.3419,
-"p_away": 0.6581,
+"p_home": 0.3382,
+"p_away": 0.6618,
 "pick": "North Dakota State",
-"predicted_at": "2026-11-14T22:28:48+00:00",
+"predicted_at": "2026-11-15T00:52:16+00:00",
 "model_version": "cfb-v2.0.0-crunch",
-"input_hash": "fbb813f2ea0e44d9",
-"intercept_logit": 0.9771,
+"input_hash": "3b17704394bc70c8",
+"intercept_logit": 0.9743,
 "factors": [
 {
 "feature": "Betting market point spread",
 "key": "mkt_spread",
-"logit": -0.6532
+"logit": -0.6511
 },
 {
 "feature": "Betting market win probability (from the spread)",
 "key": "mkt_logit",
-"logit": -0.6347
+"logit": -0.6327
 },
 {
 "feature": "Adj. points per drive allowed",
 "key": "d_adj_def_ppd",
-"logit": -0.3424
+"logit": -0.3316
 },
 {
 "feature": "Adj. explosive plays allowed",
 "key": "d_adj_def_explosive_rate",
-"logit": -0.2194
+"logit": -0.2258
 },
 {
 "feature": "Last 3 games: EPA/play allowed",
 "key": "d_l3_def_epa",
-"logit": 0.1693
+"logit": 0.1618
 },
 {
 "feature": "Adj. pass defense",
 "key": "d_adj_def_pass_epa",
-"logit": 0.1421
+"logit": 0.1487
 },
 {
 "feature": "Pregame Elo rating (CFBD)",
 "key": "d_elo",
-"logit": -0.112
-},
-{
-"feature": "Adj. defensive success rate",
-"key": "d_adj_def_off_sr",
-"logit": 0.084
+"logit": -0.1173
 },
 {
 "feature": "Opponent-adjusted defensive EPA/play",
 "key": "d_adj_def_off_epa",
-"logit": -0.0699
+"logit": -0.076
+},
+{
+"feature": "Adj. defensive success rate",
+"key": "d_adj_def_off_sr",
+"logit": 0.0729
 },
 {
 "feature": "Conference game",
 "key": "conf_game",
-"logit": -0.0568
+"logit": -0.057
 },
 {
 "feature": "Opponent-adjusted offensive EPA/play",
 "key": "d_adj_off_off_epa",
-"logit": 0.048
+"logit": 0.0478
 },
 {
 "feature": "Adj. explosive-play rate",
 "key": "d_adj_off_explosive_rate",
-"logit": 0.0391
+"logit": 0.0406
 },
 {
 "feature": "Adj. offensive success rate",
 "key": "d_adj_off_off_sr",
-"logit": -0.0339
+"logit": -0.0345
 },
 {
 "feature": "Last 3 games: offensive EPA/play",
 "key": "d_l3_off_epa",
-"logit": 0.032
+"logit": 0.03
 },
 {
 "feature": "Adj. points per drive",
 "key": "d_adj_off_ppd",
-"logit": -0.0171
+"logit": -0.0186
+},
+{
+"feature": "Adj. passing EPA/dropback",
+"key": "d_adj_off_pass_epa",
+"logit": -0.0101
 },
 {
 "feature": "Adj. run defense",
 "key": "d_adj_def_rush_epa",
-"logit": -0.0163
+"logit": -0.0099
 },
 {
 "feature": "Home-field advantage",
@@ -594438,19 +595059,14 @@ null
 "logit": 0.0092
 },
 {
-"feature": "Adj. passing EPA/dropback",
-"key": "d_adj_off_pass_epa",
-"logit": -0.0085
-},
-{
 "feature": "Last 3 games: points per drive",
 "key": "d_l3_ppd",
-"logit": 0.007
+"logit": 0.0066
 },
 {
 "feature": "Adj. rushing EPA/play",
 "key": "d_adj_off_rush_epa",
-"logit": 0.0015
+"logit": 0.0014
 }
 ]
 },
@@ -594458,87 +595074,87 @@ null
 "ats": {
 "team": "Hawai'i",
 "line": 7.0,
-"edge": 0.7
+"edge": 0.6
 },
 "value": {
 "moneyline": {
 "pick": "North Dakota State",
 "odds": -270.0,
-"p": 0.6581,
+"p": 0.6618,
 "break_even": 0.7297,
-"edge": -0.0716,
-"ev_per_100": -9.8
+"edge": -0.0679,
+"ev_per_100": -9.3
 },
 "spread": {
 "pick": "Hawai'i",
 "line": 7.0,
 "odds": -115.0,
 "odds_assumed": false,
-"p": 0.5219,
+"p": 0.5196,
 "break_even": 0.5349,
-"edge": -0.013,
-"ev_per_100": -2.4
+"edge": -0.0153,
+"ev_per_100": -2.9
 },
 "alt": [
 {
 "team": "Hawai'i",
 "line": -3.0,
-"p": 0.2654,
-"fair_odds": 277
+"p": 0.2617,
+"fair_odds": 282
 },
 {
 "team": "Hawai'i",
 "line": 0.0,
-"p": 0.3331,
-"fair_odds": 200
+"p": 0.3311,
+"fair_odds": 202
 },
 {
 "team": "Hawai'i",
 "line": 3.5,
-"p": 0.4238,
-"fair_odds": 136
+"p": 0.4214,
+"fair_odds": 137
 },
 {
 "team": "Hawai'i",
 "line": 4.0,
-"p": 0.4366,
-"fair_odds": 129
+"p": 0.4342,
+"fair_odds": 130
 },
 {
 "team": "Hawai'i",
 "line": 10.0,
-"p": 0.6122,
-"fair_odds": -158
+"p": 0.6093,
+"fair_odds": -156
 },
 {
 "team": "Hawai'i",
 "line": 10.5,
-"p": 0.6231,
-"fair_odds": -165
+"p": 0.6201,
+"fair_odds": -163
 },
 {
 "team": "Hawai'i",
 "line": 14.0,
-"p": 0.706,
-"fair_odds": -240
+"p": 0.704,
+"fair_odds": -238
 },
 {
 "team": "Hawai'i",
 "line": 17.0,
-"p": 0.7685,
-"fair_odds": -332
+"p": 0.7659,
+"fair_odds": -327
 }
 ],
 "total": {
 "pick": "Over",
 "line": 39.5,
-"proj": 44.9,
+"proj": 44.8,
 "odds": -115.0,
 "odds_assumed": false,
-"p": 0.6169,
+"p": 0.6123,
 "break_even": 0.5349,
-"edge": 0.082,
-"ev_per_100": 15.3,
+"edge": 0.0775,
+"ev_per_100": 14.5,
 "range80": [
 25,
 66
@@ -594546,39 +595162,39 @@ null
 "alt": [
 {
 "line": 29.5,
-"over": 0.8405,
-"fair_over": -527,
-"fair_under": 527
+"over": 0.8355,
+"fair_over": -508,
+"fair_under": 508
 },
 {
 "line": 32.5,
-"over": 0.7776,
-"fair_over": -350,
-"fair_under": 350
+"over": 0.7753,
+"fair_over": -345,
+"fair_under": 345
 },
 {
 "line": 36.5,
-"over": 0.6959,
-"fair_over": -229,
-"fair_under": 229
+"over": 0.6911,
+"fair_over": -224,
+"fair_under": 224
 },
 {
 "line": 42.5,
-"over": 0.543,
-"fair_over": -119,
-"fair_under": 119
+"over": 0.5374,
+"fair_over": -116,
+"fair_under": 116
 },
 {
 "line": 46.5,
-"over": 0.4429,
-"fair_over": 126,
-"fair_under": -126
+"over": 0.4377,
+"fair_over": 128,
+"fair_under": -128
 },
 {
 "line": 49.5,
-"over": 0.3718,
-"fair_over": 169,
-"fair_under": -169
+"over": 0.3655,
+"fair_over": 174,
+"fair_under": -174
 }
 ]
 }
@@ -594586,7 +595202,7 @@ null
 "ou": {
 "pick": "Over",
 "line": 39.5,
-"proj": 44.9
+"proj": 44.8
 }
 }
 }
