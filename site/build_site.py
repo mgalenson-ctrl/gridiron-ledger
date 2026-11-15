@@ -2,6 +2,20 @@
 A sport whose bundle is missing (pipeline failed, or offseason) keeps its previously published page if PREVIOUS_URL is set."""
 import json, os, shutil, sys, urllib.request, html
 from datetime import datetime, timezone
+
+def _json_safe(o):
+    """Replace NaN/inf with null so the page's JSON always parses (a missing Elo once blanked the college page)."""
+    import math
+    if isinstance(o, dict): return {k: _json_safe(v) for k, v in o.items()}
+    if isinstance(o, (list, tuple)): return [_json_safe(v) for v in o]
+    if isinstance(o, float): return None if (math.isnan(o) or math.isinf(o)) else o
+    try:
+        import numpy as _np
+        if isinstance(o, _np.floating): f = float(o); return None if (math.isnan(f) or math.isinf(f)) else f
+        if isinstance(o, _np.integer): return int(o)
+        if isinstance(o, _np.bool_): return bool(o)
+    except Exception: pass
+    return o
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DIST = os.path.join(ROOT, 'site', 'dist'); STATIC = os.path.join(ROOT, 'site', 'static')
 PREV = os.environ.get('PREVIOUS_URL', '').rstrip('/')
@@ -45,14 +59,14 @@ def accuracy_records():
             if h.get('home_win') is None or h.get('p_home') is None: continue
             out['bt'].append([key, int(h['season']), int(h['week']), None if h['home_win'] == 0.5 else int((h['p_home'] > 0.5) == (h['home_win'] == 1))])
     return out
-ACC = json.dumps(accuracy_records(), separators=(',', ':'))
+ACC = json.dumps(_json_safe(accuracy_records()), separators=(',', ':'))
 _ar = json.loads(ACC); print('accuracy records: live', len(_ar['live']), 'back-test', len(_ar['bt']))
 cards = []; built = 0
 for key, label, title in SPORTS:
     out = os.path.join(DIST, key); os.makedirs(out, exist_ok=True)
     bpath = os.path.join(ROOT, key, 'out', 'bundle.json'); tpl = open(os.path.join(ROOT, key, 'app_template.html')).read()
     if os.path.exists(bpath):
-        b = json.load(open(bpath)); raw = json.dumps(b, separators=(',', ':')).replace('</', '<\\/')
+        b = _json_safe(json.load(open(bpath))); raw = json.dumps(b, separators=(',', ':')).replace('</', '<\\/')
         page = head(title, '../') + tpl.replace('__BUNDLE__', raw).replace('__ACCDATA__', ACC) + FOOT + '</body></html>'
         open(os.path.join(out, 'index.html'), 'w').write(page); built += 1
         top = sorted(b['games'], key=lambda g: -max(g['latest']['p_home'], 1 - g['latest']['p_home']))[:3]

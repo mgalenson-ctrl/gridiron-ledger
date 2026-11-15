@@ -2,6 +2,20 @@
 import numpy as np, pandas as pd, json, hashlib, os
 from datetime import datetime, timezone
 from cfb_train import *
+
+def _json_safe(o):
+    """Replace NaN/inf with null so the page's JSON always parses (a missing Elo once blanked the college page)."""
+    import math
+    if isinstance(o, dict): return {k: _json_safe(v) for k, v in o.items()}
+    if isinstance(o, (list, tuple)): return [_json_safe(v) for v in o]
+    if isinstance(o, float): return None if (math.isnan(o) or math.isinf(o)) else o
+    try:
+        import numpy as _np
+        if isinstance(o, _np.floating): f = float(o); return None if (math.isnan(f) or math.isinf(f)) else f
+        if isinstance(o, _np.integer): return int(o)
+        if isinstance(o, _np.bool_): return bool(o)
+    except Exception: pass
+    return o
 OUT = '/home/claude/cfbpredict/out'
 
 MODEL_VERSION = 'cfb-v2.0.0'
@@ -354,7 +368,7 @@ for idx, row in wk.iterrows():
            'gametime_et': et.strftime('%H:%M'), 'home': row.home_team, 'away': row.away_team, 'neutral': int(row.neutral),
            'stadium': row.venue if isinstance(row.venue,str) else None, 'roof': row.roof if isinstance(row.roof,str) else None, 'surface': None,
            'div_game': int(row.conf_game), 'home_conf': row.home_conf, 'away_conf': row.away_conf, 'home_div': row.home_div, 'away_div': row.away_div,
-           'elo': {'home': None if pd.isna(row.home_elo) else float(row.home_elo), 'away': None if pd.isna(row.away_elo) else float(row.away_elo), 'p_home': None if pd.isna(row.home_elo) else round(float(elo_prob(row.home_elo,row.away_elo)),4)},
+           'elo': {'home': None if pd.isna(row.home_elo) else float(row.home_elo), 'away': None if pd.isna(row.away_elo) else float(row.away_elo), 'p_home': None if (pd.isna(row.home_elo) or pd.isna(row.away_elo)) else round(float(elo_prob(row.home_elo,row.away_elo)),4)},
            'early': {'p_home': round(p_early,4), 'p_away': round(1-p_early,4),
                      'pick': row.home_team if p_early>=0.5 else row.away_team,
                      'predicted_at': now, 'model_version': MODEL_VERSION, 'input_hash': input_hash,
@@ -466,7 +480,7 @@ for _gid, _e in LOG.items():
     _f = _e.get('final')
     if _f and _f.get('pick') and str(_gid) in _played.index: archive.append({'game_id': str(_gid), **_f})
 archive.sort(key=lambda a: (-(a.get('week') or 0), a.get('gameday') or ''))
-json.dump(LOG, open(LOG_PATH,'w'), indent=0, default=float)
+json.dump(_json_safe(LOG), open(LOG_PATH,'w'), indent=0, default=float)
 
 # ---------------------------------------------------------------- history for dashboard: walk-forward preds of final early model
 def ats_table(A):
@@ -537,14 +551,14 @@ for name, P in (('crunch',P_crunch),('early',P_early),('updated',P_upd),('baseli
         'elo_accuracy': float(((elo_prob(d.home_elo,d.away_elo)>0.5)==(d.home_win==1))[d.home_elo.notna()&d.away_elo.notna()].mean()),
         'home_accuracy': float((d.home_win==1).mean())}
 
-json.dump(bundle, open(f'{OUT}/bundle.json','w'), indent=0, default=float)
+json.dump(_json_safe(bundle), open(f'{OUT}/bundle.json','w'), indent=0, default=float)
 # immutable snapshot
 os.makedirs(f'{OUT}/snapshots', exist_ok=True)
 snap = {'generated_at': now, 'model_version': MODEL_VERSION, 'season': cur_season, 'week': cur_week, 'input_hash': input_hash,
         'inputs': Xwk[upd_cols].round(6).assign(game_id=wk.game_id.values).to_dict(orient='records'),
         'predictions': [{'game_id':g['game_id'],'early':g['early']['p_home'],'updated': g['updated']['p_home'] if g['updated'] else None} for g in games_out],
         'coefficients': coef_table}
-json.dump(snap, open(f'{OUT}/snapshots/{cur_season}_wk{cur_week:02d}_{MODEL_VERSION}_{now[:10]}.json','w'), indent=1, default=float)
+json.dump(_json_safe(snap), open(f'{OUT}/snapshots/{cur_season}_wk{cur_week:02d}_{MODEL_VERSION}_{now[:10]}.json','w'), indent=1, default=float)
 print('week', cur_week, 'games', len(games_out), 'injuries_available', injuries_available, 'hash', input_hash)
 for g in games_out: print(f"{g['away']}@{g['home']}: early home {g['early']['p_home']:.3f} pick {g['early']['pick']} | mkt {g['market']['p_home_devig']} | flags {g['qb_flags']}")
 print(json.dumps(bundle['metrics']['holdout_2025_on'], indent=1))
